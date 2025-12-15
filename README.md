@@ -1,4 +1,4 @@
-# TotTrots - Advanced Game Architecture & ARPG System
+# Garax - Advanced Game Architecture & ARPG System
 
 [![CI Web](https://github.com/your-org/tottrots-game/actions/workflows/ci-web.yml/badge.svg)](https://github.com/your-org/tottrots-game/actions/workflows/ci-web.yml)
 [![CI Unity](https://github.com/your-org/tottrots-game/actions/workflows/ci-unity.yml/badge.svg)](https://github.com/your-org/tottrots-game/actions/workflows/ci-unity.yml)
