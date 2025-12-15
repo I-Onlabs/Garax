@@ -62,6 +62,9 @@ npm run dev
 *   `npm run test:e2e`: Run end-to-end tests (Playwright)
 *   `npm run lint`: Run linting
 
+### Test Status
+The project includes a comprehensive test suite (`npm test`). Note that some tests may require specific environment configurations (like `jsdom`) or may have pending updates to match the latest architectural changes. We recommend using the tests as a reference for how to test game systems.
+
 ## Architecture Overview
 
 The project follows a modular system-based architecture:
