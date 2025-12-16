@@ -12,6 +12,7 @@ export class CollisionDetector {
   constructor(options = {}) {
     this.collisionObjects = new Map();
     this.spatialGrid = null;
+    this.objectCells = new Map(); // Track which cells each object occupies
     this.gridSize = 64; // Grid cell size for spatial partitioning
     
     // TODO: Inject dependencies
@@ -33,7 +34,7 @@ export class CollisionDetector {
    * TODO: Set up spatial partitioning and collision groups
    */
   async initialize() {
-    // TODO: Initialize spatial grid
+    this.spatialGrid = new Map();
     // TODO: Set up collision groups
     // TODO: Configure collision layers
     console.log('CollisionDetector initialized');
@@ -135,8 +136,38 @@ export class CollisionDetector {
    * TODO: Implement spatial partitioning
    */
   checkCollisionsSpatial() {
-    // TODO: Implement spatial grid collision detection
-    return [];
+    const collisions = [];
+    const checkedPairs = new Set();
+
+    for (const [id, object] of this.collisionObjects) {
+      const cells = this.getCellsForObject(object);
+
+      for (const cellKey of cells) {
+        const neighbors = this.spatialGrid.get(cellKey);
+        if (!neighbors) continue;
+
+        for (const neighborId of neighbors) {
+          if (id === neighborId) continue;
+
+          // Avoid checking the same pair twice
+          const pairId = id < neighborId ? `${id}:${neighborId}` : `${neighborId}:${id}`;
+          if (checkedPairs.has(pairId)) continue;
+
+          checkedPairs.add(pairId);
+
+          const neighbor = this.collisionObjects.get(neighborId);
+          if (neighbor && this.objectsCanCollide(object, neighbor) && this.checkAABBCollision(object, neighbor)) {
+            collisions.push({
+              object1: object,
+              object2: neighbor,
+              collisionPoint: this.calculateCollisionPoint(object, neighbor)
+            });
+          }
+        }
+      }
+    }
+
+    return collisions;
   }
 
   /**
@@ -235,11 +266,51 @@ export class CollisionDetector {
   }
 
   /**
+   * Get grid cell key for coordinates
+   */
+  getGridCell(x, y) {
+    const cellX = Math.floor(x / this.gridSize);
+    const cellY = Math.floor(y / this.gridSize);
+    return `${cellX},${cellY}`;
+  }
+
+  /**
+   * Get all cells an object overlaps with
+   */
+  getCellsForObject(object) {
+    const cells = new Set();
+    const { position, size } = object;
+
+    const startX = Math.floor(position.x / this.gridSize);
+    const endX = Math.floor((position.x + size.width) / this.gridSize);
+    const startY = Math.floor(position.y / this.gridSize);
+    const endY = Math.floor((position.y + size.height) / this.gridSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        cells.add(`${x},${y}`);
+      }
+    }
+
+    return cells;
+  }
+
+  /**
    * Add object to spatial grid
    * TODO: Implement spatial grid
    */
   addToSpatialGrid(id, object) {
-    // TODO: Implement spatial grid insertion
+    if (!this.spatialGrid) return;
+
+    const cells = this.getCellsForObject(object);
+    this.objectCells.set(id, cells);
+
+    for (const cellKey of cells) {
+      if (!this.spatialGrid.has(cellKey)) {
+        this.spatialGrid.set(cellKey, new Set());
+      }
+      this.spatialGrid.get(cellKey).add(id);
+    }
   }
 
   /**
@@ -247,7 +318,22 @@ export class CollisionDetector {
    * TODO: Implement spatial grid removal
    */
   removeFromSpatialGrid(id, object) {
-    // TODO: Implement spatial grid removal
+    if (!this.spatialGrid) return;
+
+    const cells = this.objectCells.get(id);
+    if (!cells) return;
+
+    for (const cellKey of cells) {
+      const cell = this.spatialGrid.get(cellKey);
+      if (cell) {
+        cell.delete(id);
+        if (cell.size === 0) {
+          this.spatialGrid.delete(cellKey);
+        }
+      }
+    }
+
+    this.objectCells.delete(id);
   }
 
   /**
@@ -255,7 +341,8 @@ export class CollisionDetector {
    * TODO: Implement spatial grid updates
    */
   updateSpatialGrid(id, object) {
-    // TODO: Implement spatial grid updates
+    this.removeFromSpatialGrid(id, object);
+    this.addToSpatialGrid(id, object);
   }
 
   /**
@@ -277,7 +364,11 @@ export class CollisionDetector {
     // TODO: Clear collision objects
     // TODO: Clear spatial grid
     this.collisionObjects.clear();
-    this.spatialGrid = null;
+    if (this.spatialGrid) {
+      this.spatialGrid.clear();
+      this.spatialGrid = null;
+    }
+    this.objectCells.clear();
   }
 }
 
