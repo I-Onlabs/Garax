@@ -20,6 +20,13 @@ export class InputHandler {
       gamepad: { connected: false, buttons: [], axes: [] }
     };
     
+    // Internal touch state for gesture recognition
+    this.touchContext = {
+      activeTouches: new Map(),
+      startDistance: 0,
+      startAngle: 0
+    };
+
     // TODO: Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
@@ -32,7 +39,17 @@ export class InputHandler {
       enableTouch: true,
       enableGamepad: true,
       bufferInputs: true,
-      inputRepeatDelay: 100
+      inputRepeatDelay: 100,
+      gestures: {
+        enableSwipe: true,
+        enablePinch: true,
+        enableRotate: true,
+        swipeThreshold: 50,
+        swipeTimeThreshold: 500, // ms - max time for a swipe
+        pinchThreshold: 0.1,
+        rotateThreshold: 5,
+        ...options.config?.gestures
+      }
     };
   }
 
@@ -189,9 +206,9 @@ export class InputHandler {
     event.preventDefault();
     const touches = Array.from(event.touches);
     this.inputState.touch.touches = touches;
-    
-    // TODO: Process touch gestures
-    this.processTouchGestures(touches);
+
+    // Process touch gestures
+    this.processTouchGestures('start', event, touches);
     
     // TODO: Add to input buffer
     this.addToBuffer('touchstart', touches, event);
@@ -208,9 +225,9 @@ export class InputHandler {
     event.preventDefault();
     const touches = Array.from(event.touches);
     this.inputState.touch.touches = touches;
-    
-    // TODO: Process touch gestures
-    this.processTouchGestures(touches);
+
+    // Process touch gestures
+    this.processTouchGestures('move', event, touches);
     
     // TODO: Add to input buffer
     this.addToBuffer('touchmove', touches, event);
@@ -227,9 +244,9 @@ export class InputHandler {
     event.preventDefault();
     const touches = Array.from(event.touches);
     this.inputState.touch.touches = touches;
-    
-    // TODO: Process touch gestures
-    this.processTouchGestures(touches);
+
+    // Process touch gestures
+    this.processTouchGestures('end', event, touches);
     
     // TODO: Add to input buffer
     this.addToBuffer('touchend', touches, event);
@@ -260,12 +277,108 @@ export class InputHandler {
 
   /**
    * Process touch gestures
-   * TODO: Extract from mobile gesture recognition
    */
-  processTouchGestures(touches) {
-    // TODO: Implement gesture recognition
-    // TODO: Detect swipe, pinch, rotate gestures
-    // TODO: Add gesture to input state
+  processTouchGestures(eventType, event, touches) {
+    if (eventType === 'start') {
+      // Track new touches
+      for (const touch of event.changedTouches) {
+        this.touchContext.activeTouches.set(touch.identifier, {
+          startX: touch.clientX,
+          startY: touch.clientY,
+          startTime: Date.now()
+        });
+      }
+
+      // If we have exactly 2 touches, prepare for pinch/rotate
+      if (touches.length === 2) {
+        const [t1, t2] = touches;
+        this.touchContext.startDistance = this.getDistance(t1, t2);
+        this.touchContext.startAngle = this.getAngle(t1, t2);
+      }
+    } else if (eventType === 'move') {
+      // Handle Pinch and Rotate
+      if (touches.length === 2) {
+        const [t1, t2] = touches;
+        const currentDistance = this.getDistance(t1, t2);
+        const currentAngle = this.getAngle(t1, t2);
+
+        // Pinch
+        if (this.inputConfig.gestures.enablePinch && this.touchContext.startDistance > 0) {
+          const scale = currentDistance / this.touchContext.startDistance;
+          if (Math.abs(scale - 1) > this.inputConfig.gestures.pinchThreshold) {
+            this.eventBus?.emit('input:pinch', { scale });
+          }
+        }
+
+        // Rotate
+        if (this.inputConfig.gestures.enableRotate) {
+          let rotation = currentAngle - this.touchContext.startAngle;
+
+          // Handle wrap-around for rotation (e.g. 179 to -179 should be -2 degrees, not -358)
+          if (rotation > 180) {
+            rotation -= 360;
+          } else if (rotation < -180) {
+            rotation += 360;
+          }
+
+          if (Math.abs(rotation) > this.inputConfig.gestures.rotateThreshold) {
+            this.eventBus?.emit('input:rotate', { rotation });
+          }
+        }
+      }
+    } else if (eventType === 'end') {
+      // Handle Swipe
+      if (this.inputConfig.gestures.enableSwipe) {
+        for (const touch of event.changedTouches) {
+          const startData = this.touchContext.activeTouches.get(touch.identifier);
+          if (startData) {
+            const deltaX = touch.clientX - startData.startX;
+            const deltaY = touch.clientY - startData.startY;
+            const timeDiff = Date.now() - startData.startTime;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            // Check for valid swipe (enough distance and short enough time)
+            if (distance > this.inputConfig.gestures.swipeThreshold &&
+                timeDiff < this.inputConfig.gestures.swipeTimeThreshold) {
+
+              const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+              let direction = '';
+
+              if (angle > -45 && angle <= 45) {
+                direction = 'right';
+              } else if (angle > 45 && angle <= 135) {
+                direction = 'down';
+              } else if (angle > 135 || angle <= -135) {
+                direction = 'left';
+              } else if (angle > -135 && angle <= -45) {
+                direction = 'up';
+              }
+
+              if (direction) {
+                this.eventBus?.emit('input:swipe', { direction, distance });
+              }
+            }
+          }
+          // Remove from active touches
+          this.touchContext.activeTouches.delete(touch.identifier);
+        }
+      } else {
+          // Just clean up
+          for (const touch of event.changedTouches) {
+             this.touchContext.activeTouches.delete(touch.identifier);
+          }
+      }
+    }
+  }
+
+  getDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  getAngle(touch1, touch2) {
+    return Math.atan2(touch2.clientY - touch1.clientY, touch2.clientX - touch1.clientX) * 180 / Math.PI;
   }
 
   /**
@@ -390,6 +503,7 @@ export class InputHandler {
     this.inputState.mouse.buttons.clear();
     this.inputState.touch.touches = [];
     this.inputBuffer = [];
+    this.touchContext.activeTouches.clear();
   }
 }
 

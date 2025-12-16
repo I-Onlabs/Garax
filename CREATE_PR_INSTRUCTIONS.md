@@ -34,10 +34,10 @@ Click **"Create pull request"**
 ### Set Up GitHub Projects Board
 ```bash
 # Make the script executable
-chmod +x github-setup-commands.sh
+chmod +x scripts/github-setup-commands.sh
 
 # Run the setup script
-./github-setup-commands.sh
+./scripts/github-setup-commands.sh
 ```
 
 ### Verify Everything Works
