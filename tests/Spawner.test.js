@@ -120,6 +120,33 @@ describe('EntitySpawner', () => {
     expect(distance).toBe(5);
   });
 
+  test('should clean up distant entities', () => {
+    // Setup player
+    const playerPosition = { x: 0, y: 0 };
+    spawner.spawnEntity('player', playerPosition);
+
+    // Setup close entity (within cleanupDistance 1500)
+    const closeEntityId = spawner.spawnEntity('enemy', { x: 1000, y: 0 });
+
+    // Setup distant entity (beyond cleanupDistance 1500)
+    const distantEntityId = spawner.spawnEntity('enemy', { x: 2000, y: 0 });
+
+    // Setup persistent distant entity
+    const persistentEntityId = spawner.spawnEntity('enemy', { x: 2000, y: 0 }, { persistent: true });
+
+    // Run update
+    spawner.update(16);
+
+    // Check results
+    expect(spawner.spawnedEntities.has(closeEntityId)).toBe(true);
+    expect(spawner.spawnedEntities.has(distantEntityId)).toBe(false);
+    expect(spawner.spawnedEntities.has(persistentEntityId)).toBe(true);
+
+    // Verify player still exists
+    const player = Array.from(spawner.spawnedEntities.values()).find(e => e.type === 'player');
+    expect(player).toBeDefined();
+  });
+
   // TODO: Add more comprehensive tests
   // - Test entity pooling
   // - Test spawn patterns
