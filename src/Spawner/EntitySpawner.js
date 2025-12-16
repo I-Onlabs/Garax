@@ -8,6 +8,8 @@
  * - Handle entity lifecycle management
  */
 
+import { Player } from '../objects/Player.js';
+
 export class EntitySpawner {
   constructor(options = {}) {
     this.spawnedEntities = new Map();
@@ -85,13 +87,14 @@ export class EntitySpawner {
    * TODO: Extract from Player.js
    */
   createPlayer(position, options) {
-    // TODO: Implement player creation
-    return {
-      id: 'player',
-      type: 'player',
-      position,
+    const playerConfig = {
+      x: position.x,
+      y: position.y,
+      z: position.z || 0,
+      logger: this.logger,
       ...options
     };
+    return new Player(playerConfig);
   }
 
   /**
