@@ -16,7 +16,8 @@ global.Audio = jest.fn(() => ({
   cloneNode: jest.fn().mockReturnThis(),
   preload: 'auto',
   volume: 1,
-  currentTime: 0
+  currentTime: 0,
+  ended: false // Add ended property mock
 }));
 
 describe('AudioManager', () => {
@@ -91,19 +92,27 @@ describe('AudioManager', () => {
     expect(audioManager.volumeSettings.master).toBe(1);
   });
 
-  test('should play sound effect', () => {
+  test('should play sound effect', async () => {
     // Mock sound in sounds map
     const mockSound = {
       play: jest.fn().mockResolvedValue(undefined),
       currentTime: 0,
-      volume: 1
+      volume: 1,
+      ended: false
     };
     audioManager.sounds.set('jump', mockSound);
     
     audioManager.playSound('jump');
     
+    // play is async but playSound calls it and pushes to activeSounds in .then()
+    // We need to wait for the promise to resolve
+    await new Promise(resolve => setTimeout(resolve, 0));
+
     expect(mockSound.play).toHaveBeenCalled();
     expect(mockSound.currentTime).toBe(0);
+    expect(audioManager.activeSounds.length).toBe(1);
+    expect(audioManager.activeSounds[0].name).toBe('jump');
+    expect(audioManager.activeSounds[0].sound).toBe(mockSound);
   });
 
   test('should play sound with options', () => {
@@ -111,7 +120,8 @@ describe('AudioManager', () => {
       play: jest.fn().mockResolvedValue(undefined),
       currentTime: 0,
       volume: 1,
-      playbackRate: 1
+      playbackRate: 1,
+      ended: false
     };
     audioManager.sounds.set('jump', mockSound);
     
@@ -126,7 +136,8 @@ describe('AudioManager', () => {
       play: jest.fn().mockResolvedValue(undefined),
       pause: jest.fn(),
       volume: 0.8,
-      loop: true
+      loop: true,
+      ended: false
     };
     audioManager.music.set('main_theme', mockMusic);
     
@@ -140,7 +151,8 @@ describe('AudioManager', () => {
       play: jest.fn().mockResolvedValue(undefined),
       pause: jest.fn(),
       currentTime: 0,
-      volume: 0.8
+      volume: 0.8,
+      ended: false
     };
     audioManager.music.set('main_theme', mockMusic);
     
@@ -205,6 +217,50 @@ describe('AudioManager', () => {
     
     expect(audioManager.audioPools.get('jump')).toHaveLength(5);
     expect(audioManager.audioPools.get('jump')).not.toContain(mockSound);
+  });
+
+  test('should clean up finished sounds in update', () => {
+    // Setup pools
+    audioManager.audioPools.set('jump', []);
+
+    // Create a mock sound that is ended
+    const finishedSound = {
+        play: jest.fn(),
+        pause: jest.fn(),
+        currentTime: 0,
+        ended: true,
+        cloneNode: jest.fn()
+    };
+
+    // Create a mock sound that is NOT ended
+    const activeSound = {
+        play: jest.fn(),
+        pause: jest.fn(),
+        currentTime: 0,
+        ended: false,
+        cloneNode: jest.fn()
+    };
+
+    // Manually push to active sounds (since playSound is async in pushing)
+    audioManager.activeSounds.push(
+        { name: 'jump', sound: finishedSound },
+        { name: 'run', sound: activeSound }
+    );
+
+    expect(audioManager.activeSounds.length).toBe(2);
+
+    // Call update
+    audioManager.update(0.16);
+
+    // finishedSound should be removed
+    expect(audioManager.activeSounds.length).toBe(1);
+    expect(audioManager.activeSounds[0].name).toBe('run');
+    expect(audioManager.activeSounds[0].sound).toBe(activeSound);
+
+    // finishedSound should be returned to pool (if pool exists)
+    expect(audioManager.audioPools.get('jump')).toContain(finishedSound);
+    expect(finishedSound.pause).toHaveBeenCalled();
+    expect(finishedSound.currentTime).toBe(0);
   });
 
   // TODO: Add more comprehensive tests
