@@ -8,6 +8,8 @@
  * - Handle delta time calculations
  */
 
+import { PhysicsSystem } from '../systems/PhysicsSystem.js';
+
 export class GameLoopManager {
   constructor(options = {}) {
     this.isRunning = false;
@@ -23,6 +25,12 @@ export class GameLoopManager {
     this.logger = options.logger;
     this.config = options.config;
     this.uiManager = options.uiManager;
+
+    this.physicsSystem = new PhysicsSystem({
+      eventBus: this.eventBus,
+      logger: this.logger,
+      config: this.config
+    });
     
     // TODO: Add game state management
     this.gameState = {
@@ -41,6 +49,10 @@ export class GameLoopManager {
     // TODO: Set up event listeners
     // TODO: Initialize game state
     // TODO: Set up performance monitoring
+
+    if (this.physicsSystem) {
+      await this.physicsSystem.initialize();
+    }
     console.log('GameLoopManager initialized');
   }
 
@@ -89,7 +101,12 @@ export class GameLoopManager {
     // TODO: Update game systems
     // TODO: Update game state
     // TODO: Handle input
-    // TODO: Update physics
+
+    // Update physics
+    if (this.physicsSystem) {
+      this.physicsSystem.update(deltaTime, this.gameState);
+    }
+
     // TODO: Update audio
 
     if (this.uiManager && typeof this.uiManager.update === 'function') {
