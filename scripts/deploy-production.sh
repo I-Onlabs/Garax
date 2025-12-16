@@ -34,7 +34,7 @@ print_error() {
 
 # Step 1: Pre-deployment validation
 print_status "Step 1: Running pre-deployment validation..."
-if node validate-implementation.js; then
+if node scripts/validate-implementation.js; then
     print_success "Validation passed - 100% success rate"
 else
     print_error "Validation failed - aborting deployment"
