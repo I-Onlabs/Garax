@@ -14,7 +14,7 @@ This PR implements the complete codebase audit and remediation plan, delivering 
   - "Unity Scripts" section with Unity version and setup requirements
   - Added CI status badges and links to project board
   - Created "What lives where" section mapping files to systems
-- **Created `Docs/UNITY_BOOTSTRAP.md`** with comprehensive Unity setup instructions
+- **Created `docs/UNITY_BOOTSTRAP.md`** with comprehensive Unity setup instructions
 - **Cross-linked documentation** files for better navigation
 
 #### B. Tooling Modernization
@@ -119,7 +119,7 @@ This PR implements the complete codebase audit and remediation plan, delivering 
 3. **✅ Linting/formatting**: `.eslintrc.cjs`, `.prettierrc`, `.editorconfig`
 4. **✅ Playwright**: `playwright.config.ts` and `tests/smoke.spec.ts`
 5. **✅ GitHub Actions**: `.github/workflows/ci-web.yml` and `.github/workflows/ci-unity.yml`
-6. **✅ Documentation**: Updated `README.md`, `Docs/UNITY_BOOTSTRAP.md`, audit docs
+6. **✅ Documentation**: Updated `README.md`, `docs/UNITY_BOOTSTRAP.md`, audit docs
 7. **✅ Phase 2 scaffolding**: Module stubs with TODOs and minimal tests
 8. **✅ Tracking**: GitHub Projects board setup scripts and issue templates
 
@@ -196,7 +196,7 @@ This will create:
 1. **Set up GitHub Projects board** using provided scripts
 2. **Test complete setup** in development environment
 3. **Begin Phase 2 implementation** using created module scaffolding
-4. **Set up Unity project** following `Docs/UNITY_BOOTSTRAP.md`
+4. **Set up Unity project** following `docs/UNITY_BOOTSTRAP.md`
 
 ### Phase 2 Priorities
 - Extract core game loop logic from `GameRefactored.js`

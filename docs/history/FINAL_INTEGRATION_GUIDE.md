@@ -216,7 +216,7 @@ npm run build
 
 ### **Getting Help**
 - Check `CONTRIBUTING.md` for development guidelines
-- Review `Docs/UNITY_BOOTSTRAP.md` for Unity setup
+- Review `docs/UNITY_BOOTSTRAP.md` for Unity setup
 - Use GitHub Projects board for issue tracking
 - Follow conventional commit format for commits
 

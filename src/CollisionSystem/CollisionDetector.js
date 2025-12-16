@@ -33,7 +33,7 @@ export class CollisionDetector {
    * TODO: Set up spatial partitioning and collision groups
    */
   async initialize() {
-    // TODO: Initialize spatial grid
+    this.spatialGrid = new Map();
     // TODO: Set up collision groups
     // TODO: Configure collision layers
     console.log('CollisionDetector initialized');
@@ -168,13 +168,19 @@ export class CollisionDetector {
 
   /**
    * Calculate collision point
-   * TODO: Implement precise collision point calculation
+   * Calculates the center of the intersection rectangle between two AABBs.
    */
   calculateCollisionPoint(obj1, obj2) {
-    // TODO: Calculate actual collision point
+    // Calculate the intersection rectangle
+    const x1 = Math.max(obj1.position.x, obj2.position.x);
+    const y1 = Math.max(obj1.position.y, obj2.position.y);
+    const x2 = Math.min(obj1.position.x + obj1.size.width, obj2.position.x + obj2.size.width);
+    const y2 = Math.min(obj1.position.y + obj1.size.height, obj2.position.y + obj2.size.height);
+
+    // Return the center of the intersection rectangle
     return {
-      x: (obj1.position.x + obj2.position.x) / 2,
-      y: (obj1.position.y + obj2.position.y) / 2
+      x: (x1 + x2) / 2,
+      y: (y1 + y2) / 2
     };
   }
 
@@ -235,19 +241,56 @@ export class CollisionDetector {
   }
 
   /**
+   * Calculate grid cells for an object
+   * @param {Object} object - The object to calculate cells for
+   * @returns {string[]} Array of cell keys
+   */
+  getGridCells(object) {
+    const cells = [];
+    const startX = Math.floor(object.position.x / this.gridSize);
+    const startY = Math.floor(object.position.y / this.gridSize);
+    const endX = Math.floor((object.position.x + object.size.width) / this.gridSize);
+    const endY = Math.floor((object.position.y + object.size.height) / this.gridSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        cells.push(`${x},${y}`);
+      }
+    }
+    return cells;
+  }
+
+  /**
    * Add object to spatial grid
-   * TODO: Implement spatial grid
    */
   addToSpatialGrid(id, object) {
-    // TODO: Implement spatial grid insertion
+    if (!this.spatialGrid) return;
+
+    const cells = this.getGridCells(object);
+    for (const cell of cells) {
+      if (!this.spatialGrid.has(cell)) {
+        this.spatialGrid.set(cell, new Set());
+      }
+      this.spatialGrid.get(cell).add(id);
+    }
   }
 
   /**
    * Remove object from spatial grid
-   * TODO: Implement spatial grid removal
    */
   removeFromSpatialGrid(id, object) {
-    // TODO: Implement spatial grid removal
+    if (!this.spatialGrid) return;
+
+    const cells = this.getGridCells(object);
+    for (const cell of cells) {
+      if (this.spatialGrid.has(cell)) {
+        const cellObjects = this.spatialGrid.get(cell);
+        cellObjects.delete(id);
+        if (cellObjects.size === 0) {
+          this.spatialGrid.delete(cell);
+        }
+      }
+    }
   }
 
   /**
