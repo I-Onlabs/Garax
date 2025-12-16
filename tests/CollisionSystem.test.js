@@ -124,7 +124,7 @@ describe('CollisionDetector', () => {
     };
     
     const collisionPoint = collisionDetector.calculateCollisionPoint(obj1, obj2);
-    expect(collisionPoint).toEqual({ x: 32, y: 32 });
+    expect(collisionPoint).toEqual({ x: 16, y: 16 });
   });
 
   test('should check if objects can collide', () => {

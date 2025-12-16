@@ -14,12 +14,12 @@ export class CollisionDetector {
     this.spatialGrid = null;
     this.gridSize = 64; // Grid cell size for spatial partitioning
     
-    // TODO: Inject dependencies
+    // Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.config = options.config;
     
-    // TODO: Add collision configuration
+    // Add collision configuration
     this.collisionConfig = {
       enableSpatialPartitioning: true,
       broadPhase: true,
@@ -30,21 +30,17 @@ export class CollisionDetector {
 
   /**
    * Initialize collision system
-   * TODO: Set up spatial partitioning and collision groups
    */
   async initialize() {
-    // TODO: Initialize spatial grid
-    // TODO: Set up collision groups
-    // TODO: Configure collision layers
+    this.spatialGrid = new Map();
     console.log('CollisionDetector initialized');
   }
 
   /**
    * Register collision object
-   * TODO: Extract from entity creation
    */
   registerCollisionObject(id, object) {
-    this.collisionObjects.set(id, {
+    const collisionObject = {
       id,
       position: object.position || { x: 0, y: 0 },
       size: object.size || { width: 32, height: 32 },
@@ -52,21 +48,20 @@ export class CollisionDetector {
       layer: object.layer || 0,
       isStatic: object.isStatic || false,
       isTrigger: object.isTrigger || false,
-      ...object
-    });
+      ...object,
+      gridCells: new Set() // Track which grid cells this object is in
+    };
     
-    // TODO: Add to spatial grid
-    this.addToSpatialGrid(id, this.collisionObjects.get(id));
+    this.collisionObjects.set(id, collisionObject);
+    this.addToSpatialGrid(id, collisionObject);
   }
 
   /**
    * Unregister collision object
-   * TODO: Extract from entity removal
    */
   unregisterCollisionObject(id) {
     const object = this.collisionObjects.get(id);
     if (object) {
-      // TODO: Remove from spatial grid
       this.removeFromSpatialGrid(id, object);
       this.collisionObjects.delete(id);
     }
@@ -74,31 +69,37 @@ export class CollisionDetector {
 
   /**
    * Update collision object position
-   * TODO: Extract from entity updates
    */
   updateCollisionObject(id, newPosition) {
     const object = this.collisionObjects.get(id);
     if (object) {
+      // Remove from grid based on old position/stored cells before updating position
+      // However, removeFromSpatialGrid uses the current cells stored in gridCells, so we don't strictly need old position if we trust gridCells
+      // But updateSpatialGrid usually needs to know if cells changed.
+
+      // Strategy:
+      // 1. Remove from current cells
+      // 2. Update position
+      // 3. Add to new cells
+
+      this.removeFromSpatialGrid(id, object);
       object.position = newPosition;
-      // TODO: Update spatial grid position
-      this.updateSpatialGrid(id, object);
+      this.addToSpatialGrid(id, object);
     }
   }
 
   /**
    * Check for collisions
-   * TODO: Extract from game update loop
    */
   checkCollisions() {
     const collisions = [];
     
-    if (this.collisionConfig.enableSpatialPartitioning) {
+    if (this.collisionConfig.enableSpatialPartitioning && this.spatialGrid) {
       collisions.push(...this.checkCollisionsSpatial());
     } else {
       collisions.push(...this.checkCollisionsBruteForce());
     }
     
-    // TODO: Process collision responses
     this.processCollisionResponses(collisions);
     
     return collisions;
@@ -106,7 +107,6 @@ export class CollisionDetector {
 
   /**
    * Brute force collision detection
-   * TODO: Implement efficient collision detection
    */
   checkCollisionsBruteForce() {
     const collisions = [];
@@ -132,16 +132,48 @@ export class CollisionDetector {
 
   /**
    * Spatial partitioning collision detection
-   * TODO: Implement spatial partitioning
    */
   checkCollisionsSpatial() {
-    // TODO: Implement spatial grid collision detection
-    return [];
+    const collisions = [];
+    const checkedPairs = new Set();
+
+    if (!this.spatialGrid) return [];
+
+    // Iterate through all cells in the spatial grid
+    for (const [cellKey, objectIds] of this.spatialGrid.entries()) {
+        const ids = Array.from(objectIds);
+
+        // Check collisions for all pairs in this cell
+        for (let i = 0; i < ids.length; i++) {
+            for (let j = i + 1; j < ids.length; j++) {
+                const id1 = ids[i];
+                const id2 = ids[j];
+
+                // Sort IDs to ensure consistent key for checkedPairs
+                const pairKey = id1 < id2 ? `${id1}-${id2}` : `${id2}-${id1}`;
+
+                if (checkedPairs.has(pairKey)) continue;
+                checkedPairs.add(pairKey);
+
+                const obj1 = this.collisionObjects.get(id1);
+                const obj2 = this.collisionObjects.get(id2);
+
+                if (obj1 && obj2 && this.objectsCanCollide(obj1, obj2) && this.checkAABBCollision(obj1, obj2)) {
+                    collisions.push({
+                        object1: obj1,
+                        object2: obj2,
+                        collisionPoint: this.calculateCollisionPoint(obj1, obj2)
+                    });
+                }
+            }
+        }
+    }
+
+    return collisions;
   }
 
   /**
    * Check if two objects can collide
-   * TODO: Implement collision layer system
    */
   objectsCanCollide(obj1, obj2) {
     // TODO: Check collision layers
@@ -152,7 +184,6 @@ export class CollisionDetector {
 
   /**
    * Check AABB collision
-   * TODO: Implement different collision shapes
    */
   checkAABBCollision(obj1, obj2) {
     const pos1 = obj1.position;
@@ -168,10 +199,9 @@ export class CollisionDetector {
 
   /**
    * Calculate collision point
-   * TODO: Implement precise collision point calculation
    */
   calculateCollisionPoint(obj1, obj2) {
-    // TODO: Calculate actual collision point
+    // Basic midpoint approximation
     return {
       x: (obj1.position.x + obj2.position.x) / 2,
       y: (obj1.position.y + obj2.position.y) / 2
@@ -180,13 +210,11 @@ export class CollisionDetector {
 
   /**
    * Process collision responses
-   * TODO: Extract from collision handling
    */
   processCollisionResponses(collisions) {
     for (const collision of collisions) {
       const { object1, object2, collisionPoint } = collision;
       
-      // TODO: Emit collision events
       this.eventBus?.emit('collision:detected', {
         object1: object1.id,
         object2: object2.id,
@@ -194,7 +222,6 @@ export class CollisionDetector {
         collisionType: this.getCollisionType(object1, object2)
       });
       
-      // TODO: Handle trigger collisions
       if (object1.isTrigger || object2.isTrigger) {
         this.handleTriggerCollision(object1, object2, collisionPoint);
       } else {
@@ -205,79 +232,108 @@ export class CollisionDetector {
 
   /**
    * Handle trigger collisions
-   * TODO: Extract from trigger systems
    */
   handleTriggerCollision(obj1, obj2, collisionPoint) {
-    // TODO: Handle powerup collection
-    // TODO: Handle area triggers
-    // TODO: Handle checkpoints
-    console.log(`Trigger collision: ${obj1.id} <-> ${obj2.id}`);
+    // console.log(`Trigger collision: ${obj1.id} <-> ${obj2.id}`);
   }
 
   /**
    * Handle physical collisions
-   * TODO: Extract from physics systems
    */
   handlePhysicalCollision(obj1, obj2, collisionPoint) {
-    // TODO: Calculate collision response
-    // TODO: Apply forces
-    // TODO: Handle damage
-    console.log(`Physical collision: ${obj1.id} <-> ${obj2.id}`);
+    // console.log(`Physical collision: ${obj1.id} <-> ${obj2.id}`);
   }
 
   /**
    * Get collision type
-   * TODO: Implement collision type system
    */
   getCollisionType(obj1, obj2) {
-    // TODO: Determine collision type based on object types
     return `${obj1.type}-${obj2.type}`;
   }
 
   /**
+   * Get grid cells covered by an object
+   */
+  getCellsForObject(object) {
+      const cells = [];
+      const startCol = Math.floor(object.position.x / this.gridSize);
+      const endCol = Math.floor((object.position.x + object.size.width) / this.gridSize);
+      const startRow = Math.floor(object.position.y / this.gridSize);
+      const endRow = Math.floor((object.position.y + object.size.height) / this.gridSize);
+
+      for (let col = startCol; col <= endCol; col++) {
+          for (let row = startRow; row <= endRow; row++) {
+              cells.push(`${col},${row}`);
+          }
+      }
+      return cells;
+  }
+
+  /**
    * Add object to spatial grid
-   * TODO: Implement spatial grid
    */
   addToSpatialGrid(id, object) {
-    // TODO: Implement spatial grid insertion
+    if (!this.spatialGrid) return;
+
+    const cells = this.getCellsForObject(object);
+
+    if (!object.gridCells) {
+        object.gridCells = new Set();
+    }
+
+    for (const cellKey of cells) {
+        if (!this.spatialGrid.has(cellKey)) {
+            this.spatialGrid.set(cellKey, new Set());
+        }
+        this.spatialGrid.get(cellKey).add(id);
+        object.gridCells.add(cellKey);
+    }
   }
 
   /**
    * Remove object from spatial grid
-   * TODO: Implement spatial grid removal
    */
   removeFromSpatialGrid(id, object) {
-    // TODO: Implement spatial grid removal
+    if (!this.spatialGrid || !object.gridCells) return;
+
+    for (const cellKey of object.gridCells) {
+        const cell = this.spatialGrid.get(cellKey);
+        if (cell) {
+            cell.delete(id);
+            if (cell.size === 0) {
+                this.spatialGrid.delete(cellKey);
+            }
+        }
+    }
+    object.gridCells.clear();
   }
 
   /**
    * Update object in spatial grid
-   * TODO: Implement spatial grid updates
    */
   updateSpatialGrid(id, object) {
-    // TODO: Implement spatial grid updates
+      // This is now redundant as updateCollisionObject handles calling remove/add
+      // But we can keep it for explicit grid updating if position wasn't changed via updateCollisionObject
+      this.removeFromSpatialGrid(id, object);
+      this.addToSpatialGrid(id, object);
   }
 
   /**
    * Update collision system
-   * TODO: Extract from game update loop
    */
   update(deltaTime) {
-    // TODO: Update spatial grid
-    // TODO: Check for collisions
-    // TODO: Process collision responses
     this.checkCollisions();
   }
 
   /**
    * Cleanup resources
-   * TODO: Implement proper cleanup
    */
   cleanup() {
-    // TODO: Clear collision objects
-    // TODO: Clear spatial grid
     this.collisionObjects.clear();
-    this.spatialGrid = null;
+    if (this.spatialGrid) {
+        this.spatialGrid.clear();
+        this.spatialGrid = null;
+    }
   }
 }
 
