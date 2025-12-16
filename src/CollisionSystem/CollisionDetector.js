@@ -168,13 +168,19 @@ export class CollisionDetector {
 
   /**
    * Calculate collision point
-   * TODO: Implement precise collision point calculation
+   * Calculates the center of the intersection rectangle between two AABBs.
    */
   calculateCollisionPoint(obj1, obj2) {
-    // TODO: Calculate actual collision point
+    // Calculate the intersection rectangle
+    const x1 = Math.max(obj1.position.x, obj2.position.x);
+    const y1 = Math.max(obj1.position.y, obj2.position.y);
+    const x2 = Math.min(obj1.position.x + obj1.size.width, obj2.position.x + obj2.size.width);
+    const y2 = Math.min(obj1.position.y + obj1.size.height, obj2.position.y + obj2.size.height);
+
+    // Return the center of the intersection rectangle
     return {
-      x: (obj1.position.x + obj2.position.x) / 2,
-      y: (obj1.position.y + obj2.position.y) / 2
+      x: (x1 + x2) / 2,
+      y: (y1 + y2) / 2
     };
   }
 
