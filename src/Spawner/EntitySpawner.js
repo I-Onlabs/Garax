@@ -210,8 +210,38 @@ export class EntitySpawner {
     }
 
     // TODO: Check spawn conditions
-    // TODO: Clean up distant entities
+
+    // Clean up distant entities
+    // Find player position for reference
+    const player = Array.from(this.spawnedEntities.values()).find(e => e.type === 'player');
+    if (player) {
+      this.cleanupDistantEntities(player.position);
+    }
+
     // TODO: Update entity pools
+  }
+
+  /**
+   * Clean up entities that are too far away
+   * @param {Object} referencePosition - The position to check distance from (usually player position)
+   */
+  cleanupDistantEntities(referencePosition) {
+    if (!referencePosition) return;
+
+    const cleanupDistance = this.spawnConfig.cleanupDistance;
+
+    for (const [id, entity] of this.spawnedEntities) {
+      // Don't clean up the player
+      if (entity.type === 'player') continue;
+
+      // Don't clean up persistent entities
+      if (entity.persistent) continue;
+
+      const distance = this.calculateDistance(referencePosition, entity.position);
+      if (distance > cleanupDistance) {
+        this.removeEntity(id);
+      }
+    }
   }
 
   /**
