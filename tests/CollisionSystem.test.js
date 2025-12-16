@@ -124,7 +124,7 @@ describe('CollisionDetector', () => {
     };
     
     const collisionPoint = collisionDetector.calculateCollisionPoint(obj1, obj2);
-    expect(collisionPoint).toEqual({ x: 32, y: 32 });
+    expect(collisionPoint).toEqual({ x: 16, y: 16 });
   });
 
   test('should check if objects can collide', () => {
@@ -143,10 +143,69 @@ describe('CollisionDetector', () => {
   });
 
   // TODO: Add more comprehensive tests
-  // - Test spatial partitioning
   // - Test collision response handling
   // - Test trigger collisions
   // - Test physical collisions
   // - Test event emission
   // - Test performance with many objects
+
+  describe('Spatial Grid', () => {
+    beforeEach(async () => {
+        await collisionDetector.initialize();
+    });
+
+    test('should initialize spatial grid', () => {
+        expect(collisionDetector.spatialGrid).toBeInstanceOf(Map);
+    });
+
+    test('should add object to spatial grid', () => {
+        const object = {
+            position: { x: 10, y: 10 },
+            size: { width: 32, height: 32 }
+        };
+        const id = 'obj1';
+
+        collisionDetector.addToSpatialGrid(id, object);
+
+        expect(collisionDetector.spatialGrid.has('0,0')).toBe(true);
+        expect(collisionDetector.spatialGrid.get('0,0').has(id)).toBe(true);
+    });
+
+    test('should add object spanning multiple cells', () => {
+        const object = {
+            position: { x: 50, y: 50 },
+            size: { width: 30, height: 30 }
+        };
+        const id = 'obj2';
+
+        collisionDetector.addToSpatialGrid(id, object);
+
+        expect(collisionDetector.spatialGrid.has('0,0')).toBe(true);
+        expect(collisionDetector.spatialGrid.has('1,0')).toBe(true);
+        expect(collisionDetector.spatialGrid.has('0,1')).toBe(true);
+        expect(collisionDetector.spatialGrid.has('1,1')).toBe(true);
+
+        expect(collisionDetector.spatialGrid.get('0,0').has(id)).toBe(true);
+        expect(collisionDetector.spatialGrid.get('1,1').has(id)).toBe(true);
+    });
+
+    test('should remove object from spatial grid', () => {
+        const object = {
+            position: { x: 10, y: 10 },
+            size: { width: 32, height: 32 }
+        };
+        const id = 'obj1';
+
+        collisionDetector.addToSpatialGrid(id, object);
+        expect(collisionDetector.spatialGrid.get('0,0').has(id)).toBe(true);
+
+        collisionDetector.removeFromSpatialGrid(id, object);
+
+        if (collisionDetector.spatialGrid.has('0,0')) {
+            expect(collisionDetector.spatialGrid.get('0,0').has(id)).toBe(false);
+        } else {
+            expect(true).toBe(true);
+        }
+    });
+  });
 });

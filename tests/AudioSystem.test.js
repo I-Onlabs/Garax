@@ -124,6 +124,7 @@ describe('AudioManager', () => {
   test('should play background music', () => {
     const mockMusic = {
       play: jest.fn().mockResolvedValue(undefined),
+      pause: jest.fn(),
       volume: 0.8,
       loop: true
     };
