@@ -14,6 +14,7 @@ export class AudioManager {
     this.sounds = new Map();
     this.music = new Map();
     this.audioPools = new Map();
+    this.activeSounds = [];
     this.volumeSettings = {
       master: 1.0,
       music: 0.8,
@@ -166,7 +167,9 @@ export class AudioManager {
     sound.currentTime = 0;
     
     // TODO: Play sound
-    sound.play().catch(error => {
+    sound.play().then(() => {
+      this.activeSounds.push({ name, sound });
+    }).catch(error => {
       console.warn(`Failed to play sound: ${name}`, error);
     });
     
@@ -369,8 +372,15 @@ export class AudioManager {
   update(deltaTime) {
     // TODO: Update 3D audio
     // TODO: Update spatial audio
-    // TODO: Clean up finished audio
-    // TODO: Return sounds to pools
+
+    // Clean up finished audio and return to pools
+    for (let i = this.activeSounds.length - 1; i >= 0; i--) {
+      const { name, sound } = this.activeSounds[i];
+      if (sound.ended) {
+        this.returnSoundToPool(name, sound);
+        this.activeSounds.splice(i, 1);
+      }
+    }
   }
 
   /**
