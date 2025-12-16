@@ -148,7 +148,7 @@ Create comprehensive Unity setup documentation with version requirements, packag
 - [ ] Cross-referenced with main README
 
 ## Files to Touch
-- Docs/UNITY_BOOTSTRAP.md
+- docs/UNITY_BOOTSTRAP.md
 - README.md" --label "phase:1 --label area:unity --label kind:docs --label priority:medium"
 gh issue create --title "Create GameLoop module scaffolding" --body "## Description
 Extract game loop logic from GameRefactored.js into a dedicated GameLoopManager module with proper interfaces and TODOs.

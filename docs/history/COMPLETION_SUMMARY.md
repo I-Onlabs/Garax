@@ -34,9 +34,9 @@ I have successfully executed the codebase audit and remediation plan with **high
 
 ### 2. Comprehensive Documentation
 - **README.md**: Updated with clear scope separation and setup instructions
-- **Docs/CODEBASE_AUDIT.md**: Complete audit findings and recommendations
-- **Docs/REMEDIATION_PLAN.md**: Detailed implementation plan
-- **Docs/UNITY_BOOTSTRAP.md**: Unity setup and testing guide
+- **docs/CODEBASE_AUDIT.md**: Complete audit findings and recommendations
+- **docs/REMEDIATION_PLAN.md**: Detailed implementation plan
+- **docs/UNITY_BOOTSTRAP.md**: Unity setup and testing guide
 - **CONTRIBUTING.md**: Development workflow and guidelines
 
 ### 3. Quality Assurance
@@ -112,7 +112,7 @@ chmod +x github-setup-commands.sh
 ```
 
 ### Unity Setup
-1. Follow `Docs/UNITY_BOOTSTRAP.md`
+1. Follow `docs/UNITY_BOOTSTRAP.md`
 2. Install Unity LTS 2022.3.x
 3. Set up required packages
 4. Configure CI runner (optional)
