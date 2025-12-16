@@ -11,7 +11,7 @@
 export class CollisionDetector {
   constructor(options = {}) {
     this.collisionObjects = new Map();
-    this.spatialGrid = null;
+    this.spatialGrid = new Map();
     this.gridSize = 64; // Grid cell size for spatial partitioning
     
     // TODO: Inject dependencies
@@ -236,10 +236,24 @@ export class CollisionDetector {
 
   /**
    * Add object to spatial grid
-   * TODO: Implement spatial grid
    */
   addToSpatialGrid(id, object) {
-    // TODO: Implement spatial grid insertion
+    if (!this.spatialGrid) return;
+
+    const startX = Math.floor(object.position.x / this.gridSize);
+    const startY = Math.floor(object.position.y / this.gridSize);
+    const endX = Math.floor((object.position.x + object.size.width) / this.gridSize);
+    const endY = Math.floor((object.position.y + object.size.height) / this.gridSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        const key = `${x},${y}`;
+        if (!this.spatialGrid.has(key)) {
+          this.spatialGrid.set(key, new Set());
+        }
+        this.spatialGrid.get(key).add(id);
+      }
+    }
   }
 
   /**

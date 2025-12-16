@@ -37,7 +37,7 @@ describe('CollisionDetector', () => {
 
   test('should initialize with default values', () => {
     expect(collisionDetector.collisionObjects).toBeInstanceOf(Map);
-    expect(collisionDetector.spatialGrid).toBeNull();
+    expect(collisionDetector.spatialGrid).toBeInstanceOf(Map);
     expect(collisionDetector.gridSize).toBe(64);
   });
 
@@ -140,6 +140,42 @@ describe('CollisionDetector', () => {
     
     const collisionType = collisionDetector.getCollisionType(obj1, obj2);
     expect(collisionType).toBe('player-enemy');
+  });
+
+  test('should add object to spatial grid', () => {
+    const object = {
+      position: { x: 10, y: 10 },
+      size: { width: 32, height: 32 }
+    };
+
+    // Grid size is 64. 10/64 = 0.
+    collisionDetector.addToSpatialGrid('obj1', object);
+
+    expect(collisionDetector.spatialGrid.has('0,0')).toBe(true);
+    expect(collisionDetector.spatialGrid.get('0,0').has('obj1')).toBe(true);
+  });
+
+  test('should add object spanning multiple grid cells', () => {
+    const object = {
+      position: { x: 50, y: 50 },
+      size: { width: 32, height: 32 }
+    };
+
+    // Grid size is 64.
+    // x: 50 (cell 0) to 82 (cell 1)
+    // y: 50 (cell 0) to 82 (cell 1)
+
+    collisionDetector.addToSpatialGrid('obj2', object);
+
+    expect(collisionDetector.spatialGrid.has('0,0')).toBe(true);
+    expect(collisionDetector.spatialGrid.has('1,0')).toBe(true);
+    expect(collisionDetector.spatialGrid.has('0,1')).toBe(true);
+    expect(collisionDetector.spatialGrid.has('1,1')).toBe(true);
+
+    expect(collisionDetector.spatialGrid.get('0,0').has('obj2')).toBe(true);
+    expect(collisionDetector.spatialGrid.get('1,0').has('obj2')).toBe(true);
+    expect(collisionDetector.spatialGrid.get('0,1').has('obj2')).toBe(true);
+    expect(collisionDetector.spatialGrid.get('1,1').has('obj2')).toBe(true);
   });
 
   // TODO: Add more comprehensive tests
