@@ -373,7 +373,7 @@ export class AudioManager {
     // TODO: Update 3D audio
     // TODO: Update spatial audio
 
-    // Clean up finished audio and return to pools
+    // Clean up finished audio
     for (let i = this.activeSounds.length - 1; i >= 0; i--) {
       const { name, sound } = this.activeSounds[i];
       if (sound.ended) {
