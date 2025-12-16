@@ -51,7 +51,7 @@ src/
 5. **Build for production**: `npm run build`
 
 ### Unity Development
-See `Docs/UNITY_BOOTSTRAP.md` for Unity setup instructions.
+See `docs/UNITY_BOOTSTRAP.md` for Unity setup instructions.
 
 ### Contributing
 See `CONTRIBUTING.md` for detailed contribution guidelines.

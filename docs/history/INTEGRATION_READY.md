@@ -85,7 +85,7 @@ npm run test:e2e # Run Playwright smoke tests
 - Optimize audio management in `AudioManager`
 
 ### **4. Set Up Unity Project**
-- Follow `Docs/UNITY_BOOTSTRAP.md`
+- Follow `docs/UNITY_BOOTSTRAP.md`
 - Install Unity LTS 2022.3.x
 - Set up required packages
 - Configure CI runner (optional)
