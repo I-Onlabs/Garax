@@ -33,7 +33,7 @@ export class CollisionDetector {
    * TODO: Set up spatial partitioning and collision groups
    */
   async initialize() {
-    // TODO: Initialize spatial grid
+    this.spatialGrid = new Map();
     // TODO: Set up collision groups
     // TODO: Configure collision layers
     console.log('CollisionDetector initialized');
@@ -235,19 +235,56 @@ export class CollisionDetector {
   }
 
   /**
+   * Calculate grid cells for an object
+   * @param {Object} object - The object to calculate cells for
+   * @returns {string[]} Array of cell keys
+   */
+  getGridCells(object) {
+    const cells = [];
+    const startX = Math.floor(object.position.x / this.gridSize);
+    const startY = Math.floor(object.position.y / this.gridSize);
+    const endX = Math.floor((object.position.x + object.size.width) / this.gridSize);
+    const endY = Math.floor((object.position.y + object.size.height) / this.gridSize);
+
+    for (let x = startX; x <= endX; x++) {
+      for (let y = startY; y <= endY; y++) {
+        cells.push(`${x},${y}`);
+      }
+    }
+    return cells;
+  }
+
+  /**
    * Add object to spatial grid
-   * TODO: Implement spatial grid
    */
   addToSpatialGrid(id, object) {
-    // TODO: Implement spatial grid insertion
+    if (!this.spatialGrid) return;
+
+    const cells = this.getGridCells(object);
+    for (const cell of cells) {
+      if (!this.spatialGrid.has(cell)) {
+        this.spatialGrid.set(cell, new Set());
+      }
+      this.spatialGrid.get(cell).add(id);
+    }
   }
 
   /**
    * Remove object from spatial grid
-   * TODO: Implement spatial grid removal
    */
   removeFromSpatialGrid(id, object) {
-    // TODO: Implement spatial grid removal
+    if (!this.spatialGrid) return;
+
+    const cells = this.getGridCells(object);
+    for (const cell of cells) {
+      if (this.spatialGrid.has(cell)) {
+        const cellObjects = this.spatialGrid.get(cell);
+        cellObjects.delete(id);
+        if (cellObjects.size === 0) {
+          this.spatialGrid.delete(cell);
+        }
+      }
+    }
   }
 
   /**
