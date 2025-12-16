@@ -29,6 +29,7 @@ export class EntitySpawner {
       spawnDistance: 1000,
       cleanupDistance: 1500
     };
+
   }
 
   /**
@@ -189,7 +190,25 @@ export class EntitySpawner {
    * TODO: Extract from game update loop
    */
   update(deltaTime) {
-    // TODO: Update spawn timers
+    // Update spawn timers
+    for (const [id, timer] of this.spawnTimers) {
+      timer.timeRemaining -= deltaTime;
+
+      if (timer.timeRemaining <= 0) {
+        // Trigger spawn callback
+        if (typeof timer.callback === 'function') {
+          timer.callback();
+        }
+
+        // Handle repeat or removal
+        if (timer.repeat) {
+          timer.timeRemaining += timer.interval;
+        } else {
+          this.spawnTimers.delete(id);
+        }
+      }
+    }
+
     // TODO: Check spawn conditions
     // TODO: Clean up distant entities
     // TODO: Update entity pools

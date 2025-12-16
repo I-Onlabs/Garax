@@ -1,13 +1,18 @@
 # Garax
 
-Garax is a reference game architecture and starter framework demonstrating modular JavaScript game design, ARPG-style systems, accessibility patterns, performance monitoring, and mobile UX.
+> **Repository Metadata**
+>
+> *   **Description:** Vite-based web game architecture reference: modular systems, DI/event bus, accessibility, performance + mobile UX patterns.
+> *   **Topics:** game-architecture, vite, javascript, accessibility, performance, mobile, canvas
 
-It is intended for learning, forking, and integration. It is not a finished commercial ARPG. Many systems are illustrative, scaffolded, or prototype-level.
+Garax is a **reference game architecture and starter framework** demonstrating modular JavaScript game design, ARPG-style systems, accessibility patterns, performance monitoring, and mobile UX.
+
+It is intended for learning, forking, and integration. It is **not** a finished commercial ARPG. Many systems are illustrative, scaffolded, or prototype-level.
 
 ## Intended Use
 
 *   **Reference Architecture**: Explore advanced patterns like Dependency Injection, Event Bus, and System-based architecture in a game context.
-*   **Learning Resource**: detailed examples of accessibility implementation, performance monitoring, and mobile responsiveness.
+*   **Learning Resource**: Detailed examples of accessibility implementation, performance monitoring, and mobile responsiveness.
 *   **Starting Point**: A solid foundation for building your own web-based canvas games.
 *   **Prototype Base**: Quickly scaffold ideas using the existing systems.
 
@@ -56,14 +61,15 @@ npm run dev
 ```
 
 ### Available Commands
-*   `npm run dev`: Start Vite dev server (http://localhost:3000)
+*   `npm run dev`: Start Vite dev server (http://localhost:5173 or similar)
 *   `npm run build`: Build for production (outputs to `dist/`)
 *   `npm test`: Run unit tests (Jest)
 *   `npm run test:e2e`: Run end-to-end tests (Playwright)
 *   `npm run lint`: Run linting
 
 ### Test Status
-The project includes a comprehensive test suite (`npm test`). Note that some tests may require specific environment configurations (like `jsdom`) or may have pending updates to match the latest architectural changes. We recommend using the tests as a reference for how to test game systems.
+The project includes a comprehensive test suite (`npm test`).
+> **Note**: Some tests may require specific environment configurations (like `jsdom`) or may have pending updates to match the latest architectural changes. We recommend using the tests as a reference for how to test game systems.
 
 ## Architecture Overview
 
@@ -72,6 +78,7 @@ The project follows a modular system-based architecture:
 *   `src/systems/`: Game logic modules (Combat, Audio, UI, etc.).
 *   `src/managers/`: High-level state managers (GameManager, AchievementManager).
 *   `src/objects/`: Game entities (Player, Enemies).
+*   `src/Spawner/`: Entity spawning and lifecycle management.
 
 ## Contributing
 

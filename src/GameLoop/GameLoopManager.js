@@ -22,6 +22,7 @@ export class GameLoopManager {
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.config = options.config;
+    this.uiManager = options.uiManager;
     
     // TODO: Add game state management
     this.gameState = {
@@ -90,7 +91,10 @@ export class GameLoopManager {
     // TODO: Handle input
     // TODO: Update physics
     // TODO: Update audio
-    // TODO: Update UI
+
+    if (this.uiManager && typeof this.uiManager.update === 'function') {
+      this.uiManager.update(deltaTime);
+    }
   }
 
   /**
