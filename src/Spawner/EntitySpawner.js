@@ -35,9 +35,122 @@ export class EntitySpawner {
    */
   async initialize() {
     // TODO: Create entity pools
-    // TODO: Load spawn patterns
+    this.loadSpawnPatterns();
     // TODO: Set up spawn timers
     console.log('EntitySpawner initialized');
+  }
+
+  /**
+   * Load spawn patterns
+   */
+  loadSpawnPatterns() {
+    this.spawnPatterns.set('single', (config) => {
+      return [{
+        type: config.type,
+        position: config.position,
+        options: config.options
+      }];
+    });
+
+    this.spawnPatterns.set('line', (config) => {
+      const spawns = [];
+      const count = config.count || 3;
+      const spacing = config.spacing || 50;
+      const startX = config.position.x;
+      const startY = config.position.y;
+      const horizontal = config.horizontal !== false; // Default true
+
+      for (let i = 0; i < count; i++) {
+        spawns.push({
+          type: config.type,
+          position: {
+            x: horizontal ? startX + (i * spacing) : startX,
+            y: horizontal ? startY : startY + (i * spacing)
+          },
+          options: config.options
+        });
+      }
+      return spawns;
+    });
+
+    this.spawnPatterns.set('circle', (config) => {
+      const spawns = [];
+      const count = config.count || 5;
+      const radius = config.radius || 100;
+      const center = config.position;
+      const angleStep = (Math.PI * 2) / count;
+
+      for (let i = 0; i < count; i++) {
+        const angle = i * angleStep;
+        const x = center.x + Math.cos(angle) * radius;
+        const y = center.y + Math.sin(angle) * radius;
+        spawns.push({
+          type: config.type,
+          position: { x, y },
+          options: config.options
+        });
+      }
+      return spawns;
+    });
+
+    this.spawnPatterns.set('grid', (config) => {
+      const spawns = [];
+      const rows = config.rows || 3;
+      const cols = config.cols || 3;
+      const spacingX = config.spacingX || 50;
+      const spacingY = config.spacingY || 50;
+      const startX = config.position.x;
+      const startY = config.position.y;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          spawns.push({
+            type: config.type,
+            position: {
+              x: startX + (c * spacingX),
+              y: startY + (r * spacingY)
+            },
+            options: config.options
+          });
+        }
+      }
+      return spawns;
+    });
+
+    this.spawnPatterns.set('random', (config) => {
+      const spawns = [];
+      const count = config.count || 5;
+      const radius = config.radius || 100;
+      const center = config.position;
+
+      for (let i = 0; i < count; i++) {
+         const angle = Math.random() * Math.PI * 2;
+         const dist = Math.random() * radius;
+         const x = center.x + Math.cos(angle) * dist;
+         const y = center.y + Math.sin(angle) * dist;
+
+         spawns.push({
+            type: config.type,
+            position: { x, y },
+            options: config.options
+         });
+      }
+      return spawns;
+    });
+  }
+
+  /**
+   * Spawn entities from a pattern
+   */
+  spawnFromPattern(patternName, config) {
+    const pattern = this.spawnPatterns.get(patternName);
+    if (!pattern) {
+      this.logger?.warn(`Unknown spawn pattern: ${patternName}`);
+      return [];
+    }
+
+    const spawnList = pattern(config);
+    return spawnList.map(spawn => this.spawnEntity(spawn.type, spawn.position, spawn.options));
   }
 
   /**

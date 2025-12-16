@@ -11,7 +11,7 @@ describe('EntitySpawner', () => {
   let mockLogger;
   let mockConfig;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockEventBus = {
       emit: jest.fn()
     };
@@ -29,6 +29,8 @@ describe('EntitySpawner', () => {
       logger: mockLogger,
       config: mockConfig
     });
+
+    await spawner.initialize();
   });
 
   afterEach(() => {
@@ -40,6 +42,14 @@ describe('EntitySpawner', () => {
     expect(spawner.entityPools).toBeInstanceOf(Map);
     expect(spawner.spawnPatterns).toBeInstanceOf(Map);
     expect(spawner.spawnTimers).toBeInstanceOf(Map);
+  });
+
+  test('should load spawn patterns', () => {
+    expect(spawner.spawnPatterns.has('single')).toBe(true);
+    expect(spawner.spawnPatterns.has('line')).toBe(true);
+    expect(spawner.spawnPatterns.has('circle')).toBe(true);
+    expect(spawner.spawnPatterns.has('grid')).toBe(true);
+    expect(spawner.spawnPatterns.has('random')).toBe(true);
   });
 
   test('should spawn player entity', () => {
@@ -120,10 +130,91 @@ describe('EntitySpawner', () => {
     expect(distance).toBe(5);
   });
 
-  // TODO: Add more comprehensive tests
-  // - Test entity pooling
-  // - Test spawn patterns
-  // - Test spawn timers
-  // - Test cleanup functionality
-  // - Test event emission
+  describe('spawnFromPattern', () => {
+    test('should spawn single entity', () => {
+      const entityIds = spawner.spawnFromPattern('single', {
+        type: 'enemy',
+        position: { x: 100, y: 100 }
+      });
+      expect(entityIds).toHaveLength(1);
+      const entity = spawner.spawnedEntities.get(entityIds[0]);
+      expect(entity.position).toEqual({ x: 100, y: 100 });
+      expect(entity.type).toBe('enemy');
+    });
+
+    test('should spawn line of entities', () => {
+      const entityIds = spawner.spawnFromPattern('line', {
+        type: 'enemy',
+        position: { x: 100, y: 100 },
+        count: 3,
+        spacing: 10,
+        horizontal: true
+      });
+      expect(entityIds).toHaveLength(3);
+
+      const entities = entityIds.map(id => spawner.spawnedEntities.get(id));
+      expect(entities[0].position).toEqual({ x: 100, y: 100 });
+      expect(entities[1].position).toEqual({ x: 110, y: 100 });
+      expect(entities[2].position).toEqual({ x: 120, y: 100 });
+    });
+
+    test('should spawn circle of entities', () => {
+      const count = 4;
+      const radius = 100;
+      const entityIds = spawner.spawnFromPattern('circle', {
+        type: 'enemy',
+        position: { x: 0, y: 0 },
+        count: count,
+        radius: radius
+      });
+      expect(entityIds).toHaveLength(count);
+
+      // Check first entity (at angle 0)
+      const entities = entityIds.map(id => spawner.spawnedEntities.get(id));
+      expect(entities[0].position.x).toBeCloseTo(radius);
+      expect(entities[0].position.y).toBeCloseTo(0);
+    });
+
+    test('should spawn grid of entities', () => {
+      const rows = 2;
+      const cols = 2;
+      const entityIds = spawner.spawnFromPattern('grid', {
+        type: 'enemy',
+        position: { x: 0, y: 0 },
+        rows: rows,
+        cols: cols,
+        spacingX: 10,
+        spacingY: 10
+      });
+      expect(entityIds).toHaveLength(rows * cols);
+
+      const entities = entityIds.map(id => spawner.spawnedEntities.get(id));
+      expect(entities[0].position).toEqual({ x: 0, y: 0 });
+      expect(entities[1].position).toEqual({ x: 10, y: 0 });
+      expect(entities[2].position).toEqual({ x: 0, y: 10 });
+      expect(entities[3].position).toEqual({ x: 10, y: 10 });
+    });
+
+    test('should spawn random entities', () => {
+       const count = 5;
+       const entityIds = spawner.spawnFromPattern('random', {
+           type: 'enemy',
+           position: { x: 100, y: 100 },
+           count: count,
+           radius: 50
+       });
+       expect(entityIds).toHaveLength(count);
+       const entities = entityIds.map(id => spawner.spawnedEntities.get(id));
+       entities.forEach(entity => {
+           const dist = spawner.calculateDistance(entity.position, { x: 100, y: 100 });
+           expect(dist).toBeLessThanOrEqual(50);
+       });
+    });
+
+    test('should handle unknown pattern', () => {
+      const entityIds = spawner.spawnFromPattern('unknown', {});
+      expect(entityIds).toEqual([]);
+      expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('Unknown spawn pattern'));
+    });
+  });
 });
