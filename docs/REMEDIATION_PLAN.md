@@ -15,7 +15,7 @@ This remediation plan addresses the critical issues identified in the codebase a
   - "Unity Scripts" section with Unity version and setup requirements
   - Add CI status badges and links to project board
   - Create "What lives where" section mapping files to systems
-- [ ] Create `Docs/UNITY_BOOTSTRAP.md` with Unity setup instructions
+- [ ] Create `docs/UNITY_BOOTSTRAP.md` with Unity setup instructions
 - [ ] Cross-link documentation files for better navigation
 
 #### Acceptance Criteria

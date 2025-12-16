@@ -107,4 +107,4 @@ jobs:
       run: |
         echo "No Unity project found in repository"
         echo "Unity CI will be skipped until Unity project is added"
-        echo "See Docs/UNITY_BOOTSTRAP.md for setup instructions"
+        echo "See docs/UNITY_BOOTSTRAP.md for setup instructions"

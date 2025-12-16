@@ -148,7 +148,7 @@ Create comprehensive Unity setup documentation with version requirements, packag
 - [ ] Cross-referenced with main README
 
 ## Files to Touch
-- Docs/UNITY_BOOTSTRAP.md
+- docs/UNITY_BOOTSTRAP.md
 - README.md`,
     labels: ['phase:1', 'area:unity', 'kind:docs', 'priority:medium'],
     column: 'Phase 1'
@@ -446,14 +446,14 @@ ${generateCommands()}
 const commands = generateCommands();
 const report = generateReport();
 
-fs.writeFileSync('github-setup-commands.sh', commands);
-fs.writeFileSync('github-projects-report.md', report);
+fs.writeFileSync('scripts/github-setup-commands.sh', commands);
+fs.writeFileSync('docs/history/github-projects-report.md', report);
 
 console.log('GitHub Projects setup files generated:');
-console.log('- github-setup-commands.sh (commands to run)');
-console.log('- github-projects-report.md (detailed report)');
+console.log('- scripts/github-setup-commands.sh (commands to run)');
+console.log('- docs/history/github-projects-report.md (detailed report)');
 console.log('');
 console.log('To set up the project board:');
-console.log('1. Make the script executable: chmod +x github-setup-commands.sh');
-console.log('2. Run the script: ./github-setup-commands.sh');
+console.log('1. Make the script executable: chmod +x scripts/github-setup-commands.sh');
+console.log('2. Run the script: ./scripts/github-setup-commands.sh');
 console.log('3. Or copy and paste the commands manually');
