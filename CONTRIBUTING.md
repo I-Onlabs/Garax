@@ -1,6 +1,6 @@
-# Contributing to TotTrots Game Refactored
+## Contributing to Garax
 
-Thank you for your interest in contributing to the TotTrots Game Refactored project! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to Garax! This project is a **reference architecture** and **starter framework**, so we prioritize architectural clarity, documentation, and maintainability over feature quantity.
 
 ## Development Workflow
 
@@ -26,8 +26,8 @@ Thank you for your interest in contributing to the TotTrots Game Refactored proj
 
 - **ESLint**: All code must pass ESLint checks
 - **Prettier**: Code should be formatted with Prettier
-- **Tests**: New features must include tests
-- **Documentation**: Update documentation as needed
+- **Tests**: New features must include tests (unit tests required, integration optional but recommended)
+- **Documentation**: Update documentation as needed. Since this is a reference project, comments and docs are critical.
 - **Type Safety**: Use JSDoc for type annotations
 
 ### Commit Message Format
@@ -68,7 +68,7 @@ docs(readme): update installation instructions
 
 ### Unity Scripts
 - `Unity/` - Unity project (when created)
-- `Docs/UNITY_BOOTSTRAP.md` - Unity setup guide
+- `docs/UNITY_BOOTSTRAP.md` - Unity setup guide
 
 ## Testing
 
