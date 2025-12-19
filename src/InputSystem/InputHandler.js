@@ -105,7 +105,8 @@ export class InputHandler {
     this.inputState.keys.set(key, {
       pressed: true,
       timestamp: Date.now(),
-      repeat: event.repeat
+      repeat: event.repeat,
+      lastRepeatTime: Date.now()
     });
     
     // TODO: Add to input buffer
@@ -470,10 +471,42 @@ export class InputHandler {
    * TODO: Extract from game update loop
    */
   update(deltaTime) {
-    // TODO: Update gamepad state
-    // TODO: Process input buffer
-    // TODO: Handle input repeat
     this.updateGamepadState();
+    this.processInputBuffer();
+    this.handleInputRepeat(deltaTime);
+  }
+
+  /**
+   * Process input buffer
+   * Consumes and emits buffered inputs for frame-aligned processing
+   */
+  processInputBuffer() {
+    if (this.inputBuffer.length > 0) {
+      this.eventBus?.emit('input:batch', {
+        events: [...this.inputBuffer],
+        timestamp: Date.now()
+      });
+      this.clearInputBuffer();
+    }
+  }
+
+  /**
+   * Handle input repeat
+   * Emits repeat events for held keys
+   */
+  handleInputRepeat(deltaTime) {
+    const now = Date.now();
+    for (const [key, state] of this.inputState.keys) {
+      if (state.pressed) {
+        if (now - state.lastRepeatTime > this.inputConfig.inputRepeatDelay) {
+          this.eventBus?.emit('input:repeat', {
+            key,
+            timestamp: now
+          });
+          state.lastRepeatTime = now;
+        }
+      }
+    }
   }
 
   /**
