@@ -21,6 +21,9 @@ export class EntitySpawner {
     // Initialize object pools immediately
     this.initializePools();
 
+    // Cache player reference for performance
+    this.playerEntity = null;
+
     // TODO: Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
@@ -95,6 +98,12 @@ export class EntitySpawner {
     
     if (entity) {
       this.spawnedEntities.set(entityId, entity);
+
+      // Update player cache
+      if (type === 'player') {
+        this.playerEntity = entity;
+      }
+
       // TODO: Emit spawn event
       this.eventBus?.emit('entity:spawned', { id: entityId, type, entity });
       return entityId;
@@ -203,6 +212,11 @@ export class EntitySpawner {
     if (entity) {
       this.spawnedEntities.delete(entityId);
 
+      // Clear player cache if needed
+      if (entity.type === 'player' && this.playerEntity === entity) {
+        this.playerEntity = null;
+      }
+
       // TODO: Emit removal event
       this.eventBus?.emit('entity:removed', { id: entityId, entity });
 
@@ -272,11 +286,9 @@ export class EntitySpawner {
     // TODO: Check spawn conditions
 
     // Clean up distant entities
-    // Find player position for reference
-    const player = Array.from(this.spawnedEntities.values()).find(e => e.type === 'player');
-    if (player) {
+    if (this.playerEntity) {
       // Handle both position object and direct x,y coordinates (Player class uses x,y)
-      const playerPos = player.position || { x: player.x, y: player.y };
+      const playerPos = this.playerEntity.position || { x: this.playerEntity.x, y: this.playerEntity.y };
       this.cleanupDistantEntities(playerPos);
     }
 
@@ -299,7 +311,13 @@ export class EntitySpawner {
       // Don't clean up persistent entities
       if (entity.persistent) continue;
 
-      const distance = this.calculateDistance(referencePosition, entity.position);
+      // Robust position check
+      const entityPos = entity.position || { x: entity.x, y: entity.y };
+
+      // Skip if no valid position found
+      if (entityPos.x === undefined || entityPos.y === undefined) continue;
+
+      const distance = this.calculateDistance(referencePosition, entityPos);
       if (distance > cleanupDistance) {
         this.removeEntity(id);
       }
