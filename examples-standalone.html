@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garax Simple Game Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .info {
+            max-width: 800px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .info p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .controls {
+            background: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .controls strong {
+            color: #4CAF50;
+        }
+
+        #game-container {
+            position: relative;
+            border: 3px solid #4CAF50;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #game-canvas {
+            display: block;
+            background: #000;
+        }
+
+        .tutorial-link {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tutorial-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .tutorial-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Garax Simple Space Shooter</h1>
+
+    <div class="info">
+        <p><strong>This is a complete working example built with Garax's infrastructure.</strong></p>
+
+        <div class="controls">
+            <strong>Controls:</strong> Arrow Keys or WASD to move | R to restart when game over
+        </div>
+
+        <p><strong>Objective:</strong> Avoid the falling red enemies. Your health is shown above your green spaceship. Survive as long as possible!</p>
+
+        <p><strong>Features demonstrated:</strong></p>
+        <ul style="margin-left: 20px;">
+            <li>Dependency Injection pattern</li>
+            <li>EventBus communication</li>
+            <li>Game loop (update/draw)</li>
+            <li>AABB collision detection</li>
+            <li>State management</li>
+            <li>Progressive difficulty</li>
+        </ul>
+    </div>
+
+    <div id="game-container">
+        <canvas id="game-canvas" width="800" height="600"></canvas>
+    </div>
+
+    <div class="tutorial-link">
+        📚 <a href="docs/TUTORIAL_YOUR_FIRST_GAME.md">View the complete tutorial on how this was built</a>
+    </div>
+
+    <script type="module">
+        // Minimal Garax infrastructure for standalone example
+        class SimpleEventBus {
+            constructor() {
+                this.listeners = new Map();
+            }
+
+            on(event, callback) {
+                if (!this.listeners.has(event)) {
+                    this.listeners.set(event, []);
+                }
+                this.listeners.get(event).push(callback);
+            }
+
+            off(event, callback) {
+                if (!this.listeners.has(event)) return;
+                const callbacks = this.listeners.get(event);
+                const index = callbacks.indexOf(callback);
+                if (index > -1) {
+                    callbacks.splice(index, 1);
+                }
+            }
+
+            emit(event, data) {
+                if (!this.listeners.has(event)) return;
+                this.listeners.get(event).forEach(callback => callback(data));
+            }
+        }
+
+        class SimpleInputManager {
+            constructor() {
+                this.keys = {};
+                this.setupListeners();
+            }
+
+            setupListeners() {
+                window.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+            }
+
+            getInputState() {
+                return { keys: this.keys };
+            }
+        }
+
+        // Import game classes (adjust paths if needed)
+        import { SimplePlayer } from './src/objects/SimplePlayer.js';
+        import { SimpleEnemy } from './src/objects/SimpleEnemy.js';
+        import { SimpleGame } from './src/examples/SimpleGame.js';
+
+        // Initialize
+        const eventBus = new SimpleEventBus();
+        const inputManager = new SimpleInputManager();
+        const logger = console;
+
+        const game = new SimpleGame({
+            eventBus,
+            inputManager,
+            logger
+        });
+
+        // Initialize and start game loop
+        game.initialize().then(() => {
+            let lastTime = performance.now();
+
+            function gameLoop(currentTime) {
+                const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+                lastTime = currentTime;
+
+                game.update(deltaTime);
+                game.draw();
+
+                requestAnimationFrame(gameLoop);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }).catch(error => {
+            console.error('Failed to initialize game:', error);
+            document.body.innerHTML += `<p style="color: red;">Error: ${error.message}</p>`;
+        });
+    </script>
+</body>
+</html>

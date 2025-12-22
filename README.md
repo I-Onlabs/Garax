@@ -9,6 +9,24 @@ Garax is a **reference game architecture and starter framework** demonstrating m
 
 It is intended for learning, forking, and integration. It is **not** a finished commercial ARPG. Many systems are illustrative, scaffolded, or prototype-level.
 
+## 🚀 New to Garax? Start Here!
+
+**Want to build your first game in 30 minutes?**
+
+👉 **[Your First Game Tutorial](docs/TUTORIAL_YOUR_FIRST_GAME.md)** - Step-by-step guide building a working space shooter
+
+**What you'll learn:**
+- Creating game entities (Player, Enemies)
+- Using Garax's input system
+- Implementing collision detection
+- Working with the EventBus
+- Following best practices
+
+**Already know what you're doing?**
+- Browse [example games](src/examples/) for reference code
+- Check the [Quick Start](QUICK_START.md) for installation
+- Review [architecture docs](docs/CODEBASE_AUDIT.md) for deep dive
+
 ## Intended Use
 
 *   **Reference Architecture**: Explore advanced patterns like Dependency Injection, Event Bus, and System-based architecture in a game context.
