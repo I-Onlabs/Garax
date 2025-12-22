@@ -1,5 +1,5 @@
 /**
- * Development server for TotTrots Game Refactored
+ * Development server for Garax Web Game Framework
  */
 
 import express from 'express';
@@ -81,7 +81,7 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 TotTrots Game Server running on port ${PORT}`);
+  console.log(`🚀 Garax Game Server running on port ${PORT}`);
   console.log(`📱 Open http://localhost:${PORT} to play`);
   console.log(`🔧 Development mode: ${isDev ? 'enabled' : 'disabled'}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);

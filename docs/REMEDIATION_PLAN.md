@@ -1,4 +1,4 @@
-# Remediation Plan - TotTrots Game Refactored
+# Remediation Plan - Garax Web Game Framework
 
 ## Overview
 

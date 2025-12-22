@@ -167,7 +167,7 @@ describe('GameRefactored Enhanced', () => {
           enableDailyChallenges: true,
           enableAccessibility: true,
         });
-      }).toThrow('GameRefactored: SettingsUI initialization failed');
+      }).toThrow('SettingsUI init failed');
     });
 
     test('should throw error if AudioSystem initialization fails', () => {
@@ -184,7 +184,7 @@ describe('GameRefactored Enhanced', () => {
           enableDailyChallenges: true,
           enableAccessibility: true,
         });
-      }).toThrow('GameRefactored: AudioSystem initialization failed');
+      }).toThrow('AudioSystem init failed');
     });
   });
 
@@ -471,13 +471,15 @@ describe('GameRefactored Enhanced', () => {
     test('should cleanup UI and audio systems', () => {
       const settingsCleanupSpy = jest.spyOn(game.ui.settings, 'cleanup');
       const audioCleanupSpy = jest.spyOn(game.systems.audio, 'cleanup');
-      
+
       game.destroy();
-      
+
       expect(settingsCleanupSpy).toHaveBeenCalled();
       expect(audioCleanupSpy).toHaveBeenCalled();
       expect(game.ui).toBeNull();
       expect(game.systems).toBeNull();
+      // Set game to null so afterEach doesn't try to destroy again
+      game = null;
     });
   });
 

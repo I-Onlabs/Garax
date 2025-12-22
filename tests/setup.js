@@ -2,6 +2,73 @@
  * Jest test setup file
  */
 
+/**
+ * Custom Jest matchers for EventBus callback testing.
+ *
+ * The EventBus passes TWO arguments to callbacks:
+ *   1. data - the actual event payload
+ *   2. eventData - metadata object { event, data, timestamp, id }
+ *
+ * These matchers help test EventBus callbacks by focusing on the first argument (data).
+ */
+expect.extend({
+  /**
+   * Checks if a mock was called with the expected data as the first argument.
+   * Use this instead of toHaveBeenCalledWith when testing EventBus callbacks.
+   *
+   * @example
+   * const callback = jest.fn();
+   * eventBus.on('game:scored', callback);
+   * eventBus.emit('game:scored', { score: 100 });
+   * expect(callback).toHaveBeenCalledWithEventData({ score: 100 });
+   */
+  toHaveBeenCalledWithEventData(received, expected) {
+    if (!jest.isMockFunction(received)) {
+      return {
+        pass: false,
+        message: () => 'Expected value to be a mock function',
+      };
+    }
+
+    const calls = received.mock.calls;
+    if (calls.length === 0) {
+      return {
+        pass: false,
+        message: () => 'Expected mock function to have been called, but it was not called',
+      };
+    }
+
+    // Check if any call's first argument matches the expected value
+    const matchingCall = calls.find(call => {
+      const firstArg = call[0];
+      try {
+        expect(firstArg).toEqual(expect.objectContaining(expected));
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    if (matchingCall) {
+      return {
+        pass: true,
+        message: () => `Expected mock not to have been called with event data matching ${JSON.stringify(expected)}`,
+      };
+    }
+
+    // Build a helpful error message showing what was actually received
+    const receivedFirstArgs = calls.map(call => call[0]);
+    return {
+      pass: false,
+      message: () =>
+        `Expected mock to have been called with event data matching:\n` +
+        `  ${JSON.stringify(expected)}\n\n` +
+        `Received first arguments:\n` +
+        `  ${receivedFirstArgs.map(arg => JSON.stringify(arg)).join('\n  ')}`,
+    };
+  },
+});
+
 // Mock localStorage
 const localStorageMock = {
   getItem: jest.fn(),
@@ -58,7 +125,43 @@ global.AudioContext = jest.fn(() => ({
   destination: {},
   currentTime: 0,
   close: jest.fn(),
+  resume: jest.fn().mockResolvedValue(undefined),
+  state: 'running',
 }));
+global.webkitAudioContext = global.AudioContext;
+
+// Mock Audio element - immediately fires canplaythrough event
+global.Audio = jest.fn().mockImplementation((src) => {
+  const eventListeners = {};
+  const audioMock = {
+    src: src || '',
+    preload: 'auto',
+    loop: false,
+    volume: 1,
+    currentTime: 0,
+    duration: 1,
+    paused: true,
+    ended: false,
+    muted: false,
+    addEventListener: jest.fn((event, handler) => {
+      eventListeners[event] = eventListeners[event] || [];
+      eventListeners[event].push(handler);
+      // Immediately fire canplaythrough event for audio loading
+      if (event === 'canplaythrough') {
+        setTimeout(() => handler(), 0);
+      }
+    }),
+    removeEventListener: jest.fn((event, handler) => {
+      if (eventListeners[event]) {
+        eventListeners[event] = eventListeners[event].filter(h => h !== handler);
+      }
+    }),
+    play: jest.fn().mockResolvedValue(undefined),
+    pause: jest.fn(),
+    load: jest.fn(),
+  };
+  return audioMock;
+});
 
 // Mock gamepad API
 global.navigator.getGamepads = jest.fn(() => []);
@@ -71,6 +174,25 @@ global.URLSearchParams = jest.fn(() => ({
   delete: jest.fn(),
   entries: jest.fn(() => []),
 }));
+
+// Mock URL.createObjectURL and URL.revokeObjectURL
+global.URL.createObjectURL = jest.fn(() => 'blob:mock-url');
+global.URL.revokeObjectURL = jest.fn();
+
+// Mock Blob
+global.Blob = class Blob {
+  constructor(parts, options = {}) {
+    this.parts = parts;
+    this.type = options.type || '';
+    this.size = parts ? parts.reduce((acc, part) => acc + (part.length || 0), 0) : 0;
+  }
+  arrayBuffer() {
+    return Promise.resolve(new ArrayBuffer(0));
+  }
+  text() {
+    return Promise.resolve('');
+  }
+};
 
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn(() => ({
@@ -103,18 +225,15 @@ global.console = {
   error: jest.fn(),
 };
 
-// Mock window.location
-delete window.location;
-window.location = {
-  href: 'http://localhost:3000',
-  origin: 'http://localhost:3000',
-  pathname: '/',
-  search: '',
-  hash: '',
-  assign: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
-};
+// Mock window.location methods (avoid replacing the whole location object in jsdom)
+// jsdom's window.location is non-configurable, so we only mock the methods we need
+try {
+  window.location.assign = jest.fn();
+  window.location.replace = jest.fn();
+  window.location.reload = jest.fn();
+} catch {
+  // jsdom may throw if location methods are not writable - ignore
+}
 
 // Mock window.history
 window.history = {
@@ -166,50 +285,15 @@ window.getComputedStyle = jest.fn(() => ({
   removeProperty: jest.fn(),
 }));
 
-// Mock document methods
-document.createElement = jest.fn((tagName) => {
-  const element = {
-    tagName: tagName.toUpperCase(),
-    className: '',
-    id: '',
-    style: {},
-    attributes: {},
-    children: [],
-    parentNode: null,
-    appendChild: jest.fn(),
-    removeChild: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-    focus: jest.fn(),
-    blur: jest.fn(),
-    click: jest.fn(),
-    getAttribute: jest.fn(),
-    setAttribute: jest.fn(),
-    removeAttribute: jest.fn(),
-    hasAttribute: jest.fn(),
-    querySelector: jest.fn(),
-    querySelectorAll: jest.fn(() => []),
-    getBoundingClientRect: jest.fn(() => ({
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-      width: 0,
-      height: 0,
-    })),
-  };
+// Note: We do NOT mock document.createElement or other document methods
+// because jsdom provides a full DOM implementation that the game code depends on.
+// Mocking these would break DOM manipulation that uses real Node/Element APIs.
 
-  return element;
-});
-
-document.querySelector = jest.fn();
-document.querySelectorAll = jest.fn(() => []);
-document.getElementById = jest.fn();
-document.getElementsByClassName = jest.fn(() => []);
-document.getElementsByTagName = jest.fn(() => []);
-document.addEventListener = jest.fn();
-document.removeEventListener = jest.fn();
+// Only mock document.body if it doesn't exist (for headless environments)
+if (!document.body) {
+  const mockBody = document.createElement('body');
+  document.documentElement.appendChild(mockBody);
+}
 
 // Mock HTMLElement
 global.HTMLElement = class HTMLElement {

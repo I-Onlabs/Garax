@@ -10,9 +10,9 @@
  */
 
 export class Logger {
-  constructor(debug = false) {
-    this.debug = debug;
-    this.logLevel = debug ? 'debug' : 'info';
+  constructor(debugMode = false) {
+    this.debugMode = debugMode;
+    this.logLevel = debugMode ? 'debug' : 'info';
     this.logHistory = [];
     this.maxHistorySize = 1000;
     this.performanceMetrics = {
@@ -49,7 +49,7 @@ export class Logger {
    * Enable debug mode
    */
   enableDebug() {
-    this.debug = true;
+    this.debugMode = true;
     this.setLevel('debug');
   }
 
@@ -57,7 +57,7 @@ export class Logger {
    * Disable debug mode
    */
   disableDebug() {
-    this.debug = false;
+    this.debugMode = false;
     this.setLevel('info');
   }
 
@@ -455,7 +455,7 @@ export class Logger {
    * Create a child logger with context
    */
   child(context) {
-    const childLogger = new Logger(this.debug);
+    const childLogger = new Logger(this.debugMode);
     childLogger.logLevel = this.logLevel;
     childLogger.context = context;
     return childLogger;

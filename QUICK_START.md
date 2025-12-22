@@ -10,8 +10,8 @@
 ### Installation
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd tottrots-game-refactored
+git clone https://github.com/I-Onlabs/Garax.git
+cd Garax
 
 # Install dependencies
 npm install

@@ -142,11 +142,23 @@ class ARPGGameState {
   // Skill system
   useSkill(skillId) {
     const skill = this.player.skills.find(s => s.id === skillId);
-    if (skill && this.player.mana >= skill.manaCost) {
-      this.player.mana -= skill.manaCost;
-      return skill.effect();
+    if (!skill) return false;
+
+    // Check cooldown
+    const now = Date.now();
+    if (skill.cooldown && skill.lastUsed && (now - skill.lastUsed) < skill.cooldown) {
+      return false;
     }
-    return false;
+
+    // Check mana
+    if (this.player.mana < skill.manaCost) {
+      return false;
+    }
+
+    // Use the skill
+    this.player.mana -= skill.manaCost;
+    skill.lastUsed = now;
+    return skill.effect();
   }
 
   // World interaction

@@ -220,31 +220,31 @@ export class InputManager {
     this.keyMappings.set('previous', ['ShiftLeft+Tab', 'ArrowUp']);
 
     // Mouse mappings
-    this.mouseMappings.set('leftClick', 0);
-    this.mouseMappings.set('rightClick', 2);
-    this.mouseMappings.set('middleClick', 1);
-    this.mouseMappings.set('scrollUp', 'wheelUp');
-    this.mouseMappings.set('scrollDown', 'wheelDown');
+    this.mouseMappings.set('leftClick', [0]);
+    this.mouseMappings.set('rightClick', [2]);
+    this.mouseMappings.set('middleClick', [1]);
+    this.mouseMappings.set('scrollUp', ['wheelUp']);
+    this.mouseMappings.set('scrollDown', ['wheelDown']);
 
     // Gamepad mappings
-    this.gamepadMappings.set('moveUp', 'dpadUp');
-    this.gamepadMappings.set('moveDown', 'dpadDown');
-    this.gamepadMappings.set('moveLeft', 'dpadLeft');
-    this.gamepadMappings.set('moveRight', 'dpadRight');
-    this.gamepadMappings.set('jump', 'buttonA');
-    this.gamepadMappings.set('interact', 'buttonX');
-    this.gamepadMappings.set('pause', 'buttonStart');
-    this.gamepadMappings.set('menu', 'buttonSelect');
-    this.gamepadMappings.set('confirm', 'buttonA');
-    this.gamepadMappings.set('cancel', 'buttonB');
+    this.gamepadMappings.set('moveUp', ['dpadUp']);
+    this.gamepadMappings.set('moveDown', ['dpadDown']);
+    this.gamepadMappings.set('moveLeft', ['dpadLeft']);
+    this.gamepadMappings.set('moveRight', ['dpadRight']);
+    this.gamepadMappings.set('jump', ['buttonA']);
+    this.gamepadMappings.set('interact', ['buttonX']);
+    this.gamepadMappings.set('pause', ['buttonStart']);
+    this.gamepadMappings.set('menu', ['buttonSelect']);
+    this.gamepadMappings.set('confirm', ['buttonA']);
+    this.gamepadMappings.set('cancel', ['buttonB']);
 
     // Touch mappings
-    this.touchMappings.set('tap', 'tap');
-    this.touchMappings.set('doubleTap', 'doubleTap');
-    this.touchMappings.set('longPress', 'longPress');
-    this.touchMappings.set('swipe', 'swipe');
-    this.touchMappings.set('pinch', 'pinch');
-    this.touchMappings.set('rotate', 'rotate');
+    this.touchMappings.set('tap', ['tap']);
+    this.touchMappings.set('doubleTap', ['doubleTap']);
+    this.touchMappings.set('longPress', ['longPress']);
+    this.touchMappings.set('swipe', ['swipe']);
+    this.touchMappings.set('pinch', ['pinch']);
+    this.touchMappings.set('rotate', ['rotate']);
   }
 
   /**
@@ -1487,7 +1487,7 @@ export class InputManager {
    * Load settings from config
    */
   loadSettingsFromConfig() {
-    if (!this.config) return;
+    if (!this.config || typeof this.config.getConfigValue !== 'function') return;
 
     this.settings = {
       ...this.settings,

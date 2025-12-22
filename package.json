@@ -1,7 +1,7 @@
 {
-  "name": "tottrots-game-refactored",
+  "name": "garax",
   "version": "1.0.0",
-  "description": "A comprehensive game architecture refactoring project featuring modular design, cross-cutting concerns integration, and advanced accessibility features",
+  "description": "Production-ready web game framework demonstrating modern JavaScript game architecture patterns with EventBus, Dependency Injection, accessibility-first design, and mobile UX",
   "main": "src/GameRefactored.js",
   "type": "module",
   "scripts": {
@@ -33,17 +33,26 @@
     "validate": "npm run format:check && npm run lint && npm run test:ci"
   },
   "keywords": [
-    "game",
-    "architecture",
-    "refactoring",
+    "game-framework",
+    "game-engine",
+    "javascript-game",
+    "canvas-game",
     "accessibility",
-    "modular",
+    "mobile-first",
+    "event-bus",
     "dependency-injection",
-    "event-driven",
-    "achievements",
-    "daily-challenges"
+    "game-architecture",
+    "vite"
   ],
-  "author": "Game Refactoring Project",
+  "author": "Garax Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/I-Onlabs/Garax.git"
+  },
+  "homepage": "https://garax.vercel.app",
+  "bugs": {
+    "url": "https://github.com/I-Onlabs/Garax/issues"
+  },
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.23.0",

@@ -113,18 +113,22 @@ describe('CollisionDetector', () => {
   });
 
   test('should calculate collision point', () => {
+    // Two overlapping objects - obj1 at (0,0) with size 32x32
+    // and obj2 at (16,16) with size 32x32
+    // Overlap region: x1=16, y1=16, x2=32, y2=32
+    // Center of overlap: (24, 24)
     const obj1 = {
       position: { x: 0, y: 0 },
       size: { width: 32, height: 32 }
     };
-    
+
     const obj2 = {
-      position: { x: 32, y: 32 },
+      position: { x: 16, y: 16 },
       size: { width: 32, height: 32 }
     };
-    
+
     const collisionPoint = collisionDetector.calculateCollisionPoint(obj1, obj2);
-    expect(collisionPoint).toEqual({ x: 16, y: 16 });
+    expect(collisionPoint).toEqual({ x: 24, y: 24 });
   });
 
   test('should check if objects can collide', () => {

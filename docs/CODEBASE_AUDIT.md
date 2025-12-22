@@ -1,8 +1,8 @@
-# Codebase Audit - TotTrots Game Refactored
+# Codebase Audit - Garax Web Game Framework
 
 ## Executive Summary
 
-This codebase audit evaluates the current state of the TotTrots game refactoring project, identifying areas for improvement in tooling, CI/CD, testing, and documentation to establish a solid foundation for continued development.
+This codebase audit evaluates the current state of the Garax game framework, identifying areas for improvement in tooling, CI/CD, testing, and documentation to establish a solid foundation for continued development.
 
 ## Current State Assessment
 

@@ -115,14 +115,12 @@ describe('InputManager', () => {
 
       expect(inputManager.keys.has('KeyA')).toBe(true);
       expect(inputManager.keys.get('KeyA').pressed).toBe(true);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: 'KeyA',
-          keyName: 'A',
-          code: 'KeyA',
-          keyCode: 65,
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        key: 'KeyA',
+        keyName: 'A',
+        code: 'KeyA',
+        keyCode: 65,
+      });
     });
 
     test('should handle key up events', () => {
@@ -146,12 +144,10 @@ describe('InputManager', () => {
       inputManager.handleKeyUp(mockEvent);
 
       expect(inputManager.keys.get('KeyA').pressed).toBe(false);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: 'KeyA',
-          keyName: 'A',
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        key: 'KeyA',
+        keyName: 'A',
+      });
     });
 
     test('should handle key press events', () => {
@@ -170,12 +166,10 @@ describe('InputManager', () => {
 
       inputManager.handleKeyPress(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: 'a',
-          charCode: 97,
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        key: 'a',
+        charCode: 97,
+      });
     });
 
     test('should track key repeat state', () => {
@@ -250,14 +244,12 @@ describe('InputManager', () => {
       expect(inputManager.mouse.buttons.get(0).pressed).toBe(true);
       expect(inputManager.mouse.x).toBe(100);
       expect(inputManager.mouse.y).toBe(200);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          button: 0,
-          buttonName: 'Left',
-          x: 100,
-          y: 200,
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        button: 0,
+        buttonName: 'Left',
+        x: 100,
+        y: 200,
+      });
     });
 
     test('should handle mouse up events', () => {
@@ -284,12 +276,10 @@ describe('InputManager', () => {
       inputManager.handleMouseUp(mockEvent);
 
       expect(inputManager.mouse.buttons.get(0).pressed).toBe(false);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          button: 0,
-          buttonName: 'Left',
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        button: 0,
+        buttonName: 'Left',
+      });
     });
 
     test('should handle mouse move events', () => {
@@ -314,14 +304,12 @@ describe('InputManager', () => {
 
       expect(inputManager.mouse.x).toBe(150);
       expect(inputManager.mouse.y).toBe(250);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          x: 150,
-          y: 250,
-          deltaX: 50,
-          deltaY: 50,
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        x: 150,
+        y: 250,
+        deltaX: 50,
+        deltaY: 50,
+      });
     });
 
     test('should handle wheel events', () => {
@@ -342,12 +330,10 @@ describe('InputManager', () => {
       inputManager.handleWheel(mockEvent);
 
       expect(inputManager.mouse.wheel).toBe(100);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          deltaY: 100,
-          direction: 'down',
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        deltaY: 100,
+        direction: 'down',
+      });
     });
 
     test('should apply mouse sensitivity', () => {
@@ -370,12 +356,10 @@ describe('InputManager', () => {
 
       inputManager.handleMouseMove(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          deltaX: 100, // 50 * 2.0
-          deltaY: 100, // 50 * 2.0
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        deltaX: 100, // 50 * 2.0
+        deltaY: 100, // 50 * 2.0
+      });
     });
 
     test('should handle Y-axis inversion', () => {
@@ -398,12 +382,10 @@ describe('InputManager', () => {
 
       inputManager.handleMouseMove(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          deltaX: 50,
-          deltaY: -50, // Inverted
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        deltaX: 50,
+        deltaY: -50, // Inverted
+      });
     });
   });
 
@@ -430,17 +412,17 @@ describe('InputManager', () => {
       expect(inputManager.touch.touches.get(1).x).toBe(100);
       expect(inputManager.touch.touches.get(1).y).toBe(200);
       expect(inputManager.touch.touches.get(1).pressure).toBe(0.8);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          touches: expect.arrayContaining([
-            expect.objectContaining({
-              id: 1,
-              x: 100,
-              y: 200,
-              pressure: 0.8,
-            }),
-          ]),
-        })
+      expect(eventSpy).toHaveBeenCalled();
+      const callData = eventSpy.mock.calls[0][0];
+      expect(callData.touches).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: 1,
+            x: 100,
+            y: 200,
+            pressure: 0.8,
+          }),
+        ])
       );
     });
 
@@ -472,16 +454,16 @@ describe('InputManager', () => {
       inputManager.handleTouchEnd(mockEvent);
 
       expect(inputManager.touch.touches.has(1)).toBe(false);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          touches: expect.arrayContaining([
-            expect.objectContaining({
-              id: 1,
-              x: 150,
-              y: 250,
-            }),
-          ]),
-        })
+      expect(eventSpy).toHaveBeenCalled();
+      const callData = eventSpy.mock.calls[0][0];
+      expect(callData.touches).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: 1,
+            x: 150,
+            y: 250,
+          }),
+        ])
       );
     });
 
@@ -515,17 +497,17 @@ describe('InputManager', () => {
 
       expect(inputManager.touch.touches.get(1).x).toBe(150);
       expect(inputManager.touch.touches.get(1).y).toBe(250);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          touches: expect.arrayContaining([
-            expect.objectContaining({
-              id: 1,
-              x: 150,
-              y: 250,
-              pressure: 0.9,
-            }),
-          ]),
-        })
+      expect(eventSpy).toHaveBeenCalled();
+      const callData = eventSpy.mock.calls[0][0];
+      expect(callData.touches).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: 1,
+            x: 150,
+            y: 250,
+            pressure: 0.9,
+          }),
+        ])
       );
     });
 
@@ -546,13 +528,13 @@ describe('InputManager', () => {
       expect(inputManager.touch.touches.size).toBe(2);
       expect(inputManager.touch.touches.has(1)).toBe(true);
       expect(inputManager.touch.touches.has(2)).toBe(true);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          touches: expect.arrayContaining([
-            expect.objectContaining({ id: 1 }),
-            expect.objectContaining({ id: 2 }),
-          ]),
-        })
+      expect(eventSpy).toHaveBeenCalled();
+      const callData = eventSpy.mock.calls[0][0];
+      expect(callData.touches).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 1 }),
+          expect.objectContaining({ id: 2 }),
+        ])
       );
     });
   });
@@ -574,12 +556,10 @@ describe('InputManager', () => {
       expect(inputManager.gamepad.controllers.has(0)).toBe(true);
       expect(inputManager.gamepad.controllers.get(0).id).toBe('Test Gamepad');
       expect(inputManager.gamepad.controllers.get(0).connected).toBe(true);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: 'Test Gamepad',
-          index: 0,
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        id: 'Test Gamepad',
+        index: 0,
+      });
     });
 
     test('should handle gamepad disconnected events', () => {
@@ -605,12 +585,10 @@ describe('InputManager', () => {
       inputManager.handleGamepadDisconnected(mockEvent);
 
       expect(inputManager.gamepad.controllers.has(0)).toBe(false);
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: 'Test Gamepad',
-          index: 0,
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        id: 'Test Gamepad',
+        index: 0,
+      });
     });
 
     test('should update gamepad state', () => {
@@ -641,22 +619,18 @@ describe('InputManager', () => {
 
       inputManager.updateGamepadState();
 
-      expect(buttonSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          controller: 0,
-          button: 0,
-          pressed: true,
-          value: 1.0,
-        })
-      );
+      expect(buttonSpy).toHaveBeenCalledWithEventData({
+        controller: 0,
+        button: 0,
+        pressed: true,
+        value: 1.0,
+      });
 
-      expect(axisSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          controller: 0,
-          axis: 0,
-          value: 0.5,
-        })
-      );
+      expect(axisSpy).toHaveBeenCalledWithEventData({
+        controller: 0,
+        axis: 0,
+        value: 0.5,
+      });
     });
 
     test('should apply deadzone to gamepad axes', () => {
@@ -682,21 +656,14 @@ describe('InputManager', () => {
 
       inputManager.updateGamepadState();
 
-      expect(axisSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          controller: 0,
-          axis: 0,
-          value: 0, // Should be zeroed due to deadzone
-        })
-      );
-
-      expect(axisSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          controller: 0,
-          axis: 1,
-          value: 0.5, // Should pass through deadzone
-        })
-      );
+      // First axis (0.1) is within deadzone (0.2), so no event emitted for it
+      // Only axis 1 (0.5) should emit since it exceeds the deadzone
+      expect(axisSpy).toHaveBeenCalledTimes(1);
+      expect(axisSpy).toHaveBeenCalledWithEventData({
+        controller: 0,
+        axis: 1,
+        value: 0.5, // Should pass through deadzone
+      });
     });
   });
 
@@ -741,7 +708,11 @@ describe('InputManager', () => {
 
     test('should handle element activation', () => {
       const mockElement = { click: jest.fn() };
-      document.activeElement = mockElement;
+      Object.defineProperty(document, 'activeElement', {
+        value: mockElement,
+        writable: true,
+        configurable: true,
+      });
 
       const mockEvent = {
         key: 'Enter',
@@ -764,11 +735,9 @@ describe('InputManager', () => {
 
       inputManager.handleEscape(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          timestamp: expect.any(Number),
-        })
-      );
+      expect(eventSpy).toHaveBeenCalled();
+      const callData = eventSpy.mock.calls[0][0];
+      expect(callData.timestamp).toEqual(expect.any(Number));
     });
 
     test('should handle arrow navigation', () => {
@@ -782,11 +751,9 @@ describe('InputManager', () => {
 
       inputManager.handleArrowNavigation(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          direction: 'up',
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        direction: 'up',
+      });
     });
   });
 
@@ -808,14 +775,12 @@ describe('InputManager', () => {
 
       inputManager.handleKeyDown(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          action: 'jump',
-          inputType: 'keyboard',
-          input: 'Space',
-          state: 'down',
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        action: 'jump',
+        inputType: 'keyboard',
+        input: 'Space',
+        state: 'down',
+      });
     });
 
     test('should handle mapped mouse actions', () => {
@@ -835,14 +800,12 @@ describe('InputManager', () => {
 
       inputManager.handleMouseDown(mockEvent);
 
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          action: 'leftClick',
-          inputType: 'mouse',
-          input: 0,
-          state: 'down',
-        })
-      );
+      expect(eventSpy).toHaveBeenCalledWithEventData({
+        action: 'leftClick',
+        inputType: 'mouse',
+        input: 0,
+        state: 'down',
+      });
     });
 
     test('should set and get key mappings', () => {

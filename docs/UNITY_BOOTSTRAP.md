@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides setup instructions for the Unity components of the TotTrots game project. The Unity integration is designed to work alongside the web-based prototype, providing additional platform-specific features and testing capabilities.
+This document provides setup instructions for the Unity components of the Garax game framework. The Unity integration is designed to work alongside the web-based prototype, providing additional platform-specific features and testing capabilities.
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ Install the following packages via Package Manager:
 1. Open Unity Hub
 2. Click "New Project"
 3. Select "2D Core" template
-4. Name: "TotTrots-Unity"
+4. Name: "Garax-Unity"
 5. Location: Create in project root as "Unity/" folder
 ```
 

@@ -11,7 +11,7 @@ export default {
     file: 'dist/game.js',
     format: 'es',
     sourcemap: !isProduction,
-    name: 'TotTrotsGame'
+    name: 'GaraxGame'
   },
   plugins: [
     nodeResolve({

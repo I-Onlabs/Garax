@@ -27,7 +27,7 @@ export class PersistenceManager {
 
     // Storage configuration
     this.storageConfig = {
-      prefix: 'tottrots_',
+      prefix: 'garax_',
       version: '1.0.0',
       compression: true,
       encryption: false,
