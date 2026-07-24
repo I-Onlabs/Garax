@@ -13,21 +13,21 @@ describe('EntitySpawner', () => {
 
   beforeEach(() => {
     mockEventBus = {
-      emit: jest.fn()
+      emit: jest.fn(),
     };
     mockLogger = {
       log: jest.fn(),
       warn: jest.fn(),
-      error: jest.fn()
+      error: jest.fn(),
     };
     mockConfig = {
-      maxEntities: 100
+      maxEntities: 100,
     };
 
     spawner = new EntitySpawner({
       eventBus: mockEventBus,
       logger: mockLogger,
-      config: mockConfig
+      config: mockConfig,
     });
   });
 
@@ -45,7 +45,7 @@ describe('EntitySpawner', () => {
   test('should spawn player entity', () => {
     const position = { x: 100, y: 100 };
     const entityId = spawner.spawnEntity('player', position);
-    
+
     expect(entityId).toBeTruthy();
     expect(spawner.spawnedEntities.has(entityId)).toBe(true);
   });
@@ -53,7 +53,7 @@ describe('EntitySpawner', () => {
   test('should spawn enemy entity', () => {
     const position = { x: 200, y: 200 };
     const entityId = spawner.spawnEntity('enemy', position);
-    
+
     expect(entityId).toBeTruthy();
     expect(spawner.spawnedEntities.has(entityId)).toBe(true);
   });
@@ -61,7 +61,7 @@ describe('EntitySpawner', () => {
   test('should spawn powerup entity', () => {
     const position = { x: 300, y: 300 };
     const entityId = spawner.spawnEntity('powerup', position);
-    
+
     expect(entityId).toBeTruthy();
     expect(spawner.spawnedEntities.has(entityId)).toBe(true);
   });
@@ -69,7 +69,7 @@ describe('EntitySpawner', () => {
   test('should spawn projectile entity', () => {
     const position = { x: 400, y: 400 };
     const entityId = spawner.spawnEntity('projectile', position);
-    
+
     expect(entityId).toBeTruthy();
     expect(spawner.spawnedEntities.has(entityId)).toBe(true);
   });
@@ -77,7 +77,7 @@ describe('EntitySpawner', () => {
   test('should remove entity', () => {
     const position = { x: 100, y: 100 };
     const entityId = spawner.spawnEntity('enemy', position);
-    
+
     expect(spawner.removeEntity(entityId)).toBe(true);
     expect(spawner.spawnedEntities.has(entityId)).toBe(false);
   });
@@ -86,10 +86,10 @@ describe('EntitySpawner', () => {
     spawner.spawnEntity('enemy', { x: 100, y: 100 });
     spawner.spawnEntity('enemy', { x: 200, y: 200 });
     spawner.spawnEntity('powerup', { x: 300, y: 300 });
-    
+
     const enemies = spawner.getEntitiesByType('enemy');
     expect(enemies).toHaveLength(2);
-    
+
     const powerups = spawner.getEntitiesByType('powerup');
     expect(powerups).toHaveLength(1);
   });
@@ -98,7 +98,7 @@ describe('EntitySpawner', () => {
     spawner.spawnEntity('enemy', { x: 100, y: 100 });
     spawner.spawnEntity('enemy', { x: 200, y: 200 });
     spawner.spawnEntity('enemy', { x: 500, y: 500 });
-    
+
     const nearbyEntities = spawner.getEntitiesInRange({ x: 150, y: 150 }, 200);
     expect(nearbyEntities).toHaveLength(2);
   });
@@ -106,7 +106,7 @@ describe('EntitySpawner', () => {
   test('should generate unique entity IDs', () => {
     const id1 = spawner.generateEntityId();
     const id2 = spawner.generateEntityId();
-    
+
     expect(id1).not.toBe(id2);
     expect(id1).toMatch(/^entity_\d+_[a-z0-9]+$/);
     expect(id2).toMatch(/^entity_\d+_[a-z0-9]+$/);
@@ -115,7 +115,7 @@ describe('EntitySpawner', () => {
   test('should calculate distance correctly', () => {
     const pos1 = { x: 0, y: 0 };
     const pos2 = { x: 3, y: 4 };
-    
+
     const distance = spawner.calculateDistance(pos1, pos2);
     expect(distance).toBe(5);
   });
@@ -132,7 +132,11 @@ describe('EntitySpawner', () => {
     const distantEntityId = spawner.spawnEntity('enemy', { x: 2000, y: 0 });
 
     // Setup persistent distant entity
-    const persistentEntityId = spawner.spawnEntity('enemy', { x: 2000, y: 0 }, { persistent: true });
+    const persistentEntityId = spawner.spawnEntity(
+      'enemy',
+      { x: 2000, y: 0 },
+      { persistent: true }
+    );
 
     // Run update
     spawner.update(16);
@@ -143,7 +147,9 @@ describe('EntitySpawner', () => {
     expect(spawner.spawnedEntities.has(persistentEntityId)).toBe(true);
 
     // Verify player still exists
-    const player = Array.from(spawner.spawnedEntities.values()).find(e => e.type === 'player');
+    const player = Array.from(spawner.spawnedEntities.values()).find(
+      (e) => e.type === 'player'
+    );
     expect(player).toBeDefined();
   });
 

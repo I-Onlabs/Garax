@@ -1,6 +1,6 @@
 /**
  * CollisionDetector - Collision detection and response
- * 
+ *
  * TODO: Extract from GameRefactored.js and systems
  * - Move collision detection logic here
  * - Implement spatial partitioning
@@ -13,18 +13,18 @@ export class CollisionDetector {
     this.collisionObjects = new Map();
     this.spatialGrid = null;
     this.gridSize = 64; // Grid cell size for spatial partitioning
-    
+
     // TODO: Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.config = options.config;
-    
+
     // TODO: Add collision configuration
     this.collisionConfig = {
       enableSpatialPartitioning: true,
       broadPhase: true,
       narrowPhase: true,
-      responseEnabled: true
+      responseEnabled: true,
     };
   }
 
@@ -52,9 +52,9 @@ export class CollisionDetector {
       layer: object.layer || 0,
       isStatic: object.isStatic || false,
       isTrigger: object.isTrigger || false,
-      ...object
+      ...object,
     });
-    
+
     // TODO: Add to spatial grid
     this.addToSpatialGrid(id, this.collisionObjects.get(id));
   }
@@ -91,16 +91,16 @@ export class CollisionDetector {
    */
   checkCollisions() {
     const collisions = [];
-    
+
     if (this.collisionConfig.enableSpatialPartitioning) {
       collisions.push(...this.checkCollisionsSpatial());
     } else {
       collisions.push(...this.checkCollisionsBruteForce());
     }
-    
+
     // TODO: Process collision responses
     this.processCollisionResponses(collisions);
-    
+
     return collisions;
   }
 
@@ -111,22 +111,25 @@ export class CollisionDetector {
   checkCollisionsBruteForce() {
     const collisions = [];
     const objects = Array.from(this.collisionObjects.values());
-    
+
     for (let i = 0; i < objects.length; i++) {
       for (let j = i + 1; j < objects.length; j++) {
         const obj1 = objects[i];
         const obj2 = objects[j];
-        
-        if (this.objectsCanCollide(obj1, obj2) && this.checkAABBCollision(obj1, obj2)) {
+
+        if (
+          this.objectsCanCollide(obj1, obj2) &&
+          this.checkAABBCollision(obj1, obj2)
+        ) {
           collisions.push({
             object1: obj1,
             object2: obj2,
-            collisionPoint: this.calculateCollisionPoint(obj1, obj2)
+            collisionPoint: this.calculateCollisionPoint(obj1, obj2),
           });
         }
       }
     }
-    
+
     return collisions;
   }
 
@@ -159,11 +162,13 @@ export class CollisionDetector {
     const pos2 = obj2.position;
     const size1 = obj1.size;
     const size2 = obj2.size;
-    
-    return pos1.x < pos2.x + size2.width &&
-           pos1.x + size1.width > pos2.x &&
-           pos1.y < pos2.y + size2.height &&
-           pos1.y + size1.height > pos2.y;
+
+    return (
+      pos1.x < pos2.x + size2.width &&
+      pos1.x + size1.width > pos2.x &&
+      pos1.y < pos2.y + size2.height &&
+      pos1.y + size1.height > pos2.y
+    );
   }
 
   /**
@@ -174,13 +179,19 @@ export class CollisionDetector {
     // Calculate the intersection rectangle
     const x1 = Math.max(obj1.position.x, obj2.position.x);
     const y1 = Math.max(obj1.position.y, obj2.position.y);
-    const x2 = Math.min(obj1.position.x + obj1.size.width, obj2.position.x + obj2.size.width);
-    const y2 = Math.min(obj1.position.y + obj1.size.height, obj2.position.y + obj2.size.height);
+    const x2 = Math.min(
+      obj1.position.x + obj1.size.width,
+      obj2.position.x + obj2.size.width
+    );
+    const y2 = Math.min(
+      obj1.position.y + obj1.size.height,
+      obj2.position.y + obj2.size.height
+    );
 
     // Return the center of the intersection rectangle
     return {
       x: (x1 + x2) / 2,
-      y: (y1 + y2) / 2
+      y: (y1 + y2) / 2,
     };
   }
 
@@ -191,15 +202,15 @@ export class CollisionDetector {
   processCollisionResponses(collisions) {
     for (const collision of collisions) {
       const { object1, object2, collisionPoint } = collision;
-      
+
       // TODO: Emit collision events
       this.eventBus?.emit('collision:detected', {
         object1: object1.id,
         object2: object2.id,
         collisionPoint,
-        collisionType: this.getCollisionType(object1, object2)
+        collisionType: this.getCollisionType(object1, object2),
       });
-      
+
       // TODO: Handle trigger collisions
       if (object1.isTrigger || object2.isTrigger) {
         this.handleTriggerCollision(object1, object2, collisionPoint);
@@ -249,8 +260,12 @@ export class CollisionDetector {
     const cells = [];
     const startX = Math.floor(object.position.x / this.gridSize);
     const startY = Math.floor(object.position.y / this.gridSize);
-    const endX = Math.floor((object.position.x + object.size.width) / this.gridSize);
-    const endY = Math.floor((object.position.y + object.size.height) / this.gridSize);
+    const endX = Math.floor(
+      (object.position.x + object.size.width) / this.gridSize
+    );
+    const endY = Math.floor(
+      (object.position.y + object.size.height) / this.gridSize
+    );
 
     for (let x = startX; x <= endX; x++) {
       for (let y = startY; y <= endY; y++) {

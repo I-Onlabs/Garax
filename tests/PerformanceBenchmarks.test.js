@@ -10,7 +10,14 @@
  * - Battery optimization testing
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { GameRefactored } from '../src/GameRefactored.js';
 import { PerformanceMonitor } from '../src/core/PerformanceMonitor.js';
 
@@ -35,14 +42,14 @@ class PerformanceBenchmark {
     this.start();
     const result = testFunction();
     const duration = this.end();
-    
+
     this.results.push({
       name,
       duration,
       result,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     return { duration, result };
   }
 
@@ -51,25 +58,25 @@ class PerformanceBenchmark {
   }
 
   getAverageDuration(testName) {
-    const testResults = this.results.filter(r => r.name === testName);
+    const testResults = this.results.filter((r) => r.name === testName);
     if (testResults.length === 0) return 0;
-    
+
     const total = testResults.reduce((sum, r) => sum + r.duration, 0);
     return total / testResults.length;
   }
 
   getMaxDuration(testName) {
-    const testResults = this.results.filter(r => r.name === testName);
+    const testResults = this.results.filter((r) => r.name === testName);
     if (testResults.length === 0) return 0;
-    
-    return Math.max(...testResults.map(r => r.duration));
+
+    return Math.max(...testResults.map((r) => r.duration));
   }
 
   getMinDuration(testName) {
-    const testResults = this.results.filter(r => r.name === testName);
+    const testResults = this.results.filter((r) => r.name === testName);
     if (testResults.length === 0) return 0;
-    
-    return Math.min(...testResults.map(r => r.duration));
+
+    return Math.min(...testResults.map((r) => r.duration));
   }
 }
 
@@ -93,14 +100,18 @@ const setupPerformanceEnvironment = () => {
       },
       get jsHeapSizeLimit() {
         return 200 * 1024 * 1024;
-      }
+      },
     },
     writable: true,
   });
 
   return {
-    setMemory: (value) => { mockMemory = value; },
-    advanceTime: (ms) => { mockTime += ms; }
+    setMemory: (value) => {
+      mockMemory = value;
+    },
+    advanceTime: (ms) => {
+      mockTime += ms;
+    },
   };
 };
 
@@ -215,13 +226,16 @@ describe('⚡ Performance Benchmarks', () => {
       const monitor = game.getPerformanceMonitor();
       const iterations = 60; // Test 60 frames
 
-      const { duration } = await benchmark.measure('game_loop_60fps', async () => {
-        for (let i = 0; i < iterations; i++) {
-          monitor.updateFPSMetrics(60, 16.67);
-          perfEnv.advanceTime(16.67); // Advance by 16.67ms (60fps)
-          await new Promise((resolve) => setTimeout(resolve, 1)); // Small delay
+      const { duration } = await benchmark.measure(
+        'game_loop_60fps',
+        async () => {
+          for (let i = 0; i < iterations; i++) {
+            monitor.updateFPSMetrics(60, 16.67);
+            perfEnv.advanceTime(16.67); // Advance by 16.67ms (60fps)
+            await new Promise((resolve) => setTimeout(resolve, 1)); // Small delay
+          }
         }
-      });
+      );
 
       const averageFrameTime = duration / iterations;
       const fps = 1000 / averageFrameTime;
@@ -238,12 +252,15 @@ describe('⚡ Performance Benchmarks', () => {
         jsHeapSizeLimit: 200 * 1024 * 1024,
       };
 
-      const { duration } = await benchmark.measure('high_frequency_updates', async () => {
-        for (let i = 0; i < iterations; i++) {
-          monitor.updateFPSMetrics(60, 16.67);
-          monitor.updateMemoryMetrics(memoryMock);
+      const { duration } = await benchmark.measure(
+        'high_frequency_updates',
+        async () => {
+          for (let i = 0; i < iterations; i++) {
+            monitor.updateFPSMetrics(60, 16.67);
+            monitor.updateMemoryMetrics(memoryMock);
+          }
         }
-      });
+      );
 
       const averageUpdateTime = duration / iterations;
       // In test environment, each call adds ~16.67ms, so just verify completion
@@ -268,18 +285,21 @@ describe('⚡ Performance Benchmarks', () => {
       });
 
       // Simulate extended operation
-      const { duration } = await benchmark.measure('memory_stability', async () => {
-        for (let i = 0; i < 100; i++) {
-          // Simulate small memory variations (within 1MB)
-          monitor.updateMemoryMetrics({
-            usedJSHeapSize: initialMemory + Math.random() * 1024 * 1024,
-            totalJSHeapSize: 100 * 1024 * 1024,
-            jsHeapSizeLimit: 200 * 1024 * 1024,
-          });
-          perfEnv.advanceTime(16.67);
-          await new Promise((resolve) => setTimeout(resolve, 1));
+      const { duration } = await benchmark.measure(
+        'memory_stability',
+        async () => {
+          for (let i = 0; i < 100; i++) {
+            // Simulate small memory variations (within 1MB)
+            monitor.updateMemoryMetrics({
+              usedJSHeapSize: initialMemory + Math.random() * 1024 * 1024,
+              totalJSHeapSize: 100 * 1024 * 1024,
+              jsHeapSizeLimit: 200 * 1024 * 1024,
+            });
+            perfEnv.advanceTime(16.67);
+            await new Promise((resolve) => setTimeout(resolve, 1));
+          }
         }
-      });
+      );
 
       const finalMemory = monitor.metrics.memory.used;
       const memoryIncrease = finalMemory - initialMemory;
@@ -313,10 +333,11 @@ describe('⚡ Performance Benchmarks', () => {
     beforeEach(() => {
       // Mock mobile environment
       Object.defineProperty(navigator, 'userAgent', {
-        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+        value:
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
         writable: true,
       });
-      
+
       Object.defineProperty(navigator, 'maxTouchPoints', {
         value: 5,
         writable: true,
@@ -334,11 +355,14 @@ describe('⚡ Performance Benchmarks', () => {
     });
 
     it('should initialize quickly on mobile', async () => {
-      const { duration } = await benchmark.measure('mobile_initialization', async () => {
-        const mobileGame = new GameRefactored();
-        await mobileGame.start();
-        mobileGame.stop();
-      });
+      const { duration } = await benchmark.measure(
+        'mobile_initialization',
+        async () => {
+          const mobileGame = new GameRefactored();
+          await mobileGame.start();
+          mobileGame.stop();
+        }
+      );
 
       expect(duration).toBeLessThan(1000); // Should initialize in <1s on mobile
     });
@@ -352,14 +376,17 @@ describe('⚡ Performance Benchmarks', () => {
         jsHeapSizeLimit: 200 * 1024 * 1024,
       };
 
-      const { duration } = await benchmark.measure('mobile_performance', async () => {
-        for (let i = 0; i < 30; i++) {
-          monitor.updateFPSMetrics(60, 16.67);
-          monitor.updateMemoryMetrics(memoryMock);
-          perfEnv.advanceTime(16.67);
-          await new Promise((resolve) => setTimeout(resolve, 1));
+      const { duration } = await benchmark.measure(
+        'mobile_performance',
+        async () => {
+          for (let i = 0; i < 30; i++) {
+            monitor.updateFPSMetrics(60, 16.67);
+            monitor.updateMemoryMetrics(memoryMock);
+            perfEnv.advanceTime(16.67);
+            await new Promise((resolve) => setTimeout(resolve, 1));
+          }
         }
-      });
+      );
 
       const averageFrameTime = duration / 30;
       const fps = 1000 / averageFrameTime;
@@ -392,17 +419,20 @@ describe('⚡ Performance Benchmarks', () => {
         jsHeapSizeLimit: 200 * 1024 * 1024,
       };
 
-      const { duration } = await benchmark.measure('continuous_operation', async () => {
-        for (let i = 0; i < 1000; i++) {
-          monitor.updateFPSMetrics(60, 16.67);
-          monitor.updateMemoryMetrics(memoryMock);
-          perfEnv.advanceTime(16.67);
+      const { duration } = await benchmark.measure(
+        'continuous_operation',
+        async () => {
+          for (let i = 0; i < 1000; i++) {
+            monitor.updateFPSMetrics(60, 16.67);
+            monitor.updateMemoryMetrics(memoryMock);
+            perfEnv.advanceTime(16.67);
 
-          if (i % 100 === 0) {
-            await new Promise((resolve) => setTimeout(resolve, 1));
+            if (i % 100 === 0) {
+              await new Promise((resolve) => setTimeout(resolve, 1));
+            }
           }
         }
-      });
+      );
 
       expect(duration).toBeLessThan(50000); // Should complete 1000 iterations in <50s
     });
@@ -449,13 +479,16 @@ describe('⚡ Performance Benchmarks', () => {
       const monitor = game.getPerformanceMonitor();
 
       // Simulate idle state
-      const { duration } = await benchmark.measure('idle_optimization', async () => {
-        for (let i = 0; i < 100; i++) {
-          monitor.updateFPSMetrics(60, 16.67);
-          perfEnv.advanceTime(100); // Simulate slower updates when idle
-          await new Promise((resolve) => setTimeout(resolve, 1));
+      const { duration } = await benchmark.measure(
+        'idle_optimization',
+        async () => {
+          for (let i = 0; i < 100; i++) {
+            monitor.updateFPSMetrics(60, 16.67);
+            perfEnv.advanceTime(100); // Simulate slower updates when idle
+            await new Promise((resolve) => setTimeout(resolve, 1));
+          }
         }
-      });
+      );
 
       // Should be more efficient when idle
       expect(duration).toBeLessThan(10000);
@@ -472,20 +505,23 @@ describe('⚡ Performance Benchmarks', () => {
         jsHeapSizeLimit: 200 * 1024 * 1024,
       });
 
-      const { duration } = await benchmark.measure('memory_optimization', async () => {
-        for (let i = 0; i < 500; i++) {
-          monitor.updateMemoryMetrics({
-            usedJSHeapSize: initialMemory + Math.random() * 1024 * 1024,
-            totalJSHeapSize: 100 * 1024 * 1024,
-            jsHeapSizeLimit: 200 * 1024 * 1024,
-          });
-          perfEnv.advanceTime(16.67);
+      const { duration } = await benchmark.measure(
+        'memory_optimization',
+        async () => {
+          for (let i = 0; i < 500; i++) {
+            monitor.updateMemoryMetrics({
+              usedJSHeapSize: initialMemory + Math.random() * 1024 * 1024,
+              totalJSHeapSize: 100 * 1024 * 1024,
+              jsHeapSizeLimit: 200 * 1024 * 1024,
+            });
+            perfEnv.advanceTime(16.67);
 
-          if (i % 50 === 0) {
-            await new Promise((resolve) => setTimeout(resolve, 1));
+            if (i % 50 === 0) {
+              await new Promise((resolve) => setTimeout(resolve, 1));
+            }
           }
         }
-      });
+      );
 
       const finalMemory = monitor.metrics.memory.used;
       const memoryGrowth = finalMemory - initialMemory;
@@ -528,7 +564,7 @@ describe('⚡ Performance Benchmarks', () => {
       // Trigger performance checks
       monitor.checkFPSPerformance();
       monitor.checkMemoryPerformance();
-      
+
       const report = monitor.getPerformanceReport();
       const suggestions = report.suggestions;
 
@@ -559,31 +595,31 @@ describe('⚡ Performance Benchmarks', () => {
 
     it('should meet FPS targets', () => {
       const monitor = game.getPerformanceMonitor();
-      
+
       // Simulate good performance
       monitor.metrics.fps.current = 60;
       const score = monitor.getPerformanceScore();
-      
+
       expect(score).toBeGreaterThan(80); // Should score >80 for good FPS
     });
 
     it('should meet memory targets', () => {
       const monitor = game.getPerformanceMonitor();
-      
+
       // Simulate good memory usage
       monitor.metrics.memory.used = 50 * 1024 * 1024; // 50MB
       const score = monitor.getPerformanceScore();
-      
+
       expect(score).toBeGreaterThan(80); // Should score >80 for good memory usage
     });
 
     it('should meet overall performance targets', () => {
       const monitor = game.getPerformanceMonitor();
-      
+
       // Simulate excellent performance
       monitor.metrics.fps.current = 60;
       monitor.metrics.memory.used = 30 * 1024 * 1024; // 30MB
-      
+
       const score = monitor.getPerformanceScore();
       expect(score).toBeGreaterThan(90); // Should score >90 for excellent performance
     });
@@ -592,19 +628,19 @@ describe('⚡ Performance Benchmarks', () => {
   describe('📊 Benchmark Results Summary', () => {
     afterEach(() => {
       const results = benchmark.getResults();
-      
+
       if (results.length > 0) {
         console.log('\n📊 Performance Benchmark Results:');
         console.log('==================================');
-        
-        const uniqueTests = [...new Set(results.map(r => r.name))];
-        
-        uniqueTests.forEach(testName => {
-          const testResults = results.filter(r => r.name === testName);
+
+        const uniqueTests = [...new Set(results.map((r) => r.name))];
+
+        uniqueTests.forEach((testName) => {
+          const testResults = results.filter((r) => r.name === testName);
           const avgDuration = benchmark.getAverageDuration(testName);
           const maxDuration = benchmark.getMaxDuration(testName);
           const minDuration = benchmark.getMinDuration(testName);
-          
+
           console.log(`${testName}:`);
           console.log(`  Average: ${avgDuration.toFixed(2)}ms`);
           console.log(`  Min: ${minDuration.toFixed(2)}ms`);

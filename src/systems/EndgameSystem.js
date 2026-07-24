@@ -68,13 +68,13 @@ export class EndgameSystem {
    */
   async initialize() {
     this.logger.info('Initializing EndgameSystem...');
-    
+
     // Load endgame data
     await this.loadEndgameData();
-    
+
     // Start background processes
     this.startBackgroundProcesses();
-    
+
     this.logger.info('EndgameSystem initialized successfully');
   }
 
@@ -83,13 +83,13 @@ export class EndgameSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up EndgameSystem...');
-    
+
     // Save endgame data
     this.saveEndgameData();
-    
+
     // Stop background processes
     this.stopBackgroundProcesses();
-    
+
     // Clear state
     this.endgameState.activeRaids.clear();
     this.endgameState.pvpMatches.clear();
@@ -97,10 +97,10 @@ export class EndgameSystem {
     this.endgameState.seasonalContent.clear();
     this.endgameState.replayableMaps.clear();
     this.endgameState.bossEncounters.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('EndgameSystem cleaned up');
   }
 
@@ -110,16 +110,16 @@ export class EndgameSystem {
   update(deltaTime, gameState) {
     // Update active raids
     this.updateActiveRaids(deltaTime);
-    
+
     // Update PvP matches
     this.updatePvPMatches(deltaTime);
-    
+
     // Update boss encounters
     this.updateBossEncounters(deltaTime);
-    
+
     // Update seasonal content
     this.updateSeasonalContent(deltaTime);
-    
+
     // Update leaderboards
     this.updateLeaderboards(deltaTime);
   }
@@ -140,18 +140,18 @@ export class EndgameSystem {
       rewards: {
         experience: 'scaling',
         loot: 'scaling',
-        currency: 'scaling'
+        currency: 'scaling',
       },
       modifiers: [
         'enemy_health_boost',
         'enemy_damage_boost',
         'loot_quality_boost',
-        'experience_boost'
+        'experience_boost',
       ],
       requirements: {
         level: 50,
-        prestige: 0
-      }
+        prestige: 0,
+      },
     });
 
     this.endgameState.replayableMaps.set('nightmare_realm', {
@@ -167,18 +167,18 @@ export class EndgameSystem {
         experience: 'high',
         loot: 'legendary',
         currency: 'high',
-        uniqueItems: true
+        uniqueItems: true,
       },
       modifiers: [
         'reality_distortion',
         'time_dilation',
         'gravity_manipulation',
-        'elemental_chaos'
+        'elemental_chaos',
       ],
       requirements: {
         level: 75,
-        prestige: 2
-      }
+        prestige: 2,
+      },
     });
 
     this.endgameState.replayableMaps.set('void_nexus', {
@@ -194,18 +194,18 @@ export class EndgameSystem {
         experience: 'maximum',
         loot: 'unique',
         currency: 'maximum',
-        prestigePoints: true
+        prestigePoints: true,
       },
       modifiers: [
         'void_corruption',
         'dimensional_instability',
         'ancient_power',
-        'cosmic_chaos'
+        'cosmic_chaos',
       ],
       requirements: {
         level: 100,
-        prestige: 5
-      }
+        prestige: 5,
+      },
     });
   }
 
@@ -229,21 +229,21 @@ export class EndgameSystem {
         'tail_sweep',
         'dragon_roar',
         'meteor_storm',
-        'dragon_rage'
+        'dragon_rage',
       ],
       rewards: {
         experience: 50000,
         gold: 100000,
         items: ['dragon_king_crown', 'dragon_king_scale', 'dragon_king_heart'],
-        uniqueItems: ['crown_of_dragons', 'dragon_king_sword']
+        uniqueItems: ['crown_of_dragons', 'dragon_king_sword'],
       },
       respawnTime: 3600000, // 1 hour
       lastKilled: null,
       location: { x: 1000, y: 1000 },
       requirements: {
         level: 80,
-        groupSize: 4
-      }
+        groupSize: 4,
+      },
     });
 
     this.endgameState.bossEncounters.set('void_lord', {
@@ -262,21 +262,21 @@ export class EndgameSystem {
         'reality_break',
         'void_nova',
         'cosmic_storm',
-        'void_consumption'
+        'void_consumption',
       ],
       rewards: {
         experience: 100000,
         gold: 200000,
         items: ['void_essence', 'void_crystal', 'void_heart'],
-        uniqueItems: ['void_lord_crown', 'void_lord_staff', 'void_lord_armor']
+        uniqueItems: ['void_lord_crown', 'void_lord_staff', 'void_lord_armor'],
       },
       respawnTime: 7200000, // 2 hours
       lastKilled: null,
       location: { x: 2000, y: 2000 },
       requirements: {
         level: 90,
-        groupSize: 8
-      }
+        groupSize: 8,
+      },
     });
 
     this.endgameState.bossEncounters.set('time_guardian', {
@@ -294,21 +294,21 @@ export class EndgameSystem {
         'temporal_blast',
         'time_rewind',
         'chrono_storm',
-        'temporal_prison'
+        'temporal_prison',
       ],
       rewards: {
         experience: 75000,
         gold: 150000,
         items: ['time_crystal', 'temporal_essence', 'chrono_fragment'],
-        uniqueItems: ['time_guardian_amulet', 'temporal_blade']
+        uniqueItems: ['time_guardian_amulet', 'temporal_blade'],
       },
       respawnTime: 1800000, // 30 minutes
       lastKilled: null,
       location: { x: 1500, y: 1500 },
       requirements: {
         level: 85,
-        groupSize: 6
-      }
+        groupSize: 6,
+      },
     });
   }
 
@@ -329,8 +329,8 @@ export class EndgameSystem {
             timeLimit: 300, // 5 minutes
             respawns: false,
             items: 'all',
-            abilities: 'all'
-          }
+            abilities: 'all',
+          },
         },
         {
           id: 'team_arena',
@@ -343,8 +343,8 @@ export class EndgameSystem {
             timeLimit: 600, // 10 minutes
             respawns: true,
             items: 'all',
-            abilities: 'all'
-          }
+            abilities: 'all',
+          },
         },
         {
           id: 'battle_royale',
@@ -357,13 +357,13 @@ export class EndgameSystem {
             timeLimit: 1800, // 30 minutes
             respawns: false,
             items: 'found_only',
-            abilities: 'all'
-          }
-        }
+            abilities: 'all',
+          },
+        },
       ],
       rankings: new Map(),
       seasons: [],
-      currentSeason: null
+      currentSeason: null,
     };
   }
 
@@ -376,7 +376,7 @@ export class EndgameSystem {
         {
           id: 'dragon_raid',
           name: 'Dragon Raid',
-          description: 'Raid the dragon\'s lair',
+          description: "Raid the dragon's lair",
           maxPlayers: 8,
           difficulty: 'hard',
           phases: 5,
@@ -385,12 +385,12 @@ export class EndgameSystem {
             experience: 200000,
             gold: 500000,
             items: ['dragon_raid_set'],
-            uniqueItems: ['dragon_raid_weapon', 'dragon_raid_armor']
+            uniqueItems: ['dragon_raid_weapon', 'dragon_raid_armor'],
           },
           requirements: {
             level: 80,
-            groupSize: 6
-          }
+            groupSize: 6,
+          },
         },
         {
           id: 'void_raid',
@@ -404,16 +404,16 @@ export class EndgameSystem {
             experience: 500000,
             gold: 1000000,
             items: ['void_raid_set'],
-            uniqueItems: ['void_raid_weapon', 'void_raid_armor']
+            uniqueItems: ['void_raid_weapon', 'void_raid_armor'],
           },
           requirements: {
             level: 90,
-            groupSize: 8
-          }
-        }
+            groupSize: 8,
+          },
+        },
       ],
       activeRaids: new Map(),
-      raidHistory: []
+      raidHistory: [],
     };
   }
 
@@ -426,7 +426,7 @@ export class EndgameSystem {
       type: 'level',
       entries: [],
       updateInterval: 60000,
-      lastUpdate: 0
+      lastUpdate: 0,
     });
 
     this.endgameState.leaderboards.set('pvp', {
@@ -434,7 +434,7 @@ export class EndgameSystem {
       type: 'pvp',
       entries: [],
       updateInterval: 30000,
-      lastUpdate: 0
+      lastUpdate: 0,
     });
 
     this.endgameState.leaderboards.set('raid', {
@@ -442,7 +442,7 @@ export class EndgameSystem {
       type: 'raid',
       entries: [],
       updateInterval: 120000,
-      lastUpdate: 0
+      lastUpdate: 0,
     });
 
     this.endgameState.leaderboards.set('dungeon', {
@@ -450,7 +450,7 @@ export class EndgameSystem {
       type: 'dungeon',
       entries: [],
       updateInterval: 300000,
-      lastUpdate: 0
+      lastUpdate: 0,
     });
   }
 
@@ -468,14 +468,14 @@ export class EndgameSystem {
       rewards: {
         uniqueItems: ['winter_crown', 'snow_queen_armor'],
         currency: 'festival_coins',
-        experience: 'boosted'
+        experience: 'boosted',
       },
       events: [
         'snowball_fight',
         'ice_sculpting',
         'winter_races',
-        'gift_exchange'
-      ]
+        'gift_exchange',
+      ],
     });
 
     this.endgameState.seasonalContent.set('summer_solstice', {
@@ -488,14 +488,9 @@ export class EndgameSystem {
       rewards: {
         uniqueItems: ['sun_crown', 'solstice_armor'],
         currency: 'solstice_coins',
-        experience: 'boosted'
+        experience: 'boosted',
       },
-      events: [
-        'sun_worship',
-        'fire_dancing',
-        'summer_races',
-        'light_rituals'
-      ]
+      events: ['sun_worship', 'fire_dancing', 'summer_races', 'light_rituals'],
     });
   }
 
@@ -506,20 +501,20 @@ export class EndgameSystem {
     // Endgame events
     this.eventBus.on('endgame:unlock', this.unlockEndgame.bind(this));
     this.eventBus.on('endgame:prestige', this.prestigePlayer.bind(this));
-    
+
     // Map events
     this.eventBus.on('map:enter', this.enterMap.bind(this));
     this.eventBus.on('map:complete', this.completeMap.bind(this));
-    
+
     // Boss events
     this.eventBus.on('boss:spawn', this.spawnBoss.bind(this));
     this.eventBus.on('boss:defeat', this.defeatBoss.bind(this));
-    
+
     // PvP events
     this.eventBus.on('pvp:join', this.joinPvP.bind(this));
     this.eventBus.on('pvp:leave', this.leavePvP.bind(this));
     this.eventBus.on('pvp:match', this.startPvPMatch.bind(this));
-    
+
     // Raid events
     this.eventBus.on('raid:start', this.startRaid.bind(this));
     this.eventBus.on('raid:complete', this.completeRaid.bind(this));
@@ -529,8 +524,14 @@ export class EndgameSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('endgame:unlock', this.unlockEndgame.bind(this));
-    this.eventBus.removeListener('endgame:prestige', this.prestigePlayer.bind(this));
+    this.eventBus.removeListener(
+      'endgame:unlock',
+      this.unlockEndgame.bind(this)
+    );
+    this.eventBus.removeListener(
+      'endgame:prestige',
+      this.prestigePlayer.bind(this)
+    );
     this.eventBus.removeListener('map:enter', this.enterMap.bind(this));
     this.eventBus.removeListener('map:complete', this.completeMap.bind(this));
     this.eventBus.removeListener('boss:spawn', this.spawnBoss.bind(this));
@@ -547,16 +548,16 @@ export class EndgameSystem {
    */
   unlockEndgame(data) {
     const { playerLevel } = data;
-    
+
     if (playerLevel >= this.endgameConfig.maxLevel) {
       this.endgameState.endgameUnlocked = true;
       this.endgameState.playerLevel = playerLevel;
-      
+
       this.eventBus.emit('endgame:unlocked', {
         playerLevel,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       this.logger.info('Endgame content unlocked');
     }
   }
@@ -566,22 +567,24 @@ export class EndgameSystem {
    */
   prestigePlayer(data) {
     const { playerId, currentLevel } = data;
-    
+
     if (currentLevel < this.endgameConfig.maxLevel) {
       this.logger.warn('Player must be max level to prestige');
       return;
     }
-    
+
     this.endgameState.prestigeLevel++;
-    
+
     // Reset player level but keep prestige benefits
     this.eventBus.emit('endgame:prestiged', {
       playerId,
       prestigeLevel: this.endgameState.prestigeLevel,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
-    this.logger.info(`Player prestiged to level ${this.endgameState.prestigeLevel}`);
+
+    this.logger.info(
+      `Player prestiged to level ${this.endgameState.prestigeLevel}`
+    );
   }
 
   /**
@@ -590,27 +593,27 @@ export class EndgameSystem {
   enterMap(data) {
     const { mapId, playerId, groupId } = data;
     const map = this.endgameState.replayableMaps.get(mapId);
-    
+
     if (!map) {
       this.logger.error(`Map not found: ${mapId}`);
       return;
     }
-    
+
     // Check requirements
     if (!this.checkMapRequirements(map, playerId)) {
       this.logger.warn('Map requirements not met');
       return;
     }
-    
+
     // Create map instance
     const mapInstance = this.createMapInstance(map, groupId);
-    
+
     this.eventBus.emit('map:entered', {
       mapId,
       mapInstance,
       playerId,
       groupId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -619,19 +622,19 @@ export class EndgameSystem {
    */
   completeMap(data) {
     const { mapId, mapInstance, completionTime } = data;
-    
+
     // Calculate rewards
     const rewards = this.calculateMapRewards(mapInstance, completionTime);
-    
+
     // Update leaderboards
     this.updateMapLeaderboard(mapId, mapInstance, completionTime);
-    
+
     this.eventBus.emit('map:completed', {
       mapId,
       mapInstance,
       rewards,
       completionTime,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -641,27 +644,27 @@ export class EndgameSystem {
   spawnBoss(data) {
     const { bossId, location } = data;
     const boss = this.endgameState.bossEncounters.get(bossId);
-    
+
     if (!boss) {
       this.logger.error(`Boss not found: ${bossId}`);
       return;
     }
-    
+
     // Check if boss is already spawned
     if (boss.lastKilled && Date.now() - boss.lastKilled < boss.respawnTime) {
       this.logger.warn('Boss is still on cooldown');
       return;
     }
-    
+
     // Spawn boss
     boss.currentPhase = 1;
     boss.health = boss.maxHealth;
     boss.location = location || boss.location;
-    
+
     this.eventBus.emit('boss:spawned', {
       bossId,
       boss,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -671,27 +674,27 @@ export class EndgameSystem {
   defeatBoss(data) {
     const { bossId, players } = data;
     const boss = this.endgameState.bossEncounters.get(bossId);
-    
+
     if (!boss) {
       this.logger.error(`Boss not found: ${bossId}`);
       return;
     }
-    
+
     // Calculate rewards
     const rewards = this.calculateBossRewards(boss, players);
-    
+
     // Update boss state
     boss.lastKilled = Date.now();
-    
+
     // Update leaderboards
     this.updateBossLeaderboard(bossId, players);
-    
+
     this.eventBus.emit('boss:defeated', {
       bossId,
       boss,
       rewards,
       players,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -700,20 +703,20 @@ export class EndgameSystem {
    */
   joinPvP(data) {
     const { playerId, arenaId } = data;
-    const arena = this.pvpSystem.arenas.find(a => a.id === arenaId);
-    
+    const arena = this.pvpSystem.arenas.find((a) => a.id === arenaId);
+
     if (!arena) {
       this.logger.error(`Arena not found: ${arenaId}`);
       return;
     }
-    
+
     // Add player to matchmaking
     this.addToMatchmaking(playerId, arena);
-    
+
     this.eventBus.emit('pvp:joined', {
       playerId,
       arenaId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -722,14 +725,14 @@ export class EndgameSystem {
    */
   leavePvP(data) {
     const { playerId, matchId } = data;
-    
+
     // Remove player from match
     this.removeFromMatch(playerId, matchId);
-    
+
     this.eventBus.emit('pvp:left', {
       playerId,
       matchId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -738,22 +741,22 @@ export class EndgameSystem {
    */
   startPvPMatch(data) {
     const { matchId, players, arena } = data;
-    
+
     const match = {
       id: matchId,
       arena: arena,
       players: players,
       startTime: Date.now(),
       status: 'active',
-      results: []
+      results: [],
     };
-    
+
     this.endgameState.pvpMatches.set(matchId, match);
-    
+
     this.eventBus.emit('pvp:matchStarted', {
       matchId,
       match,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -762,29 +765,29 @@ export class EndgameSystem {
    */
   startRaid(data) {
     const { raidId, players } = data;
-    const raid = this.raidSystem.raids.find(r => r.id === raidId);
-    
+    const raid = this.raidSystem.raids.find((r) => r.id === raidId);
+
     if (!raid) {
       this.logger.error(`Raid not found: ${raidId}`);
       return;
     }
-    
+
     // Check requirements
     if (!this.checkRaidRequirements(raid, players)) {
       this.logger.warn('Raid requirements not met');
       return;
     }
-    
+
     // Create raid instance
     const raidInstance = this.createRaidInstance(raid, players);
-    
+
     this.endgameState.activeRaids.set(raidId, raidInstance);
-    
+
     this.eventBus.emit('raid:started', {
       raidId,
       raidInstance,
       players,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -793,22 +796,22 @@ export class EndgameSystem {
    */
   completeRaid(data) {
     const { raidId, raidInstance, completionTime } = data;
-    
+
     // Calculate rewards
     const rewards = this.calculateRaidRewards(raidInstance, completionTime);
-    
+
     // Update leaderboards
     this.updateRaidLeaderboard(raidId, raidInstance, completionTime);
-    
+
     // Remove from active raids
     this.endgameState.activeRaids.delete(raidId);
-    
+
     this.eventBus.emit('raid:completed', {
       raidId,
       raidInstance,
       rewards,
       completionTime,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -844,17 +847,18 @@ export class EndgameSystem {
    */
   updateSeasonalContent(deltaTime) {
     const now = Date.now();
-    
+
     for (const [seasonId, season] of this.endgameState.seasonalContent) {
-      const isActive = now >= season.startDate.getTime() && now <= season.endDate.getTime();
-      
+      const isActive =
+        now >= season.startDate.getTime() && now <= season.endDate.getTime();
+
       if (isActive !== season.active) {
         season.active = isActive;
-        
+
         this.eventBus.emit('seasonal:statusChanged', {
           seasonId,
           active: isActive,
-          timestamp: now
+          timestamp: now,
         });
       }
     }
@@ -865,7 +869,7 @@ export class EndgameSystem {
    */
   updateLeaderboards(deltaTime) {
     const now = Date.now();
-    
+
     for (const [leaderboardId, leaderboard] of this.endgameState.leaderboards) {
       if (now - leaderboard.lastUpdate >= leaderboard.updateInterval) {
         this.updateLeaderboard(leaderboardId);
@@ -882,12 +886,12 @@ export class EndgameSystem {
     if (this.endgameState.playerLevel < map.requirements.level) {
       return false;
     }
-    
+
     // Check prestige requirement
     if (this.endgameState.prestigeLevel < map.requirements.prestige) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -906,7 +910,7 @@ export class EndgameSystem {
       difficulty: map.difficulty,
       modifiers: [...map.modifiers],
       players: [],
-      status: 'active'
+      status: 'active',
     };
   }
 
@@ -918,9 +922,9 @@ export class EndgameSystem {
       experience: 0,
       gold: 0,
       items: [],
-      currency: 0
+      currency: 0,
     };
-    
+
     // Calculate based on map type and completion time
     switch (mapInstance.mapId) {
       case 'infinite_dungeon':
@@ -938,12 +942,12 @@ export class EndgameSystem {
         baseRewards.currency = 2500;
         break;
     }
-    
+
     // Apply time bonus
-    const timeBonus = Math.max(0, 1 - (completionTime / 3600000)); // 1 hour max
-    baseRewards.experience *= (1 + timeBonus);
-    baseRewards.gold *= (1 + timeBonus);
-    
+    const timeBonus = Math.max(0, 1 - completionTime / 3600000); // 1 hour max
+    baseRewards.experience *= 1 + timeBonus;
+    baseRewards.gold *= 1 + timeBonus;
+
     return baseRewards;
   }
 
@@ -952,14 +956,14 @@ export class EndgameSystem {
    */
   calculateBossRewards(boss, players) {
     const baseRewards = { ...boss.rewards };
-    
+
     // Scale rewards based on number of players
     const playerCount = players.length;
     const scaleFactor = Math.min(2.0, 1 + (playerCount - 1) * 0.1);
-    
+
     baseRewards.experience = Math.floor(baseRewards.experience * scaleFactor);
     baseRewards.gold = Math.floor(baseRewards.gold * scaleFactor);
-    
+
     return baseRewards;
   }
 
@@ -968,12 +972,12 @@ export class EndgameSystem {
    */
   calculateRaidRewards(raidInstance, completionTime) {
     const baseRewards = { ...raidInstance.rewards };
-    
+
     // Apply completion time bonus
-    const timeBonus = Math.max(0, 1 - (completionTime / 7200000)); // 2 hours max
-    baseRewards.experience *= (1 + timeBonus);
-    baseRewards.gold *= (1 + timeBonus);
-    
+    const timeBonus = Math.max(0, 1 - completionTime / 7200000); // 2 hours max
+    baseRewards.experience *= 1 + timeBonus;
+    baseRewards.gold *= 1 + timeBonus;
+
     return baseRewards;
   }
 
@@ -982,14 +986,14 @@ export class EndgameSystem {
    */
   updateMapLeaderboard(mapId, mapInstance, completionTime) {
     const leaderboard = this.endgameState.leaderboards.get('dungeon');
-    
+
     const entry = {
       mapId: mapId,
       groupId: mapInstance.groupId,
       completionTime: completionTime,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     leaderboard.entries.push(entry);
     leaderboard.entries.sort((a, b) => a.completionTime - b.completionTime);
     leaderboard.entries = leaderboard.entries.slice(0, 100); // Keep top 100
@@ -1000,13 +1004,13 @@ export class EndgameSystem {
    */
   updateBossLeaderboard(bossId, players) {
     const leaderboard = this.endgameState.leaderboards.get('raid');
-    
+
     const entry = {
       bossId: bossId,
-      players: players.map(p => p.id),
-      timestamp: Date.now()
+      players: players.map((p) => p.id),
+      timestamp: Date.now(),
     };
-    
+
     leaderboard.entries.push(entry);
     leaderboard.entries.sort((a, b) => b.timestamp - a.timestamp);
     leaderboard.entries = leaderboard.entries.slice(0, 100);
@@ -1017,14 +1021,14 @@ export class EndgameSystem {
    */
   updateRaidLeaderboard(raidId, raidInstance, completionTime) {
     const leaderboard = this.endgameState.leaderboards.get('raid');
-    
+
     const entry = {
       raidId: raidId,
       groupId: raidInstance.groupId,
       completionTime: completionTime,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     leaderboard.entries.push(entry);
     leaderboard.entries.sort((a, b) => a.completionTime - b.completionTime);
     leaderboard.entries = leaderboard.entries.slice(0, 100);
@@ -1035,7 +1039,7 @@ export class EndgameSystem {
    */
   updateLeaderboard(leaderboardId) {
     const leaderboard = this.endgameState.leaderboards.get(leaderboardId);
-    
+
     switch (leaderboardId) {
       case 'level':
         this.updateLevelLeaderboard(leaderboard);
@@ -1061,7 +1065,7 @@ export class EndgameSystem {
     leaderboard.entries = [
       { playerId: 'player1', level: 100, prestige: 5 },
       { playerId: 'player2', level: 100, prestige: 4 },
-      { playerId: 'player3', level: 100, prestige: 3 }
+      { playerId: 'player3', level: 100, prestige: 3 },
     ];
   }
 
@@ -1074,7 +1078,7 @@ export class EndgameSystem {
     leaderboard.entries = [
       { playerId: 'player1', rating: 2500, wins: 100, losses: 20 },
       { playerId: 'player2', rating: 2400, wins: 95, losses: 25 },
-      { playerId: 'player3', rating: 2300, wins: 90, losses: 30 }
+      { playerId: 'player3', rating: 2300, wins: 90, losses: 30 },
     ];
   }
 
@@ -1099,7 +1103,9 @@ export class EndgameSystem {
    */
   addToMatchmaking(playerId, arena) {
     // This would add player to matchmaking queue
-    this.logger.info(`Player ${playerId} added to matchmaking for ${arena.name}`);
+    this.logger.info(
+      `Player ${playerId} added to matchmaking for ${arena.name}`
+    );
   }
 
   /**
@@ -1108,8 +1114,8 @@ export class EndgameSystem {
   removeFromMatch(playerId, matchId) {
     const match = this.endgameState.pvpMatches.get(matchId);
     if (match) {
-      match.players = match.players.filter(p => p.id !== playerId);
-      
+      match.players = match.players.filter((p) => p.id !== playerId);
+
       if (match.players.length === 0) {
         this.endgameState.pvpMatches.delete(matchId);
       }
@@ -1123,9 +1129,9 @@ export class EndgameSystem {
     if (players.length < raid.requirements.groupSize) {
       return false;
     }
-    
+
     // Check if all players meet level requirement
-    return players.every(player => player.level >= raid.requirements.level);
+    return players.every((player) => player.level >= raid.requirements.level);
   }
 
   /**
@@ -1139,7 +1145,7 @@ export class EndgameSystem {
       startTime: Date.now(),
       currentPhase: 1,
       currentBoss: raid.bosses[0],
-      status: 'active'
+      status: 'active',
     };
   }
 
@@ -1172,7 +1178,7 @@ export class EndgameSystem {
     this.leaderboardTimer = setInterval(() => {
       this.updateAllLeaderboards();
     }, 60000);
-    
+
     // Start seasonal content timer
     this.seasonalTimer = setInterval(() => {
       this.updateSeasonalContent(0);
@@ -1186,7 +1192,7 @@ export class EndgameSystem {
     if (this.leaderboardTimer) {
       clearInterval(this.leaderboardTimer);
     }
-    
+
     if (this.seasonalTimer) {
       clearInterval(this.seasonalTimer);
     }
@@ -1226,7 +1232,7 @@ export class EndgameSystem {
         playerLevel: this.endgameState.playerLevel,
         prestigeLevel: this.endgameState.prestigeLevel,
         endgameUnlocked: this.endgameState.endgameUnlocked,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       localStorage.setItem('endgameData', JSON.stringify(data));
       this.logger.info('Endgame data saved to storage');

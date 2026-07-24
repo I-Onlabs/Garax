@@ -57,8 +57,8 @@ export class VisualEffectsSystem {
       performanceLevels: {
         low: { maxParticles: 100, effects: false, shadows: false },
         medium: { maxParticles: 500, effects: true, shadows: false },
-        high: { maxParticles: 1000, effects: true, shadows: true }
-      }
+        high: { maxParticles: 1000, effects: true, shadows: true },
+      },
     };
 
     // Initialize visual effects
@@ -80,19 +80,19 @@ export class VisualEffectsSystem {
    */
   async initialize() {
     this.logger.info('Initializing VisualEffectsSystem...');
-    
+
     // Set up canvas and rendering context
     this.setupRenderingContext();
-    
+
     // Initialize particle systems
     this.initializeParticleSystems();
-    
+
     // Set up lighting system
     this.setupLightingSystem();
-    
+
     // Initialize weather effects
     this.initializeWeatherEffects();
-    
+
     this.logger.info('VisualEffectsSystem initialized successfully');
   }
 
@@ -101,19 +101,19 @@ export class VisualEffectsSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up VisualEffectsSystem...');
-    
+
     // Clear all effects
     this.clearAllEffects();
-    
+
     // Clear particle systems
     this.clearParticleSystems();
-    
+
     // Clear animations
     this.clearAnimations();
-    
+
     // Clear shaders
     this.clearShaders();
-    
+
     // Clear state
     this.effectsState.activeEffects.clear();
     this.effectsState.particleSystems.clear();
@@ -122,10 +122,10 @@ export class VisualEffectsSystem {
     this.effectsState.lighting.clear();
     this.effectsState.screenEffects.clear();
     this.effectsState.uiAnimations.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('VisualEffectsSystem cleaned up');
   }
 
@@ -135,22 +135,22 @@ export class VisualEffectsSystem {
   update(deltaTime, gameState) {
     // Update active effects
     this.updateActiveEffects(deltaTime);
-    
+
     // Update particle systems
     this.updateParticleSystems(deltaTime);
-    
+
     // Update animations
     this.updateAnimations(deltaTime);
-    
+
     // Update lighting
     this.updateLighting(deltaTime);
-    
+
     // Update weather
     this.updateWeather(deltaTime);
-    
+
     // Update screen effects
     this.updateScreenEffects(deltaTime);
-    
+
     // Update UI animations
     this.updateUIAnimations(deltaTime);
   }
@@ -169,7 +169,7 @@ export class VisualEffectsSystem {
       HEALING_AURA: 'healing_aura',
       SHIELD_BARRIER: 'shield_barrier',
       TELEPORT: 'teleport',
-      
+
       // Environmental effects
       RAIN: 'rain',
       SNOW: 'snow',
@@ -179,7 +179,7 @@ export class VisualEffectsSystem {
       WATER_SPLASH: 'water_splash',
       LEAF_FALL: 'leaf_fall',
       SPARKLE: 'sparkle',
-      
+
       // UI effects
       FADE_IN: 'fade_in',
       FADE_OUT: 'fade_out',
@@ -189,14 +189,14 @@ export class VisualEffectsSystem {
       SCALE_DOWN: 'scale_down',
       ROTATE: 'rotate',
       PULSE: 'pulse',
-      
+
       // Screen effects
       SCREEN_SHAKE: 'screen_shake',
       FLASH: 'flash',
       BLUR: 'blur',
       CHROMATIC_ABERRATION: 'chromatic_aberration',
       VIGNETTE: 'vignette',
-      BLOOM: 'bloom'
+      BLOOM: 'bloom',
     };
   }
 
@@ -214,7 +214,7 @@ export class VisualEffectsSystem {
         velocity: { x: 0, y: -50, variance: 20 },
         gravity: 0.1,
         fade: true,
-        texture: 'fire_particle'
+        texture: 'fire_particle',
       },
       smoke: {
         name: 'Smoke',
@@ -225,7 +225,7 @@ export class VisualEffectsSystem {
         velocity: { x: 0, y: -30, variance: 15 },
         gravity: -0.05,
         fade: true,
-        texture: 'smoke_particle'
+        texture: 'smoke_particle',
       },
       sparkle: {
         name: 'Sparkle',
@@ -236,7 +236,7 @@ export class VisualEffectsSystem {
         velocity: { x: 0, y: 0, variance: 30 },
         gravity: 0,
         fade: true,
-        texture: 'sparkle_particle'
+        texture: 'sparkle_particle',
       },
       blood: {
         name: 'Blood',
@@ -247,7 +247,7 @@ export class VisualEffectsSystem {
         velocity: { x: 0, y: 0, variance: 40 },
         gravity: 0.2,
         fade: true,
-        texture: 'blood_particle'
+        texture: 'blood_particle',
       },
       magic: {
         name: 'Magic',
@@ -258,8 +258,8 @@ export class VisualEffectsSystem {
         velocity: { x: 0, y: 0, variance: 25 },
         gravity: 0,
         fade: true,
-        texture: 'magic_particle'
-      }
+        texture: 'magic_particle',
+      },
     };
   }
 
@@ -274,75 +274,75 @@ export class VisualEffectsSystem {
         duration: 2000,
         frames: 4,
         loop: true,
-        easing: 'linear'
+        easing: 'linear',
       },
       walk: {
         name: 'Walk',
         duration: 1000,
         frames: 8,
         loop: true,
-        easing: 'linear'
+        easing: 'linear',
       },
       run: {
         name: 'Run',
         duration: 800,
         frames: 8,
         loop: true,
-        easing: 'linear'
+        easing: 'linear',
       },
       attack: {
         name: 'Attack',
         duration: 500,
         frames: 6,
         loop: false,
-        easing: 'ease-out'
+        easing: 'ease-out',
       },
       cast: {
         name: 'Cast',
         duration: 800,
         frames: 10,
         loop: false,
-        easing: 'ease-in-out'
+        easing: 'ease-in-out',
       },
       death: {
         name: 'Death',
         duration: 1500,
         frames: 12,
         loop: false,
-        easing: 'ease-in'
+        easing: 'ease-in',
       },
-      
+
       // UI animations
       buttonHover: {
         name: 'Button Hover',
         duration: 200,
         properties: { scale: 1.1, opacity: 0.8 },
-        easing: 'ease-out'
+        easing: 'ease-out',
       },
       buttonClick: {
         name: 'Button Click',
         duration: 100,
         properties: { scale: 0.95 },
-        easing: 'ease-in-out'
+        easing: 'ease-in-out',
       },
       panelSlide: {
         name: 'Panel Slide',
         duration: 300,
         properties: { x: 0, y: 0 },
-        easing: 'ease-out'
+        easing: 'ease-out',
       },
       fadeIn: {
         name: 'Fade In',
         duration: 500,
         properties: { opacity: 1 },
-        easing: 'ease-in'
+        easing: 'ease-in',
       },
       fadeOut: {
         name: 'Fade Out',
         duration: 300,
         properties: { opacity: 0 },
-        easing: 'ease-out'
-      }
+        easing: 'ease-out',
+      },
     };
   }
 
@@ -374,9 +374,9 @@ export class VisualEffectsSystem {
           void main() {
             gl_FragColor = texture2D(u_texture, v_texCoord) * u_color;
           }
-        `
+        `,
       },
-      
+
       // Particle shader
       particle: {
         vertex: `
@@ -401,9 +401,9 @@ export class VisualEffectsSystem {
           void main() {
             gl_FragColor = u_color * v_alpha;
           }
-        `
+        `,
       },
-      
+
       // Post-processing shaders
       blur: {
         vertex: `
@@ -439,9 +439,9 @@ export class VisualEffectsSystem {
             
             gl_FragColor = color / total;
           }
-        `
+        `,
       },
-      
+
       // Screen effects
       screenShake: {
         vertex: `
@@ -465,8 +465,8 @@ export class VisualEffectsSystem {
           void main() {
             gl_FragColor = texture2D(u_texture, v_texCoord);
           }
-        `
-      }
+        `,
+      },
     };
   }
 
@@ -477,12 +477,12 @@ export class VisualEffectsSystem {
     this.lighting = {
       ambient: {
         color: '#404040',
-        intensity: 0.3
+        intensity: 0.3,
       },
       directional: {
         color: '#ffffff',
         intensity: 0.7,
-        direction: { x: 0.5, y: -0.5, z: 0.5 }
+        direction: { x: 0.5, y: -0.5, z: 0.5 },
       },
       pointLights: new Map(),
       spotLights: new Map(),
@@ -490,8 +490,8 @@ export class VisualEffectsSystem {
         enabled: true,
         resolution: 1024,
         bias: 0.001,
-        samples: 16
-      }
+        samples: 16,
+      },
     };
   }
 
@@ -505,7 +505,7 @@ export class VisualEffectsSystem {
       duration: 0,
       startTime: 0,
       effects: new Map(),
-      particles: new Map()
+      particles: new Map(),
     };
   }
 
@@ -518,16 +518,19 @@ export class VisualEffectsSystem {
     this.eventBus.on('combat:damageDealt', this.handleDamageDealt.bind(this));
     this.eventBus.on('combat:healing', this.handleHealing.bind(this));
     this.eventBus.on('combat:explosion', this.handleExplosion.bind(this));
-    
+
     // Environmental effects
-    this.eventBus.on('environment:weatherChange', this.handleWeatherChange.bind(this));
+    this.eventBus.on(
+      'environment:weatherChange',
+      this.handleWeatherChange.bind(this)
+    );
     this.eventBus.on('environment:areaEnter', this.handleAreaEnter.bind(this));
-    
+
     // UI effects
     this.eventBus.on('ui:elementShow', this.handleElementShow.bind(this));
     this.eventBus.on('ui:elementHide', this.handleElementHide.bind(this));
     this.eventBus.on('ui:buttonClick', this.handleButtonClick.bind(this));
-    
+
     // Screen effects
     this.eventBus.on('screen:shake', this.handleScreenShake.bind(this));
     this.eventBus.on('screen:flash', this.handleScreenFlash.bind(this));
@@ -538,18 +541,54 @@ export class VisualEffectsSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('combat:spellCast', this.handleSpellCast.bind(this));
-    this.eventBus.removeListener('combat:damageDealt', this.handleDamageDealt.bind(this));
-    this.eventBus.removeListener('combat:healing', this.handleHealing.bind(this));
-    this.eventBus.removeListener('combat:explosion', this.handleExplosion.bind(this));
-    this.eventBus.removeListener('environment:weatherChange', this.handleWeatherChange.bind(this));
-    this.eventBus.removeListener('environment:areaEnter', this.handleAreaEnter.bind(this));
-    this.eventBus.removeListener('ui:elementShow', this.handleElementShow.bind(this));
-    this.eventBus.removeListener('ui:elementHide', this.handleElementHide.bind(this));
-    this.eventBus.removeListener('ui:buttonClick', this.handleButtonClick.bind(this));
-    this.eventBus.removeListener('screen:shake', this.handleScreenShake.bind(this));
-    this.eventBus.removeListener('screen:flash', this.handleScreenFlash.bind(this));
-    this.eventBus.removeListener('screen:blur', this.handleScreenBlur.bind(this));
+    this.eventBus.removeListener(
+      'combat:spellCast',
+      this.handleSpellCast.bind(this)
+    );
+    this.eventBus.removeListener(
+      'combat:damageDealt',
+      this.handleDamageDealt.bind(this)
+    );
+    this.eventBus.removeListener(
+      'combat:healing',
+      this.handleHealing.bind(this)
+    );
+    this.eventBus.removeListener(
+      'combat:explosion',
+      this.handleExplosion.bind(this)
+    );
+    this.eventBus.removeListener(
+      'environment:weatherChange',
+      this.handleWeatherChange.bind(this)
+    );
+    this.eventBus.removeListener(
+      'environment:areaEnter',
+      this.handleAreaEnter.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementShow',
+      this.handleElementShow.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementHide',
+      this.handleElementHide.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:buttonClick',
+      this.handleButtonClick.bind(this)
+    );
+    this.eventBus.removeListener(
+      'screen:shake',
+      this.handleScreenShake.bind(this)
+    );
+    this.eventBus.removeListener(
+      'screen:flash',
+      this.handleScreenFlash.bind(this)
+    );
+    this.eventBus.removeListener(
+      'screen:blur',
+      this.handleScreenBlur.bind(this)
+    );
   }
 
   /**
@@ -569,11 +608,13 @@ export class VisualEffectsSystem {
       z-index: 1000;
     `;
     document.body.appendChild(this.canvas);
-    
+
     // Get rendering context
     this.ctx = this.canvas.getContext('2d');
-    this.gl = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
-    
+    this.gl =
+      this.canvas.getContext('webgl') ||
+      this.canvas.getContext('experimental-webgl');
+
     // Set canvas size
     this.resizeCanvas();
     window.addEventListener('resize', this.resizeCanvas.bind(this));
@@ -596,7 +637,7 @@ export class VisualEffectsSystem {
     if (!this.effectsState.effectsEnabled) {
       return null;
     }
-    
+
     const effect = {
       id: `effect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type: type,
@@ -604,14 +645,14 @@ export class VisualEffectsSystem {
       options: options,
       startTime: Date.now(),
       duration: options.duration || this.effectsConfig.effectLifetime,
-      active: true
+      active: true,
     };
-    
+
     this.effectsState.activeEffects.set(effect.id, effect);
-    
+
     // Create effect-specific implementation
     this.implementEffect(effect);
-    
+
     return effect;
   }
 
@@ -658,21 +699,21 @@ export class VisualEffectsSystem {
       particleCount: 30,
       lifetime: 1000,
       spread: 360,
-      speed: 100
+      speed: 100,
     });
-    
+
     // Create smoke particles
     this.createParticleSystem('smoke', effect.position, {
       particleCount: 20,
       lifetime: 2000,
       spread: 360,
-      speed: 50
+      speed: 50,
     });
-    
+
     // Screen shake
     this.createScreenEffect('screen_shake', {
       intensity: 0.5,
-      duration: 300
+      duration: 300,
     });
   }
 
@@ -685,15 +726,15 @@ export class VisualEffectsSystem {
       particleCount: 15,
       lifetime: 800,
       spread: 180,
-      speed: 80
+      speed: 80,
     });
-    
+
     // Create sparkle particles
     this.createParticleSystem('sparkle', effect.position, {
       particleCount: 10,
       lifetime: 600,
       spread: 360,
-      speed: 30
+      speed: 30,
     });
   }
 
@@ -703,13 +744,13 @@ export class VisualEffectsSystem {
   createLightningEffect(effect) {
     // Create lightning bolt
     this.createLightningBolt(effect.position, effect.options.target);
-    
+
     // Create sparkle particles
     this.createParticleSystem('sparkle', effect.position, {
       particleCount: 20,
       lifetime: 500,
       spread: 360,
-      speed: 40
+      speed: 40,
     });
   }
 
@@ -722,7 +763,7 @@ export class VisualEffectsSystem {
       particleCount: 12,
       lifetime: 1200,
       spread: 180,
-      speed: 60
+      speed: 60,
     });
   }
 
@@ -735,7 +776,7 @@ export class VisualEffectsSystem {
       particleCount: 25,
       lifetime: 3000,
       spread: 360,
-      speed: 20
+      speed: 20,
     });
   }
 
@@ -748,7 +789,7 @@ export class VisualEffectsSystem {
       particleCount: 20,
       lifetime: 1500,
       spread: 360,
-      speed: 30
+      speed: 30,
     });
   }
 
@@ -761,7 +802,7 @@ export class VisualEffectsSystem {
       particleCount: 15,
       lifetime: 2000,
       spread: 360,
-      speed: 10
+      speed: 10,
     });
   }
 
@@ -774,7 +815,7 @@ export class VisualEffectsSystem {
       particleCount: 30,
       lifetime: 1000,
       spread: 360,
-      speed: 50
+      speed: 50,
     });
   }
 
@@ -785,13 +826,13 @@ export class VisualEffectsSystem {
     if (!this.effectsState.particlesEnabled) {
       return null;
     }
-    
+
     const system = this.particleSystems[type];
     if (!system) {
       this.logger.warn(`Unknown particle system type: ${type}`);
       return null;
     }
-    
+
     const particleSystem = {
       id: `particles_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type: type,
@@ -800,17 +841,17 @@ export class VisualEffectsSystem {
       startTime: Date.now(),
       duration: options.lifetime || system.lifetime,
       active: true,
-      config: { ...system, ...options }
+      config: { ...system, ...options },
     };
-    
+
     // Create particles
     for (let i = 0; i < particleSystem.config.particleCount; i++) {
       const particle = this.createParticle(particleSystem);
       particleSystem.particles.push(particle);
     }
-    
+
     this.effectsState.particleSystems.set(particleSystem.id, particleSystem);
-    
+
     return particleSystem;
   }
 
@@ -821,18 +862,19 @@ export class VisualEffectsSystem {
     const config = system.config;
     const angle = (config.spread / 360) * Math.PI * 2 * Math.random();
     const speed = config.velocity.variance * Math.random() + config.velocity.y;
-    
+
     return {
       position: { ...system.position },
       velocity: {
         x: Math.cos(angle) * speed,
-        y: Math.sin(angle) * speed
+        y: Math.sin(angle) * speed,
       },
-      size: config.size.min + Math.random() * (config.size.max - config.size.min),
+      size:
+        config.size.min + Math.random() * (config.size.max - config.size.min),
       color: config.color,
       alpha: 1.0,
       lifetime: config.lifetime,
-      age: 0
+      age: 0,
     };
   }
 
@@ -846,11 +888,11 @@ export class VisualEffectsSystem {
       options: options,
       startTime: Date.now(),
       duration: options.duration || 1000,
-      active: true
+      active: true,
     };
-    
+
     this.effectsState.screenEffects.set(effect.id, effect);
-    
+
     return effect;
   }
 
@@ -863,7 +905,7 @@ export class VisualEffectsSystem {
       this.logger.warn(`Unknown animation type: ${animationType}`);
       return null;
     }
-    
+
     const anim = {
       id: `anim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       target: target,
@@ -873,11 +915,11 @@ export class VisualEffectsSystem {
       startTime: Date.now(),
       duration: options.duration || animation.duration,
       active: true,
-      progress: 0
+      progress: 0,
     };
-    
+
     this.effectsState.animations.set(anim.id, anim);
-    
+
     return anim;
   }
 
@@ -886,7 +928,7 @@ export class VisualEffectsSystem {
    */
   updateActiveEffects(deltaTime) {
     const now = Date.now();
-    
+
     for (const [id, effect] of this.effectsState.activeEffects) {
       if (now - effect.startTime > effect.duration) {
         effect.active = false;
@@ -900,21 +942,23 @@ export class VisualEffectsSystem {
    */
   updateParticleSystems(deltaTime) {
     const now = Date.now();
-    
+
     for (const [id, system] of this.effectsState.particleSystems) {
       if (now - system.startTime > system.duration) {
         system.active = false;
         this.effectsState.particleSystems.delete(id);
         continue;
       }
-      
+
       // Update particles
-      system.particles.forEach(particle => {
+      system.particles.forEach((particle) => {
         this.updateParticle(particle, deltaTime, system.config);
       });
-      
+
       // Remove dead particles
-      system.particles = system.particles.filter(particle => particle.age < particle.lifetime);
+      system.particles = system.particles.filter(
+        (particle) => particle.age < particle.lifetime
+      );
     }
   }
 
@@ -923,14 +967,14 @@ export class VisualEffectsSystem {
    */
   updateParticle(particle, deltaTime, config) {
     particle.age += deltaTime;
-    particle.alpha = 1 - (particle.age / particle.lifetime);
-    
+    particle.alpha = 1 - particle.age / particle.lifetime;
+
     // Update position
-    particle.position.x += particle.velocity.x * deltaTime / 1000;
-    particle.position.y += particle.velocity.y * deltaTime / 1000;
-    
+    particle.position.x += (particle.velocity.x * deltaTime) / 1000;
+    particle.position.y += (particle.velocity.y * deltaTime) / 1000;
+
     // Apply gravity
-    particle.velocity.y += config.gravity * deltaTime / 1000;
+    particle.velocity.y += (config.gravity * deltaTime) / 1000;
   }
 
   /**
@@ -938,17 +982,17 @@ export class VisualEffectsSystem {
    */
   updateAnimations(deltaTime) {
     const now = Date.now();
-    
+
     for (const [id, animation] of this.effectsState.animations) {
       if (now - animation.startTime > animation.duration) {
         animation.active = false;
         this.effectsState.animations.delete(id);
         continue;
       }
-      
+
       // Update animation progress
       animation.progress = (now - animation.startTime) / animation.duration;
-      
+
       // Apply animation to target
       this.applyAnimation(animation);
     }
@@ -961,7 +1005,7 @@ export class VisualEffectsSystem {
     const target = animation.target;
     const progress = animation.progress;
     const config = animation.config;
-    
+
     if (config.properties) {
       // Apply property animations
       Object.entries(config.properties).forEach(([property, value]) => {
@@ -970,7 +1014,7 @@ export class VisualEffectsSystem {
         }
       });
     }
-    
+
     if (config.frames) {
       // Apply frame-based animations
       const frameIndex = Math.floor(progress * config.frames);
@@ -997,7 +1041,7 @@ export class VisualEffectsSystem {
     if (!this.weather.type || this.weather.type === 'none') {
       return;
     }
-    
+
     const now = Date.now();
     if (now - this.weather.startTime > this.weather.duration) {
       this.stopWeather();
@@ -1009,14 +1053,14 @@ export class VisualEffectsSystem {
    */
   updateScreenEffects(deltaTime) {
     const now = Date.now();
-    
+
     for (const [id, effect] of this.effectsState.screenEffects) {
       if (now - effect.startTime > effect.duration) {
         effect.active = false;
         this.effectsState.screenEffects.delete(id);
         continue;
       }
-      
+
       // Apply screen effect
       this.applyScreenEffect(effect);
     }
@@ -1027,14 +1071,14 @@ export class VisualEffectsSystem {
    */
   updateUIAnimations(deltaTime) {
     const now = Date.now();
-    
+
     for (const [id, animation] of this.effectsState.uiAnimations) {
       if (now - animation.startTime > animation.duration) {
         animation.active = false;
         this.effectsState.uiAnimations.delete(id);
         continue;
       }
-      
+
       // Apply UI animation
       this.applyUIAnimation(animation);
     }
@@ -1045,16 +1089,16 @@ export class VisualEffectsSystem {
    */
   render() {
     if (!this.ctx) return;
-    
+
     // Clear canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
+
     // Render particle systems
     this.renderParticleSystems();
-    
+
     // Render active effects
     this.renderActiveEffects();
-    
+
     // Render screen effects
     this.renderScreenEffects();
   }
@@ -1065,8 +1109,8 @@ export class VisualEffectsSystem {
   renderParticleSystems() {
     for (const [id, system] of this.effectsState.particleSystems) {
       if (!system.active) continue;
-      
-      system.particles.forEach(particle => {
+
+      system.particles.forEach((particle) => {
         this.renderParticle(particle);
       });
     }
@@ -1080,7 +1124,13 @@ export class VisualEffectsSystem {
     this.ctx.globalAlpha = particle.alpha;
     this.ctx.fillStyle = particle.color;
     this.ctx.beginPath();
-    this.ctx.arc(particle.position.x, particle.position.y, particle.size, 0, Math.PI * 2);
+    this.ctx.arc(
+      particle.position.x,
+      particle.position.y,
+      particle.size,
+      0,
+      Math.PI * 2
+    );
     this.ctx.fill();
     this.ctx.restore();
   }
@@ -1091,7 +1141,7 @@ export class VisualEffectsSystem {
   renderActiveEffects() {
     for (const [id, effect] of this.effectsState.activeEffects) {
       if (!effect.active) continue;
-      
+
       this.renderEffect(effect);
     }
   }
@@ -1122,7 +1172,7 @@ export class VisualEffectsSystem {
     const age = Date.now() - effect.startTime;
     const progress = age / effect.duration;
     const size = 50 * (1 - progress);
-    
+
     this.ctx.save();
     this.ctx.globalAlpha = 1 - progress;
     this.ctx.fillStyle = '#ff4500';
@@ -1139,7 +1189,7 @@ export class VisualEffectsSystem {
     const age = Date.now() - effect.startTime;
     const progress = age / effect.duration;
     const size = 20 * (1 - progress);
-    
+
     this.ctx.save();
     this.ctx.globalAlpha = 1 - progress;
     this.ctx.fillStyle = '#ff4500';
@@ -1169,7 +1219,7 @@ export class VisualEffectsSystem {
   renderScreenEffects() {
     for (const [id, effect] of this.effectsState.screenEffects) {
       if (!effect.active) continue;
-      
+
       this.renderScreenEffect(effect);
     }
   }
@@ -1198,10 +1248,10 @@ export class VisualEffectsSystem {
     const age = Date.now() - effect.startTime;
     const progress = age / effect.duration;
     const intensity = effect.options.intensity * (1 - progress);
-    
+
     const shakeX = (Math.random() - 0.5) * intensity * 10;
     const shakeY = (Math.random() - 0.5) * intensity * 10;
-    
+
     this.canvas.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
   }
 
@@ -1212,7 +1262,7 @@ export class VisualEffectsSystem {
     const age = Date.now() - effect.startTime;
     const progress = age / effect.duration;
     const alpha = (1 - progress) * 0.5;
-    
+
     this.ctx.save();
     this.ctx.globalAlpha = alpha;
     this.ctx.fillStyle = '#ffffff';
@@ -1233,7 +1283,7 @@ export class VisualEffectsSystem {
    */
   handleSpellCast(data) {
     const { spell, position, target } = data;
-    
+
     switch (spell.type) {
       case 'fireball':
         this.createEffect(this.effectTypes.FIREBALL, position, { target });
@@ -1255,20 +1305,20 @@ export class VisualEffectsSystem {
    */
   handleDamageDealt(data) {
     const { position, damage, type } = data;
-    
+
     // Create blood particles
     this.createParticleSystem('blood', position, {
       particleCount: Math.min(10, Math.floor(damage / 10)),
       lifetime: 1000,
       spread: 360,
-      speed: 40
+      speed: 40,
     });
-    
+
     // Screen shake for high damage
     if (damage > 50) {
       this.createScreenEffect('screen_shake', {
         intensity: 0.3,
-        duration: 200
+        duration: 200,
       });
     }
   }
@@ -1278,13 +1328,13 @@ export class VisualEffectsSystem {
    */
   handleHealing(data) {
     const { position, amount } = data;
-    
+
     // Create healing particles
     this.createParticleSystem('healing', position, {
       particleCount: Math.min(15, Math.floor(amount / 20)),
       lifetime: 1500,
       spread: 360,
-      speed: 30
+      speed: 30,
     });
   }
 
@@ -1293,10 +1343,10 @@ export class VisualEffectsSystem {
    */
   handleExplosion(data) {
     const { position, radius } = data;
-    
+
     this.createEffect(this.effectTypes.EXPLOSION, position, {
       radius: radius,
-      duration: 1000
+      duration: 1000,
     });
   }
 
@@ -1305,7 +1355,7 @@ export class VisualEffectsSystem {
    */
   handleWeatherChange(data) {
     const { type, intensity, duration } = data;
-    
+
     this.startWeather(type, intensity, duration);
   }
 
@@ -1314,7 +1364,7 @@ export class VisualEffectsSystem {
    */
   handleAreaEnter(data) {
     const { area } = data;
-    
+
     // Set area-specific effects
     if (area.weather) {
       this.startWeather(area.weather.type, area.weather.intensity, 0);
@@ -1326,7 +1376,7 @@ export class VisualEffectsSystem {
    */
   handleElementShow(data) {
     const { element, animation } = data;
-    
+
     this.createUIAnimation(element, animation || 'fadeIn');
   }
 
@@ -1335,7 +1385,7 @@ export class VisualEffectsSystem {
    */
   handleElementHide(data) {
     const { element, animation } = data;
-    
+
     this.createUIAnimation(element, animation || 'fadeOut');
   }
 
@@ -1344,7 +1394,7 @@ export class VisualEffectsSystem {
    */
   handleButtonClick(data) {
     const { button } = data;
-    
+
     this.createUIAnimation(button, 'buttonClick');
   }
 
@@ -1353,10 +1403,10 @@ export class VisualEffectsSystem {
    */
   handleScreenShake(data) {
     const { intensity, duration } = data;
-    
+
     this.createScreenEffect('screen_shake', {
       intensity: intensity,
-      duration: duration
+      duration: duration,
     });
   }
 
@@ -1365,10 +1415,10 @@ export class VisualEffectsSystem {
    */
   handleScreenFlash(data) {
     const { color, duration } = data;
-    
+
     this.createScreenEffect('flash', {
       color: color,
-      duration: duration
+      duration: duration,
     });
   }
 
@@ -1377,10 +1427,10 @@ export class VisualEffectsSystem {
    */
   handleScreenBlur(data) {
     const { intensity, duration } = data;
-    
+
     this.createScreenEffect('blur', {
       intensity: intensity,
-      duration: duration
+      duration: duration,
     });
   }
 
@@ -1392,7 +1442,7 @@ export class VisualEffectsSystem {
     this.weather.intensity = intensity;
     this.weather.duration = duration;
     this.weather.startTime = Date.now();
-    
+
     // Create weather particles
     this.createWeatherParticles(type, intensity);
   }
@@ -1404,7 +1454,7 @@ export class VisualEffectsSystem {
     this.weather.type = 'none';
     this.weather.intensity = 0;
     this.weather.duration = 0;
-    
+
     // Clear weather particles
     this.clearWeatherParticles();
   }
@@ -1414,18 +1464,18 @@ export class VisualEffectsSystem {
    */
   createWeatherParticles(type, intensity) {
     const particleCount = Math.floor(intensity * 50);
-    
+
     for (let i = 0; i < particleCount; i++) {
       const position = {
         x: Math.random() * this.canvas.width,
-        y: -10
+        y: -10,
       };
-      
+
       this.createParticleSystem(type, position, {
         particleCount: 1,
         lifetime: 5000,
         spread: 0,
-        speed: 50
+        speed: 50,
       });
     }
   }
@@ -1477,10 +1527,10 @@ export class VisualEffectsSystem {
     const age = Date.now() - effect.startTime;
     const progress = age / effect.duration;
     const intensity = effect.options.intensity * (1 - progress);
-    
+
     const shakeX = (Math.random() - 0.5) * intensity * 10;
     const shakeY = (Math.random() - 0.5) * intensity * 10;
-    
+
     this.canvas.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
   }
 
@@ -1491,7 +1541,7 @@ export class VisualEffectsSystem {
     const age = Date.now() - effect.startTime;
     const progress = age / effect.duration;
     const alpha = (1 - progress) * 0.5;
-    
+
     this.ctx.save();
     this.ctx.globalAlpha = alpha;
     this.ctx.fillStyle = effect.options.color || '#ffffff';
@@ -1543,7 +1593,7 @@ export class VisualEffectsSystem {
    */
   setPerformanceLevel(level) {
     this.effectsState.performanceLevel = level;
-    
+
     const settings = this.effectsConfig.performanceLevels[level];
     if (settings) {
       this.effectsState.effectsEnabled = settings.effects;

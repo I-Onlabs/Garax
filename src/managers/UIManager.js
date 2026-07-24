@@ -25,7 +25,7 @@ export class UIManager {
       settings: null,
       hud: null, // Placeholder for HUD
       menu: null, // Placeholder for Main Menu
-      gameOver: null // Placeholder for Game Over Screen
+      gameOver: null, // Placeholder for Game Over Screen
     };
 
     // State
@@ -56,7 +56,7 @@ export class UIManager {
     // Initialize Settings UI
     this.components.settings = new SettingsUI({
       eventBus: this.eventBus,
-      logger: this.logger
+      logger: this.logger,
     });
 
     this.setupEventHandlers();

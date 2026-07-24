@@ -535,7 +535,9 @@ describe('GameManager', () => {
 
       // Verify cleanup attempts to remove handlers (GameManager has 8 handlers registered)
       // Note: Some handlers may be removed multiple times due to EventBus implementation
-      expect(offSpy.mock.calls.length + removeListenerSpy.mock.calls.length).toBeGreaterThanOrEqual(8);
+      expect(
+        offSpy.mock.calls.length + removeListenerSpy.mock.calls.length
+      ).toBeGreaterThanOrEqual(8);
     });
   });
 

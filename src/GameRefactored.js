@@ -245,13 +245,13 @@ export class GameRefactored {
     this.ui.settings = new SettingsUI({
       eventBus: this.eventBus,
       logger: this.logger,
-      container: document.body
+      container: document.body,
     });
 
     // Audio System
     this.systems.audio = new AudioSystem({
       eventBus: this.eventBus,
-      logger: this.logger
+      logger: this.logger,
     });
 
     // Set up UI and audio integration
@@ -266,7 +266,9 @@ export class GameRefactored {
     this.eventBus.on('settings:changed', (data) => {
       if (data.path.startsWith('audio.')) {
         // Audio settings are handled by AudioSystem directly
-        this.logger.debug(`Audio setting changed: ${data.path} = ${data.value}`);
+        this.logger.debug(
+          `Audio setting changed: ${data.path} = ${data.value}`
+        );
       }
     });
 
@@ -346,7 +348,7 @@ export class GameRefactored {
       this.gameState.activePowerUps.set(data.type, {
         ...data,
         startTime: Date.now(),
-        duration: data.duration || 10000 // 10 seconds default
+        duration: data.duration || 10000, // 10 seconds default
       });
       this.updateUI('powerup', data);
     });
@@ -375,7 +377,7 @@ export class GameRefactored {
     this.eventBus.emit('ui:update', {
       type,
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -384,56 +386,64 @@ export class GameRefactored {
    */
   handleConsoleCommand(data) {
     const { command, args } = data;
-    
+
     switch (command) {
       case 'setScore':
         this.gameState.score = parseInt(args[0]) || 0;
-        this.eventBus.emit('player:scoreChanged', { score: this.gameState.score });
+        this.eventBus.emit('player:scoreChanged', {
+          score: this.gameState.score,
+        });
         this.logger.info(`Console: Score set to ${this.gameState.score}`);
         break;
-        
+
       case 'setLevel':
         this.gameState.currentLevel = parseInt(args[0]) || 1;
-        this.eventBus.emit('player:levelCompleted', { level: this.gameState.currentLevel });
-        this.logger.info(`Console: Level set to ${this.gameState.currentLevel}`);
+        this.eventBus.emit('player:levelCompleted', {
+          level: this.gameState.currentLevel,
+        });
+        this.logger.info(
+          `Console: Level set to ${this.gameState.currentLevel}`
+        );
         break;
-        
-      case 'addPowerUp':
+
+      case 'addPowerUp': {
         const powerUpType = args[0] || 'speed';
-        this.eventBus.emit('powerup:activated', { 
-          type: powerUpType, 
-          duration: 10000 
+        this.eventBus.emit('powerup:activated', {
+          type: powerUpType,
+          duration: 10000,
         });
         this.logger.info(`Console: Power-up ${powerUpType} added`);
         break;
-        
-      case 'unlockAchievement':
+      }
+
+      case 'unlockAchievement': {
         const achievementName = args[0] || 'test';
-        this.eventBus.emit('achievement:unlocked', { 
+        this.eventBus.emit('achievement:unlocked', {
           name: achievementName,
-          description: 'Console unlocked achievement'
+          description: 'Console unlocked achievement',
         });
         this.logger.info(`Console: Achievement ${achievementName} unlocked`);
         break;
-        
+      }
+
       case 'toggleSettings':
         if (this.ui.settings) {
           this.ui.settings.toggle();
         }
         break;
-        
+
       case 'muteAudio':
         if (this.systems.audio) {
           this.systems.audio.muteAll();
         }
         break;
-        
+
       case 'unmuteAudio':
         if (this.systems.audio) {
           this.systems.audio.unmuteAll();
         }
         break;
-        
+
       default:
         this.logger.warn(`Console: Unknown command: ${command}`);
     }
@@ -444,33 +454,33 @@ export class GameRefactored {
    */
   handlePlayAction(data) {
     const { action, params } = data;
-    
+
     switch (action) {
       case 'jump':
         this.eventBus.emit('player:jump', params);
         break;
-        
+
       case 'collect':
         this.eventBus.emit('player:collect', params);
         break;
-        
+
       case 'damage':
         this.eventBus.emit('player:damage', params);
         break;
-        
+
       case 'pause':
         this.pause();
         break;
-        
+
       case 'resume':
         this.resume();
         break;
-        
+
       case 'restart':
         this.stop();
         this.start();
         break;
-        
+
       default:
         this.logger.warn(`Play: Unknown action: ${action}`);
     }
@@ -775,14 +785,18 @@ export class GameRefactored {
    * Get performance report
    */
   getPerformanceReport() {
-    return this.performanceMonitor ? this.performanceMonitor.getPerformanceReport() : null;
+    return this.performanceMonitor
+      ? this.performanceMonitor.getPerformanceReport()
+      : null;
   }
 
   /**
    * Get mobile controls state
    */
   getMobileControlsState() {
-    return this.inputManager ? this.inputManager.getMobileControlsState() : null;
+    return this.inputManager
+      ? this.inputManager.getMobileControlsState()
+      : null;
   }
 
   /**
@@ -812,13 +826,13 @@ export class GameRefactored {
   getActivePowerUps() {
     const now = Date.now();
     const active = [];
-    
+
     for (const [type, powerUp] of this.gameState.activePowerUps) {
       if (now - powerUp.startTime < powerUp.duration) {
         active.push({
           type,
           ...powerUp,
-          remainingTime: powerUp.duration - (now - powerUp.startTime)
+          remainingTime: powerUp.duration - (now - powerUp.startTime),
         });
       } else {
         // Power-up expired
@@ -826,7 +840,7 @@ export class GameRefactored {
         this.eventBus.emit('powerup:expired', { type });
       }
     }
-    
+
     return active;
   }
 
@@ -853,10 +867,16 @@ export class GameRefactored {
       level: this.gameState.currentLevel,
       isRunning: this.gameState.isRunning,
       isPaused: this.gameState.isPaused,
-      gameTime: this.gameState.startTime ? Date.now() - this.gameState.startTime : 0,
+      gameTime: this.gameState.startTime
+        ? Date.now() - this.gameState.startTime
+        : 0,
       activePowerUps: this.getActivePowerUps(),
-      achievements: this.managers.achievements ? this.managers.achievements.getAllAchievements() : [],
-      challenges: this.managers.dailyChallenges ? this.managers.dailyChallenges.getActiveChallenges() : []
+      achievements: this.managers.achievements
+        ? this.managers.achievements.getAllAchievements()
+        : [],
+      challenges: this.managers.dailyChallenges
+        ? this.managers.dailyChallenges.getActiveChallenges()
+        : [],
     };
   }
 

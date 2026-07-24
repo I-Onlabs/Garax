@@ -634,10 +634,10 @@ describe('GameRefactored', () => {
   describe('Configuration Validation', () => {
     test('should coerce configuration values to booleans', () => {
       const configWithStrings = {
-        debug: 'invalid',  // truthy string -> true
-        enableAchievements: '',  // falsy string -> false
-        enableDailyChallenges: 0,  // falsy number -> false
-        enableAccessibility: 1,  // truthy number -> true
+        debug: 'invalid', // truthy string -> true
+        enableAchievements: '', // falsy string -> false
+        enableDailyChallenges: 0, // falsy number -> false
+        enableAccessibility: 1, // truthy number -> true
       };
 
       expect(() => {
@@ -646,10 +646,10 @@ describe('GameRefactored', () => {
 
       // Should coerce values to boolean
       const gameWithCoercedConfig = new GameRefactored(configWithStrings);
-      expect(gameWithCoercedConfig.config.debug).toBe(true);  // Boolean('invalid') = true
-      expect(gameWithCoercedConfig.config.enableAchievements).toBe(false);  // Boolean('') = false
-      expect(gameWithCoercedConfig.config.enableDailyChallenges).toBe(false);  // Boolean(0) = false
-      expect(gameWithCoercedConfig.config.enableAccessibility).toBe(true);  // Boolean(1) = true
+      expect(gameWithCoercedConfig.config.debug).toBe(true); // Boolean('invalid') = true
+      expect(gameWithCoercedConfig.config.enableAchievements).toBe(false); // Boolean('') = false
+      expect(gameWithCoercedConfig.config.enableDailyChallenges).toBe(false); // Boolean(0) = false
+      expect(gameWithCoercedConfig.config.enableAccessibility).toBe(true); // Boolean(1) = true
     });
 
     test('should handle missing configuration gracefully', () => {

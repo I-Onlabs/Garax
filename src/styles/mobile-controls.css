@@ -173,26 +173,26 @@
   .mobile-controls {
     height: 150px;
   }
-  
+
   .virtual-joystick {
     width: 100px;
     height: 100px;
     left: 15px;
     bottom: 15px;
   }
-  
+
   .action-buttons {
     right: 15px;
     bottom: 15px;
     gap: 8px;
   }
-  
+
   .action-button {
     width: 50px;
     height: 50px;
     font-size: 10px;
   }
-  
+
   .menu-button,
   .pause-button {
     width: 50px;
@@ -200,11 +200,11 @@
     font-size: 16px;
     top: 15px;
   }
-  
+
   .menu-button {
     right: 15px;
   }
-  
+
   .pause-button {
     left: 15px;
   }
@@ -214,18 +214,18 @@
   .mobile-controls {
     height: 180px;
   }
-  
+
   .virtual-joystick {
     width: 140px;
     height: 140px;
   }
-  
+
   .action-button {
     width: 70px;
     height: 70px;
     font-size: 14px;
   }
-  
+
   .menu-button,
   .pause-button {
     width: 70px;
@@ -239,24 +239,24 @@
   .mobile-controls {
     height: 120px;
   }
-  
+
   .virtual-joystick {
     left: 10px;
     bottom: 10px;
   }
-  
+
   .action-buttons {
     right: 10px;
     bottom: 10px;
     flex-direction: row;
     gap: 8px;
   }
-  
+
   .menu-button {
     right: 10px;
     top: 10px;
   }
-  
+
   .pause-button {
     left: 10px;
     top: 10px;
@@ -279,13 +279,13 @@
     background: rgba(50, 50, 50, 0.8);
     border-color: rgba(255, 255, 255, 0.3);
   }
-  
+
   .action-button {
     background: rgba(50, 50, 50, 0.8);
     border-color: rgba(255, 255, 255, 0.3);
     color: white;
   }
-  
+
   .menu-button,
   .pause-button {
     background: rgba(50, 50, 50, 0.8);
@@ -363,7 +363,7 @@
   .mobile-controls {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .action-button,
   .menu-button,
   .pause-button {
@@ -387,7 +387,7 @@
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
-  
+
   .menu-button:hover,
   .pause-button:hover {
     transform: scale(1.05);
@@ -473,7 +473,8 @@
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {

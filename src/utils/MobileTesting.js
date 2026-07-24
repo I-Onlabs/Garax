@@ -88,9 +88,13 @@ export class MobileTesting {
    */
   detectMobileDevice() {
     const userAgent = navigator.userAgent;
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        userAgent
+      );
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const isTablet = /iPad|Android/i.test(userAgent) && 'ontouchstart' in window;
+    const isTablet =
+      /iPad|Android/i.test(userAgent) && 'ontouchstart' in window;
 
     this.testResults.device = {
       isMobile,
@@ -102,12 +106,14 @@ export class MobileTesting {
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,
       pixelRatio: window.devicePixelRatio || 1,
-      orientation: window.innerHeight > window.innerWidth ? 'portrait' : 'landscape',
+      orientation:
+        window.innerHeight > window.innerWidth ? 'portrait' : 'landscape',
       maxTouchPoints: navigator.maxTouchPoints || 0,
       hasVibration: 'vibrate' in navigator,
       hasHaptics: 'vibrate' in navigator,
       hasGeolocation: 'geolocation' in navigator,
-      hasCamera: 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices,
+      hasCamera:
+        'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices,
       hasAccelerometer: 'DeviceMotionEvent' in window,
       hasGyroscope: 'DeviceOrientationEvent' in window,
     };
@@ -185,7 +191,10 @@ export class MobileTesting {
    * Set up accessibility test listeners
    */
   setupAccessibilityTestListeners() {
-    this.testListeners.set('accessibility:test', this.testAccessibility.bind(this));
+    this.testListeners.set(
+      'accessibility:test',
+      this.testAccessibility.bind(this)
+    );
   }
 
   /**
@@ -267,15 +276,25 @@ export class MobileTesting {
    * Test all gestures
    */
   async testAllGestures() {
-    const gestureNames = ['tap', 'doubleTap', 'longPress', 'swipe', 'pinch', 'rotate'];
-    
+    const gestureNames = [
+      'tap',
+      'doubleTap',
+      'longPress',
+      'swipe',
+      'pinch',
+      'rotate',
+    ];
+
     for (const gestureName of gestureNames) {
       try {
         const result = await this.testGesture(gestureName);
         this.testResults.gestures.set(gestureName, result);
       } catch (error) {
         this.logger.error(`Error testing gesture ${gestureName}:`, error);
-        this.testResults.gestures.set(gestureName, { success: false, error: error.message });
+        this.testResults.gestures.set(gestureName, {
+          success: false,
+          error: error.message,
+        });
       }
     }
   }
@@ -298,7 +317,7 @@ export class MobileTesting {
   async testTapGesture() {
     return new Promise((resolve) => {
       let tapDetected = false;
-      let startTime = Date.now();
+      const startTime = Date.now();
 
       const handleTap = () => {
         tapDetected = true;
@@ -334,7 +353,7 @@ export class MobileTesting {
     return new Promise((resolve) => {
       let tapCount = 0;
       let lastTapTime = 0;
-      let startTime = Date.now();
+      const startTime = Date.now();
 
       const handleTap = () => {
         const currentTime = Date.now();
@@ -345,7 +364,7 @@ export class MobileTesting {
         } else if (tapCount === 2) {
           const timeDiff = currentTime - lastTapTime;
           const success = timeDiff < 500; // Double tap within 500ms
-          
+
           document.removeEventListener('touchstart', handleTap);
           resolve({
             success,
@@ -384,7 +403,7 @@ export class MobileTesting {
       const handleTouchEnd = () => {
         const duration = Date.now() - startTime;
         const success = duration >= 500; // Long press >= 500ms
-        
+
         if (success) {
           longPressDetected = true;
           resolve({
@@ -402,7 +421,7 @@ export class MobileTesting {
       setTimeout(() => {
         document.removeEventListener('touchstart', handleTouchStart);
         document.removeEventListener('touchend', handleTouchEnd);
-        
+
         if (!longPressDetected) {
           resolve({
             success: false,
@@ -433,15 +452,15 @@ export class MobileTesting {
         const deltaX = endTouch.clientX - startTouch.clientX;
         const deltaY = endTouch.clientY - startTouch.clientY;
         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        
+
         const success = distance >= 50; // Swipe distance >= 50px
-        
+
         if (success) {
           swipeDetected = true;
           resolve({
             success: true,
             distance,
-            direction: Math.atan2(deltaY, deltaX) * 180 / Math.PI,
+            direction: (Math.atan2(deltaY, deltaX) * 180) / Math.PI,
             timestamp: Date.now(),
           });
         }
@@ -454,7 +473,7 @@ export class MobileTesting {
       setTimeout(() => {
         document.removeEventListener('touchstart', handleTouchStart);
         document.removeEventListener('touchend', handleTouchEnd);
-        
+
         if (!swipeDetected) {
           resolve({
             success: false,
@@ -483,11 +502,18 @@ export class MobileTesting {
       const handleTouchMove = (e) => {
         if (e.touches.length === 2 && startTouches.length === 2) {
           const currentTouches = Array.from(e.touches);
-          const startDistance = this.getDistance(startTouches[0], startTouches[1]);
-          const currentDistance = this.getDistance(currentTouches[0], currentTouches[1]);
+          const startDistance = this.getDistance(
+            startTouches[0],
+            startTouches[1]
+          );
+          const currentDistance = this.getDistance(
+            currentTouches[0],
+            currentTouches[1]
+          );
           const scale = currentDistance / startDistance;
-          
-          if (Math.abs(scale - 1) > 0.1) { // Pinch threshold
+
+          if (Math.abs(scale - 1) > 0.1) {
+            // Pinch threshold
             pinchDetected = true;
             resolve({
               success: true,
@@ -505,7 +531,7 @@ export class MobileTesting {
       setTimeout(() => {
         document.removeEventListener('touchstart', handleTouchStart);
         document.removeEventListener('touchmove', handleTouchMove);
-        
+
         if (!pinchDetected) {
           resolve({
             success: false,
@@ -535,14 +561,18 @@ export class MobileTesting {
         if (e.touches.length === 2 && startTouches.length === 2) {
           const currentTouches = Array.from(e.touches);
           const startAngle = this.getAngle(startTouches[0], startTouches[1]);
-          const currentAngle = this.getAngle(currentTouches[0], currentTouches[1]);
+          const currentAngle = this.getAngle(
+            currentTouches[0],
+            currentTouches[1]
+          );
           const rotation = currentAngle - startAngle;
-          
-          if (Math.abs(rotation) > 0.1) { // Rotation threshold
+
+          if (Math.abs(rotation) > 0.1) {
+            // Rotation threshold
             rotateDetected = true;
             resolve({
               success: true,
-              rotation: rotation * 180 / Math.PI,
+              rotation: (rotation * 180) / Math.PI,
               timestamp: Date.now(),
             });
           }
@@ -556,7 +586,7 @@ export class MobileTesting {
       setTimeout(() => {
         document.removeEventListener('touchstart', handleTouchStart);
         document.removeEventListener('touchmove', handleTouchMove);
-        
+
         if (!rotateDetected) {
           resolve({
             success: false,
@@ -572,15 +602,23 @@ export class MobileTesting {
    * Test all controls
    */
   async testAllControls() {
-    const controlNames = ['virtualJoystick', 'actionButtons', 'menuButton', 'pauseButton'];
-    
+    const controlNames = [
+      'virtualJoystick',
+      'actionButtons',
+      'menuButton',
+      'pauseButton',
+    ];
+
     for (const controlName of controlNames) {
       try {
         const result = await this.testControl(controlName);
         this.testResults.controls.set(controlName, result);
       } catch (error) {
         this.logger.error(`Error testing control ${controlName}:`, error);
-        this.testResults.controls.set(controlName, { success: false, error: error.message });
+        this.testResults.controls.set(controlName, {
+          success: false,
+          error: error.message,
+        });
       }
     }
   }
@@ -601,7 +639,10 @@ export class MobileTesting {
    * Test virtual joystick
    */
   async testVirtualJoystick() {
-    if (!this.inputManager || !this.inputManager.mobileUI.virtualJoystick.element) {
+    if (
+      !this.inputManager ||
+      !this.inputManager.mobileUI.virtualJoystick.element
+    ) {
       return {
         success: false,
         error: 'Virtual joystick not available',
@@ -611,7 +652,7 @@ export class MobileTesting {
 
     const joystick = this.inputManager.mobileUI.virtualJoystick;
     const rect = joystick.element.getBoundingClientRect();
-    
+
     return {
       success: true,
       position: {
@@ -637,7 +678,9 @@ export class MobileTesting {
       };
     }
 
-    const buttons = Array.from(this.inputManager.mobileUI.actionButtons.entries()).map(([id, button]) => {
+    const buttons = Array.from(
+      this.inputManager.mobileUI.actionButtons.entries()
+    ).map(([id, button]) => {
       const rect = button.getBoundingClientRect();
       return {
         id,
@@ -664,7 +707,7 @@ export class MobileTesting {
    */
   async testMenuButton() {
     const menuButton = document.querySelector('.menu-button');
-    
+
     if (!menuButton) {
       return {
         success: false,
@@ -674,7 +717,7 @@ export class MobileTesting {
     }
 
     const rect = menuButton.getBoundingClientRect();
-    
+
     return {
       success: true,
       position: {
@@ -693,7 +736,7 @@ export class MobileTesting {
    */
   async testPauseButton() {
     const pauseButton = document.querySelector('.pause-button');
-    
+
     if (!pauseButton) {
       return {
         success: false,
@@ -703,7 +746,7 @@ export class MobileTesting {
     }
 
     const rect = pauseButton.getBoundingClientRect();
-    
+
     return {
       success: true,
       position: {
@@ -731,7 +774,7 @@ export class MobileTesting {
 
     const metrics = this.performanceMonitor.getMetrics();
     const score = this.performanceMonitor.getPerformanceScore();
-    
+
     this.testResults.performance = {
       success: true,
       score,
@@ -759,11 +802,13 @@ export class MobileTesting {
     ];
 
     const results = await Promise.all(accessibilityTests);
-    
+
     this.testResults.accessibility = {
       success: true,
       tests: results,
-      overallScore: results.reduce((sum, test) => sum + (test.success ? 1 : 0), 0) / results.length,
+      overallScore:
+        results.reduce((sum, test) => sum + (test.success ? 1 : 0), 0) /
+        results.length,
       timestamp: Date.now(),
     };
 
@@ -776,7 +821,7 @@ export class MobileTesting {
   async testScreenReaderSupport() {
     const hasScreenReader = 'speechSynthesis' in window;
     const hasAriaSupport = document.querySelector('[aria-label]') !== null;
-    
+
     return {
       name: 'screenReader',
       success: hasScreenReader && hasAriaSupport,
@@ -794,7 +839,7 @@ export class MobileTesting {
     const focusableElements = document.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
-    
+
     return {
       name: 'keyboardNavigation',
       success: focusableElements.length > 0,
@@ -808,8 +853,9 @@ export class MobileTesting {
    * Test high contrast
    */
   async testHighContrast() {
-    const hasHighContrast = document.documentElement.classList.contains('high-contrast');
-    
+    const hasHighContrast =
+      document.documentElement.classList.contains('high-contrast');
+
     return {
       name: 'highContrast',
       success: true, // Always available
@@ -823,8 +869,11 @@ export class MobileTesting {
    * Test text scaling
    */
   async testTextScaling() {
-    const textScale = getComputedStyle(document.documentElement).getPropertyValue('--text-scale') || '1';
-    
+    const textScale =
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--text-scale'
+      ) || '1';
+
     return {
       name: 'textScaling',
       success: true, // Always available
@@ -892,7 +941,10 @@ export class MobileTesting {
    * Get angle between two touch points
    */
   getAngle(touch1, touch2) {
-    return Math.atan2(touch2.clientY - touch1.clientY, touch2.clientX - touch1.clientX);
+    return Math.atan2(
+      touch2.clientY - touch1.clientY,
+      touch2.clientX - touch1.clientX
+    );
   }
 
   /**

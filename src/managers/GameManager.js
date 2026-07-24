@@ -129,14 +129,8 @@ export class GameManager {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.off(
-      'player:scoreChanged',
-      this.handleScoreChange.bind(this)
-    );
-    this.eventBus.off(
-      'player:damaged',
-      this.handlePlayerDamaged.bind(this)
-    );
+    this.eventBus.off('player:scoreChanged', this.handleScoreChange.bind(this));
+    this.eventBus.off('player:damaged', this.handlePlayerDamaged.bind(this));
     this.eventBus.off(
       'player:itemCollected',
       this.handleItemCollected.bind(this)

@@ -35,7 +35,7 @@ export class AnalyticsSystem {
         errors: true,
         crashes: true,
         engagement: true,
-        retention: true
+        retention: true,
       },
       events: [],
       metrics: new Map(),
@@ -47,18 +47,18 @@ export class AnalyticsSystem {
         anonymize: true,
         retention: 90, // days
         gdprCompliant: true,
-        ccpaCompliant: true
+        ccpaCompliant: true,
       },
       endpoints: {
         analytics: 'https://analytics.example.com/api',
         errors: 'https://errors.example.com/api',
-        performance: 'https://performance.example.com/api'
+        performance: 'https://performance.example.com/api',
       },
       batchSize: 100,
       flushInterval: 30000, // 30 seconds
       maxRetries: 3,
       currentSession: null,
-      lastFlush: 0
+      lastFlush: 0,
     };
 
     // Analytics system configuration
@@ -73,20 +73,20 @@ export class AnalyticsSystem {
         performance: 'performance',
         error: 'error',
         crash: 'crash',
-        custom: 'custom'
+        custom: 'custom',
       },
       metricTypes: {
         counter: 'counter',
         gauge: 'gauge',
         histogram: 'histogram',
-        timer: 'timer'
+        timer: 'timer',
       },
       sessionTimeout: 30 * 60 * 1000, // 30 minutes
       heartbeatInterval: 60 * 1000, // 1 minute
       retryDelay: 1000, // 1 second
       maxRetryDelay: 30000, // 30 seconds
       compressionEnabled: true,
-      encryptionEnabled: false
+      encryptionEnabled: false,
     };
 
     // Initialize analytics system
@@ -107,19 +107,19 @@ export class AnalyticsSystem {
    */
   async initialize() {
     this.logger.info('Initializing AnalyticsSystem...');
-    
+
     // Check for consent
     await this.checkConsent();
-    
+
     // Initialize current session
     this.initializeCurrentSession();
-    
+
     // Start heartbeat
     this.startHeartbeat();
-    
+
     // Start flush timer
     this.startFlushTimer();
-    
+
     this.logger.info('AnalyticsSystem initialized successfully');
   }
 
@@ -128,16 +128,16 @@ export class AnalyticsSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up AnalyticsSystem...');
-    
+
     // Flush remaining events
     this.flushEvents();
-    
+
     // Stop heartbeat
     this.stopHeartbeat();
-    
+
     // Stop flush timer
     this.stopFlushTimer();
-    
+
     // Clear state
     this.analyticsState.events = [];
     this.analyticsState.metrics.clear();
@@ -145,10 +145,10 @@ export class AnalyticsSystem {
     this.analyticsState.users.clear();
     this.analyticsState.experiments.clear();
     this.analyticsState.featureFlags.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('AnalyticsSystem cleaned up');
   }
 
@@ -158,16 +158,16 @@ export class AnalyticsSystem {
   update(deltaTime, gameState) {
     // Update current session
     this.updateCurrentSession(deltaTime);
-    
+
     // Update metrics
     this.updateMetrics(deltaTime);
-    
+
     // Update experiments
     this.updateExperiments(deltaTime);
-    
+
     // Update feature flags
     this.updateFeatureFlags(deltaTime);
-    
+
     // Check for flush
     this.checkFlush(deltaTime);
   }
@@ -181,123 +181,123 @@ export class AnalyticsSystem {
       pageView: {
         name: 'Page View',
         description: 'User viewed a page',
-        properties: ['url', 'title', 'referrer', 'timestamp']
+        properties: ['url', 'title', 'referrer', 'timestamp'],
       },
       pageExit: {
         name: 'Page Exit',
         description: 'User left a page',
-        properties: ['url', 'timeOnPage', 'timestamp']
+        properties: ['url', 'timeOnPage', 'timestamp'],
       },
-      
+
       // User events
       userAction: {
         name: 'User Action',
         description: 'User performed an action',
-        properties: ['action', 'element', 'value', 'timestamp']
+        properties: ['action', 'element', 'value', 'timestamp'],
       },
       userClick: {
         name: 'User Click',
         description: 'User clicked an element',
-        properties: ['element', 'position', 'timestamp']
+        properties: ['element', 'position', 'timestamp'],
       },
       userHover: {
         name: 'User Hover',
         description: 'User hovered over an element',
-        properties: ['element', 'duration', 'timestamp']
+        properties: ['element', 'duration', 'timestamp'],
       },
       userScroll: {
         name: 'User Scroll',
         description: 'User scrolled the page',
-        properties: ['direction', 'position', 'timestamp']
+        properties: ['direction', 'position', 'timestamp'],
       },
-      
+
       // Game events
       gameStart: {
         name: 'Game Start',
         description: 'User started the game',
-        properties: ['gameMode', 'difficulty', 'timestamp']
+        properties: ['gameMode', 'difficulty', 'timestamp'],
       },
       gameEnd: {
         name: 'Game End',
         description: 'User ended the game',
-        properties: ['score', 'duration', 'reason', 'timestamp']
+        properties: ['score', 'duration', 'reason', 'timestamp'],
       },
       levelStart: {
         name: 'Level Start',
         description: 'User started a level',
-        properties: ['level', 'difficulty', 'timestamp']
+        properties: ['level', 'difficulty', 'timestamp'],
       },
       levelEnd: {
         name: 'Level End',
         description: 'User ended a level',
-        properties: ['level', 'score', 'duration', 'success', 'timestamp']
+        properties: ['level', 'score', 'duration', 'success', 'timestamp'],
       },
       playerDeath: {
         name: 'Player Death',
         description: 'Player died',
-        properties: ['level', 'cause', 'timeAlive', 'timestamp']
+        properties: ['level', 'cause', 'timeAlive', 'timestamp'],
       },
       itemPickup: {
         name: 'Item Pickup',
         description: 'Player picked up an item',
-        properties: ['item', 'rarity', 'value', 'timestamp']
+        properties: ['item', 'rarity', 'value', 'timestamp'],
       },
       skillUsed: {
         name: 'Skill Used',
         description: 'Player used a skill',
-        properties: ['skill', 'level', 'target', 'timestamp']
+        properties: ['skill', 'level', 'target', 'timestamp'],
       },
       tradeCompleted: {
         name: 'Trade Completed',
         description: 'Player completed a trade',
-        properties: ['partner', 'items', 'value', 'timestamp']
+        properties: ['partner', 'items', 'value', 'timestamp'],
       },
-      
+
       // Performance events
       performance: {
         name: 'Performance',
         description: 'Performance metrics',
-        properties: ['metric', 'value', 'unit', 'timestamp']
+        properties: ['metric', 'value', 'unit', 'timestamp'],
       },
       frameRate: {
         name: 'Frame Rate',
         description: 'Frame rate measurement',
-        properties: ['fps', 'timestamp']
+        properties: ['fps', 'timestamp'],
       },
       memoryUsage: {
         name: 'Memory Usage',
         description: 'Memory usage measurement',
-        properties: ['used', 'total', 'percentage', 'timestamp']
+        properties: ['used', 'total', 'percentage', 'timestamp'],
       },
       loadTime: {
         name: 'Load Time',
         description: 'Load time measurement',
-        properties: ['duration', 'resource', 'timestamp']
+        properties: ['duration', 'resource', 'timestamp'],
       },
-      
+
       // Error events
       error: {
         name: 'Error',
         description: 'Application error',
-        properties: ['message', 'stack', 'severity', 'timestamp']
+        properties: ['message', 'stack', 'severity', 'timestamp'],
       },
       crash: {
         name: 'Crash',
         description: 'Application crash',
-        properties: ['reason', 'stack', 'timestamp']
+        properties: ['reason', 'stack', 'timestamp'],
       },
       warning: {
         name: 'Warning',
         description: 'Application warning',
-        properties: ['message', 'context', 'timestamp']
+        properties: ['message', 'context', 'timestamp'],
       },
-      
+
       // Custom events
       custom: {
         name: 'Custom',
         description: 'Custom event',
-        properties: ['name', 'data', 'timestamp']
-      }
+        properties: ['name', 'data', 'timestamp'],
+      },
     };
   }
 
@@ -311,27 +311,27 @@ export class AnalyticsSystem {
       activeUsers: { type: 'gauge', value: 0 },
       newUsers: { type: 'counter', value: 0 },
       returningUsers: { type: 'counter', value: 0 },
-      
+
       // Session metrics
       totalSessions: { type: 'counter', value: 0 },
       averageSessionDuration: { type: 'gauge', value: 0 },
       sessionBounceRate: { type: 'gauge', value: 0 },
-      
+
       // Game metrics
       gamesPlayed: { type: 'counter', value: 0 },
       gamesCompleted: { type: 'counter', value: 0 },
       averageGameDuration: { type: 'gauge', value: 0 },
       averageScore: { type: 'gauge', value: 0 },
-      
+
       // Performance metrics
       averageFrameRate: { type: 'gauge', value: 0 },
       averageMemoryUsage: { type: 'gauge', value: 0 },
       averageLoadTime: { type: 'gauge', value: 0 },
-      
+
       // Error metrics
       totalErrors: { type: 'counter', value: 0 },
       errorRate: { type: 'gauge', value: 0 },
-      crashRate: { type: 'gauge', value: 0 }
+      crashRate: { type: 'gauge', value: 0 },
     };
   }
 
@@ -343,7 +343,7 @@ export class AnalyticsSystem {
       sessions: new Map(),
       currentSession: null,
       sessionTimeout: this.analyticsConfig.sessionTimeout,
-      heartbeatInterval: this.analyticsConfig.heartbeatInterval
+      heartbeatInterval: this.analyticsConfig.heartbeatInterval,
     };
   }
 
@@ -355,7 +355,7 @@ export class AnalyticsSystem {
       experiments: new Map(),
       activeExperiments: new Map(),
       variants: new Map(),
-      results: new Map()
+      results: new Map(),
     };
   }
 
@@ -366,7 +366,7 @@ export class AnalyticsSystem {
     this.featureFlagManager = {
       flags: new Map(),
       enabledFlags: new Set(),
-      disabledFlags: new Set()
+      disabledFlags: new Set(),
     };
   }
 
@@ -380,29 +380,29 @@ export class AnalyticsSystem {
     this.eventBus.on('analytics:identify', this.identifyUser.bind(this));
     this.eventBus.on('analytics:alias', this.aliasUser.bind(this));
     this.eventBus.on('analytics:group', this.groupUser.bind(this));
-    
+
     // Game events
     this.eventBus.on('game:start', this.handleGameStart.bind(this));
     this.eventBus.on('game:end', this.handleGameEnd.bind(this));
     this.eventBus.on('game:pause', this.handleGamePause.bind(this));
     this.eventBus.on('game:resume', this.handleGameResume.bind(this));
-    
+
     // Player events
     this.eventBus.on('player:levelUp', this.handlePlayerLevelUp.bind(this));
     this.eventBus.on('player:death', this.handlePlayerDeath.bind(this));
     this.eventBus.on('player:itemPickup', this.handleItemPickup.bind(this));
     this.eventBus.on('player:skillUsed', this.handleSkillUsed.bind(this));
-    
+
     // UI events
     this.eventBus.on('ui:click', this.handleUIClick.bind(this));
     this.eventBus.on('ui:hover', this.handleUIHover.bind(this));
     this.eventBus.on('ui:scroll', this.handleUIScroll.bind(this));
-    
+
     // Performance events
     this.eventBus.on('performance:frameRate', this.handleFrameRate.bind(this));
     this.eventBus.on('performance:memory', this.handleMemoryUsage.bind(this));
     this.eventBus.on('performance:loadTime', this.handleLoadTime.bind(this));
-    
+
     // Error events
     this.eventBus.on('error:occurred', this.handleError.bind(this));
     this.eventBus.on('error:crash', this.handleCrash.bind(this));
@@ -413,24 +413,54 @@ export class AnalyticsSystem {
    */
   removeEventHandlers() {
     this.eventBus.removeListener('analytics:track', this.trackEvent.bind(this));
-    this.eventBus.removeListener('analytics:metric', this.recordMetric.bind(this));
-    this.eventBus.removeListener('analytics:identify', this.identifyUser.bind(this));
+    this.eventBus.removeListener(
+      'analytics:metric',
+      this.recordMetric.bind(this)
+    );
+    this.eventBus.removeListener(
+      'analytics:identify',
+      this.identifyUser.bind(this)
+    );
     this.eventBus.removeListener('analytics:alias', this.aliasUser.bind(this));
     this.eventBus.removeListener('analytics:group', this.groupUser.bind(this));
     this.eventBus.removeListener('game:start', this.handleGameStart.bind(this));
     this.eventBus.removeListener('game:end', this.handleGameEnd.bind(this));
     this.eventBus.removeListener('game:pause', this.handleGamePause.bind(this));
-    this.eventBus.removeListener('game:resume', this.handleGameResume.bind(this));
-    this.eventBus.removeListener('player:levelUp', this.handlePlayerLevelUp.bind(this));
-    this.eventBus.removeListener('player:death', this.handlePlayerDeath.bind(this));
-    this.eventBus.removeListener('player:itemPickup', this.handleItemPickup.bind(this));
-    this.eventBus.removeListener('player:skillUsed', this.handleSkillUsed.bind(this));
+    this.eventBus.removeListener(
+      'game:resume',
+      this.handleGameResume.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:levelUp',
+      this.handlePlayerLevelUp.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:death',
+      this.handlePlayerDeath.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:itemPickup',
+      this.handleItemPickup.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:skillUsed',
+      this.handleSkillUsed.bind(this)
+    );
     this.eventBus.removeListener('ui:click', this.handleUIClick.bind(this));
     this.eventBus.removeListener('ui:hover', this.handleUIHover.bind(this));
     this.eventBus.removeListener('ui:scroll', this.handleUIScroll.bind(this));
-    this.eventBus.removeListener('performance:frameRate', this.handleFrameRate.bind(this));
-    this.eventBus.removeListener('performance:memory', this.handleMemoryUsage.bind(this));
-    this.eventBus.removeListener('performance:loadTime', this.handleLoadTime.bind(this));
+    this.eventBus.removeListener(
+      'performance:frameRate',
+      this.handleFrameRate.bind(this)
+    );
+    this.eventBus.removeListener(
+      'performance:memory',
+      this.handleMemoryUsage.bind(this)
+    );
+    this.eventBus.removeListener(
+      'performance:loadTime',
+      this.handleLoadTime.bind(this)
+    );
     this.eventBus.removeListener('error:occurred', this.handleError.bind(this));
     this.eventBus.removeListener('error:crash', this.handleCrash.bind(this));
   }
@@ -474,14 +504,14 @@ export class AnalyticsSystem {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(dialog);
-    
+
     dialog.querySelector('.consent-accept').addEventListener('click', () => {
       this.acceptConsent();
       dialog.remove();
     });
-    
+
     dialog.querySelector('.consent-decline').addEventListener('click', () => {
       this.declineConsent();
       dialog.remove();
@@ -495,9 +525,9 @@ export class AnalyticsSystem {
     this.analyticsState.consentGiven = true;
     this.analyticsState.enabled = true;
     localStorage.setItem('analyticsConsent', 'true');
-    
+
     this.eventBus.emit('analytics:consentAccepted', {
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -508,9 +538,9 @@ export class AnalyticsSystem {
     this.analyticsState.consentGiven = false;
     this.analyticsState.enabled = false;
     localStorage.setItem('analyticsConsent', 'false');
-    
+
     this.eventBus.emit('analytics:consentDeclined', {
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -521,7 +551,7 @@ export class AnalyticsSystem {
     if (!this.analyticsState.enabled || !this.analyticsState.consentGiven) {
       return;
     }
-    
+
     const event = {
       id: this.generateEventId(),
       type: data.type || 'custom',
@@ -529,16 +559,16 @@ export class AnalyticsSystem {
       properties: data.properties || {},
       timestamp: Date.now(),
       sessionId: this.analyticsState.currentSession?.id,
-      userId: this.getCurrentUserId()
+      userId: this.getCurrentUserId(),
     };
-    
+
     this.analyticsState.events.push(event);
-    
+
     // Check if we need to flush
     if (this.analyticsState.events.length >= this.analyticsState.batchSize) {
       this.flushEvents();
     }
-    
+
     this.logger.debug(`Event tracked: ${event.name}`);
   }
 
@@ -549,9 +579,9 @@ export class AnalyticsSystem {
     if (!this.analyticsState.enabled || !this.analyticsState.consentGiven) {
       return;
     }
-    
+
     const { name, value, type = 'gauge' } = data;
-    
+
     if (this.metrics[name]) {
       this.metrics[name].value = value;
       this.metrics[name].lastUpdated = Date.now();
@@ -559,10 +589,10 @@ export class AnalyticsSystem {
       this.metrics[name] = {
         type: type,
         value: value,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       };
     }
-    
+
     this.analyticsState.metrics.set(name, this.metrics[name]);
   }
 
@@ -571,18 +601,18 @@ export class AnalyticsSystem {
    */
   identifyUser(data) {
     const { userId, traits } = data;
-    
+
     this.analyticsState.users.set(userId, {
       id: userId,
       traits: traits || {},
       firstSeen: Date.now(),
-      lastSeen: Date.now()
+      lastSeen: Date.now(),
     });
-    
+
     this.eventBus.emit('analytics:userIdentified', {
       userId,
       traits,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -591,17 +621,17 @@ export class AnalyticsSystem {
    */
   aliasUser(data) {
     const { userId, alias } = data;
-    
+
     const user = this.analyticsState.users.get(userId);
     if (user) {
       user.aliases = user.aliases || [];
       user.aliases.push(alias);
     }
-    
+
     this.eventBus.emit('analytics:userAliased', {
       userId,
       alias,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -610,22 +640,22 @@ export class AnalyticsSystem {
    */
   groupUser(data) {
     const { userId, groupId, traits } = data;
-    
+
     const user = this.analyticsState.users.get(userId);
     if (user) {
       user.groups = user.groups || [];
       user.groups.push({
         id: groupId,
         traits: traits || {},
-        joinedAt: Date.now()
+        joinedAt: Date.now(),
       });
     }
-    
+
     this.eventBus.emit('analytics:userGrouped', {
       userId,
       groupId,
       traits,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -645,24 +675,24 @@ export class AnalyticsSystem {
         platform: navigator.platform,
         screenResolution: {
           width: screen.width,
-          height: screen.height
+          height: screen.height,
         },
         viewportSize: {
           width: window.innerWidth,
-          height: window.innerHeight
-        }
-      }
+          height: window.innerHeight,
+        },
+      },
     };
-    
+
     this.analyticsState.currentSession = session;
     this.analyticsState.sessions.set(sessionId, session);
-    
+
     this.trackEvent({
       type: 'session',
       name: 'Session Start',
       properties: {
-        sessionId: sessionId
-      }
+        sessionId: sessionId,
+      },
     });
   }
 
@@ -673,11 +703,12 @@ export class AnalyticsSystem {
     if (!this.analyticsState.currentSession) {
       return;
     }
-    
+
     this.analyticsState.currentSession.lastActivity = Date.now();
-    
+
     // Check for session timeout
-    const timeSinceActivity = Date.now() - this.analyticsState.currentSession.lastActivity;
+    const timeSinceActivity =
+      Date.now() - this.analyticsState.currentSession.lastActivity;
     if (timeSinceActivity > this.analyticsConfig.sessionTimeout) {
       this.endSession();
     }
@@ -690,20 +721,20 @@ export class AnalyticsSystem {
     if (!this.analyticsState.currentSession) {
       return;
     }
-    
+
     const session = this.analyticsState.currentSession;
     session.endTime = Date.now();
     session.duration = session.endTime - session.startTime;
-    
+
     this.trackEvent({
       type: 'session',
       name: 'Session End',
       properties: {
         sessionId: session.id,
-        duration: session.duration
-      }
+        duration: session.duration,
+      },
     });
-    
+
     this.analyticsState.currentSession = null;
   }
 
@@ -733,14 +764,14 @@ export class AnalyticsSystem {
     if (!this.analyticsState.currentSession) {
       return;
     }
-    
+
     this.trackEvent({
       type: 'session',
       name: 'Heartbeat',
       properties: {
         sessionId: this.analyticsState.currentSession.id,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -768,7 +799,10 @@ export class AnalyticsSystem {
    */
   checkFlush(deltaTime) {
     const now = Date.now();
-    if (now - this.analyticsState.lastFlush >= this.analyticsState.flushInterval) {
+    if (
+      now - this.analyticsState.lastFlush >=
+      this.analyticsState.flushInterval
+    ) {
       this.flushEvents();
     }
   }
@@ -780,18 +814,18 @@ export class AnalyticsSystem {
     if (this.analyticsState.events.length === 0) {
       return;
     }
-    
+
     const events = [...this.analyticsState.events];
     this.analyticsState.events = [];
-    
+
     try {
       await this.sendEvents(events);
       this.analyticsState.lastFlush = Date.now();
-      
+
       this.logger.debug(`Flushed ${events.length} events`);
     } catch (error) {
       this.logger.error('Failed to flush events:', error);
-      
+
       // Re-add events to queue
       this.analyticsState.events.unshift(...events);
     }
@@ -805,18 +839,18 @@ export class AnalyticsSystem {
       events: events,
       sessionId: this.analyticsState.currentSession?.id,
       userId: this.getCurrentUserId(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     const response = await fetch(this.analyticsState.endpoints.analytics, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.getApiKey()}`
+        Authorization: `Bearer ${this.getApiKey()}`,
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to send events: ${response.status}`);
     }
@@ -860,8 +894,8 @@ export class AnalyticsSystem {
       properties: {
         gameMode: data.gameMode,
         difficulty: data.difficulty,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -876,8 +910,8 @@ export class AnalyticsSystem {
         score: data.score,
         duration: data.duration,
         reason: data.reason,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -889,8 +923,8 @@ export class AnalyticsSystem {
       type: 'game',
       name: 'Game Pause',
       properties: {
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -902,8 +936,8 @@ export class AnalyticsSystem {
       type: 'game',
       name: 'Game Resume',
       properties: {
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -917,8 +951,8 @@ export class AnalyticsSystem {
       properties: {
         level: data.level,
         experience: data.experience,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -933,8 +967,8 @@ export class AnalyticsSystem {
         level: data.level,
         cause: data.cause,
         timeAlive: data.timeAlive,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -949,8 +983,8 @@ export class AnalyticsSystem {
         item: data.item,
         rarity: data.rarity,
         value: data.value,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -965,8 +999,8 @@ export class AnalyticsSystem {
         skill: data.skill,
         level: data.level,
         target: data.target,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -980,8 +1014,8 @@ export class AnalyticsSystem {
       properties: {
         element: data.element,
         position: data.position,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -995,8 +1029,8 @@ export class AnalyticsSystem {
       properties: {
         element: data.element,
         duration: data.duration,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -1010,8 +1044,8 @@ export class AnalyticsSystem {
       properties: {
         direction: data.direction,
         position: data.position,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -1022,7 +1056,7 @@ export class AnalyticsSystem {
     this.recordMetric({
       name: 'frameRate',
       value: data.fps,
-      type: 'gauge'
+      type: 'gauge',
     });
   }
 
@@ -1033,7 +1067,7 @@ export class AnalyticsSystem {
     this.recordMetric({
       name: 'memoryUsage',
       value: data.percentage,
-      type: 'gauge'
+      type: 'gauge',
     });
   }
 
@@ -1044,7 +1078,7 @@ export class AnalyticsSystem {
     this.recordMetric({
       name: 'loadTime',
       value: data.duration,
-      type: 'gauge'
+      type: 'gauge',
     });
   }
 
@@ -1059,8 +1093,8 @@ export class AnalyticsSystem {
         message: data.message,
         stack: data.stack,
         severity: data.severity,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 
@@ -1074,8 +1108,8 @@ export class AnalyticsSystem {
       properties: {
         reason: data.reason,
         stack: data.stack,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     });
   }
 

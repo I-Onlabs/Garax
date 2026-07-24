@@ -47,14 +47,14 @@ export class ErrorHandlingSystem {
       errorThresholds: {
         critical: 5,
         warning: 10,
-        info: 50
+        info: 50,
       },
       performanceThresholds: {
         memoryUsage: 0.8, // 80%
         cpuUsage: 0.7, // 70%
         frameRate: 30, // FPS
-        responseTime: 1000 // ms
-      }
+        responseTime: 1000, // ms
+      },
     };
 
     // Initialize error handling
@@ -74,16 +74,16 @@ export class ErrorHandlingSystem {
    */
   async initialize() {
     this.logger.info('Initializing ErrorHandlingSystem...');
-    
+
     // Set up global error handlers
     this.setupGlobalErrorHandlers();
-    
+
     // Start performance monitoring
     this.startPerformanceMonitoring();
-    
+
     // Load error data
     await this.loadErrorData();
-    
+
     this.logger.info('ErrorHandlingSystem initialized successfully');
   }
 
@@ -92,16 +92,16 @@ export class ErrorHandlingSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up ErrorHandlingSystem...');
-    
+
     // Save error data
     this.saveErrorData();
-    
+
     // Stop performance monitoring
     this.stopPerformanceMonitoring();
-    
+
     // Remove global error handlers
     this.removeGlobalErrorHandlers();
-    
+
     // Clear state
     this.errorState.errorHistory.clear();
     this.errorState.performanceMetrics.clear();
@@ -109,10 +109,10 @@ export class ErrorHandlingSystem {
     this.errorState.recoveryStrategies.clear();
     this.errorState.userNotifications.clear();
     this.errorState.errorThresholds.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('ErrorHandlingSystem cleaned up');
   }
 
@@ -122,13 +122,13 @@ export class ErrorHandlingSystem {
   update(deltaTime, gameState) {
     // Update performance metrics
     this.updatePerformanceMetrics(deltaTime);
-    
+
     // Check error thresholds
     this.checkErrorThresholds();
-    
+
     // Process error recovery
     this.processErrorRecovery(deltaTime);
-    
+
     // Update user notifications
     this.updateUserNotifications(deltaTime);
   }
@@ -145,7 +145,7 @@ export class ErrorHandlingSystem {
       PERFORMANCE_ERROR: 'performance_error',
       USER_ERROR: 'user_error',
       SYSTEM_ERROR: 'system_error',
-      UNKNOWN_ERROR: 'unknown_error'
+      UNKNOWN_ERROR: 'unknown_error',
     };
 
     // Set up error severity levels
@@ -154,7 +154,7 @@ export class ErrorHandlingSystem {
       HIGH: 'high',
       MEDIUM: 'medium',
       LOW: 'low',
-      INFO: 'info'
+      INFO: 'info',
     };
 
     // Set up error categories
@@ -166,7 +166,7 @@ export class ErrorHandlingSystem {
       MEMORY_MANAGEMENT: 'memory_management',
       NETWORK_COMMUNICATION: 'network_communication',
       FILE_OPERATIONS: 'file_operations',
-      USER_INTERACTION: 'user_interaction'
+      USER_INTERACTION: 'user_interaction',
     };
   }
 
@@ -180,27 +180,30 @@ export class ErrorHandlingSystem {
       minLength: 3,
       maxLength: 20,
       pattern: /^[a-zA-Z0-9_]+$/,
-      message: 'Player name must be 3-20 characters long and contain only letters, numbers, and underscores'
+      message:
+        'Player name must be 3-20 characters long and contain only letters, numbers, and underscores',
     });
 
     this.errorState.validationRules.set('email', {
       required: true,
       pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: 'Please enter a valid email address'
+      message: 'Please enter a valid email address',
     });
 
     this.errorState.validationRules.set('password', {
       required: true,
       minLength: 8,
       maxLength: 128,
-      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-      message: 'Password must be 8-128 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+      pattern:
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      message:
+        'Password must be 8-128 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character',
     });
 
     this.errorState.validationRules.set('item_id', {
       required: true,
       pattern: /^item_\d+_[a-zA-Z0-9]+$/,
-      message: 'Invalid item ID format'
+      message: 'Invalid item ID format',
     });
 
     this.errorState.validationRules.set('trade_amount', {
@@ -208,7 +211,7 @@ export class ErrorHandlingSystem {
       min: 1,
       max: 1000000,
       type: 'number',
-      message: 'Trade amount must be between 1 and 1,000,000'
+      message: 'Trade amount must be between 1 and 1,000,000',
     });
 
     // Game-specific validation rules
@@ -217,7 +220,7 @@ export class ErrorHandlingSystem {
       min: 1,
       max: 100,
       type: 'number',
-      message: 'Character level must be between 1 and 100'
+      message: 'Character level must be between 1 and 100',
     });
 
     this.errorState.validationRules.set('skill_points', {
@@ -225,7 +228,7 @@ export class ErrorHandlingSystem {
       min: 0,
       max: 1000,
       type: 'number',
-      message: 'Skill points must be between 0 and 1000'
+      message: 'Skill points must be between 0 and 1000',
     });
 
     this.errorState.validationRules.set('coordinates', {
@@ -233,9 +236,9 @@ export class ErrorHandlingSystem {
       type: 'object',
       properties: {
         x: { type: 'number', min: -10000, max: 10000 },
-        y: { type: 'number', min: -10000, max: 10000 }
+        y: { type: 'number', min: -10000, max: 10000 },
       },
-      message: 'Coordinates must be valid numbers within the game world bounds'
+      message: 'Coordinates must be valid numbers within the game world bounds',
     });
   }
 
@@ -253,8 +256,8 @@ export class ErrorHandlingSystem {
         'retry_request',
         'check_connection',
         'fallback_to_cached_data',
-        'notify_user'
-      ]
+        'notify_user',
+      ],
     });
 
     // Memory error recovery
@@ -266,8 +269,8 @@ export class ErrorHandlingSystem {
         'clear_cache',
         'garbage_collect',
         'reduce_quality',
-        'notify_user'
-      ]
+        'notify_user',
+      ],
     });
 
     // Rendering error recovery
@@ -279,8 +282,8 @@ export class ErrorHandlingSystem {
         'retry_render',
         'clear_render_cache',
         'fallback_to_simple_renderer',
-        'notify_user'
-      ]
+        'notify_user',
+      ],
     });
 
     // Game logic error recovery
@@ -291,8 +294,8 @@ export class ErrorHandlingSystem {
       recoverySteps: [
         'validate_game_state',
         'reset_to_last_save',
-        'notify_user'
-      ]
+        'notify_user',
+      ],
     });
   }
 
@@ -306,7 +309,7 @@ export class ErrorHandlingSystem {
       frameRate: 0,
       responseTime: 0,
       errorRate: 0,
-      lastUpdate: Date.now()
+      lastUpdate: Date.now(),
     };
 
     this.performanceHistory = [];
@@ -320,19 +323,37 @@ export class ErrorHandlingSystem {
     // Error events
     this.eventBus.on('error:occurred', this.handleError.bind(this));
     this.eventBus.on('error:recovered', this.handleErrorRecovery.bind(this));
-    this.eventBus.on('error:threshold_exceeded', this.handleThresholdExceeded.bind(this));
-    
+    this.eventBus.on(
+      'error:threshold_exceeded',
+      this.handleThresholdExceeded.bind(this)
+    );
+
     // Validation events
-    this.eventBus.on('validation:failed', this.handleValidationFailure.bind(this));
-    this.eventBus.on('validation:passed', this.handleValidationSuccess.bind(this));
-    
+    this.eventBus.on(
+      'validation:failed',
+      this.handleValidationFailure.bind(this)
+    );
+    this.eventBus.on(
+      'validation:passed',
+      this.handleValidationSuccess.bind(this)
+    );
+
     // Performance events
-    this.eventBus.on('performance:metric', this.handlePerformanceMetric.bind(this));
-    this.eventBus.on('performance:threshold_exceeded', this.handlePerformanceThresholdExceeded.bind(this));
-    
+    this.eventBus.on(
+      'performance:metric',
+      this.handlePerformanceMetric.bind(this)
+    );
+    this.eventBus.on(
+      'performance:threshold_exceeded',
+      this.handlePerformanceThresholdExceeded.bind(this)
+    );
+
     // Recovery events
     this.eventBus.on('recovery:started', this.handleRecoveryStarted.bind(this));
-    this.eventBus.on('recovery:completed', this.handleRecoveryCompleted.bind(this));
+    this.eventBus.on(
+      'recovery:completed',
+      this.handleRecoveryCompleted.bind(this)
+    );
     this.eventBus.on('recovery:failed', this.handleRecoveryFailed.bind(this));
   }
 
@@ -341,15 +362,42 @@ export class ErrorHandlingSystem {
    */
   removeEventHandlers() {
     this.eventBus.removeListener('error:occurred', this.handleError.bind(this));
-    this.eventBus.removeListener('error:recovered', this.handleErrorRecovery.bind(this));
-    this.eventBus.removeListener('error:threshold_exceeded', this.handleThresholdExceeded.bind(this));
-    this.eventBus.removeListener('validation:failed', this.handleValidationFailure.bind(this));
-    this.eventBus.removeListener('validation:passed', this.handleValidationSuccess.bind(this));
-    this.eventBus.removeListener('performance:metric', this.handlePerformanceMetric.bind(this));
-    this.eventBus.removeListener('performance:threshold_exceeded', this.handlePerformanceThresholdExceeded.bind(this));
-    this.eventBus.removeListener('recovery:started', this.handleRecoveryStarted.bind(this));
-    this.eventBus.removeListener('recovery:completed', this.handleRecoveryCompleted.bind(this));
-    this.eventBus.removeListener('recovery:failed', this.handleRecoveryFailed.bind(this));
+    this.eventBus.removeListener(
+      'error:recovered',
+      this.handleErrorRecovery.bind(this)
+    );
+    this.eventBus.removeListener(
+      'error:threshold_exceeded',
+      this.handleThresholdExceeded.bind(this)
+    );
+    this.eventBus.removeListener(
+      'validation:failed',
+      this.handleValidationFailure.bind(this)
+    );
+    this.eventBus.removeListener(
+      'validation:passed',
+      this.handleValidationSuccess.bind(this)
+    );
+    this.eventBus.removeListener(
+      'performance:metric',
+      this.handlePerformanceMetric.bind(this)
+    );
+    this.eventBus.removeListener(
+      'performance:threshold_exceeded',
+      this.handlePerformanceThresholdExceeded.bind(this)
+    );
+    this.eventBus.removeListener(
+      'recovery:started',
+      this.handleRecoveryStarted.bind(this)
+    );
+    this.eventBus.removeListener(
+      'recovery:completed',
+      this.handleRecoveryCompleted.bind(this)
+    );
+    this.eventBus.removeListener(
+      'recovery:failed',
+      this.handleRecoveryFailed.bind(this)
+    );
   }
 
   /**
@@ -358,7 +406,12 @@ export class ErrorHandlingSystem {
   setupGlobalErrorHandlers() {
     // Window error handler
     window.addEventListener('error', (event) => {
-      this.handleGlobalError(event.error, event.filename, event.lineno, event.colno);
+      this.handleGlobalError(
+        event.error,
+        event.filename,
+        event.lineno,
+        event.colno
+      );
     });
 
     // Unhandled promise rejection handler
@@ -380,7 +433,10 @@ export class ErrorHandlingSystem {
   removeGlobalErrorHandlers() {
     // Remove event listeners
     window.removeEventListener('error', this.handleGlobalError);
-    window.removeEventListener('unhandledrejection', this.handleUnhandledRejection);
+    window.removeEventListener(
+      'unhandledrejection',
+      this.handleUnhandledRejection
+    );
   }
 
   /**
@@ -388,26 +444,31 @@ export class ErrorHandlingSystem {
    */
   handleError(data) {
     const { error, context, severity, category } = data;
-    
+
     // Create error record
-    const errorRecord = this.createErrorRecord(error, context, severity, category);
-    
+    const errorRecord = this.createErrorRecord(
+      error,
+      context,
+      severity,
+      category
+    );
+
     // Add to error history
     this.addToErrorHistory(errorRecord);
-    
+
     // Update error count
     this.errorState.errorCount++;
     this.errorState.lastError = errorRecord;
-    
+
     // Log error
     this.logError(errorRecord);
-    
+
     // Attempt recovery
     this.attemptRecovery(errorRecord);
-    
+
     // Notify user if necessary
     this.notifyUser(errorRecord);
-    
+
     // Report error if enabled
     if (this.errorConfig.errorReportingEnabled) {
       this.reportError(errorRecord);
@@ -431,10 +492,10 @@ export class ErrorHandlingSystem {
       context: {
         userAgent: navigator.userAgent,
         url: window.location.href,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     };
-    
+
     this.handleError({ error: errorRecord });
   }
 
@@ -453,10 +514,10 @@ export class ErrorHandlingSystem {
       context: {
         userAgent: navigator.userAgent,
         url: window.location.href,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     };
-    
+
     this.handleError({ error: errorRecord });
   }
 
@@ -473,10 +534,10 @@ export class ErrorHandlingSystem {
       context: {
         userAgent: navigator.userAgent,
         url: window.location.href,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     };
-    
+
     this.handleError({ error: errorRecord });
   }
 
@@ -494,7 +555,7 @@ export class ErrorHandlingSystem {
       context: context || {},
       timestamp: Date.now(),
       resolved: false,
-      recoveryAttempts: 0
+      recoveryAttempts: 0,
     };
   }
 
@@ -503,10 +564,14 @@ export class ErrorHandlingSystem {
    */
   addToErrorHistory(errorRecord) {
     this.errorState.errorHistory.push(errorRecord);
-    
+
     // Keep only the most recent errors
-    if (this.errorState.errorHistory.length > this.errorConfig.maxErrorHistory) {
-      this.errorState.errorHistory = this.errorState.errorHistory.slice(-this.errorConfig.maxErrorHistory);
+    if (
+      this.errorState.errorHistory.length > this.errorConfig.maxErrorHistory
+    ) {
+      this.errorState.errorHistory = this.errorState.errorHistory.slice(
+        -this.errorConfig.maxErrorHistory
+      );
     }
   }
 
@@ -516,7 +581,7 @@ export class ErrorHandlingSystem {
   logError(errorRecord) {
     const logLevel = this.getLogLevel(errorRecord.severity);
     const logMessage = this.formatErrorMessage(errorRecord);
-    
+
     switch (logLevel) {
       case 'error':
         this.logger.error(logMessage);
@@ -541,9 +606,9 @@ export class ErrorHandlingSystem {
       [this.severityLevels.HIGH]: 'error',
       [this.severityLevels.MEDIUM]: 'warn',
       [this.severityLevels.LOW]: 'info',
-      [this.severityLevels.INFO]: 'info'
+      [this.severityLevels.INFO]: 'info',
     };
-    
+
     return levelMap[severity] || 'log';
   }
 
@@ -561,19 +626,21 @@ export class ErrorHandlingSystem {
     if (!this.errorConfig.autoRecoveryEnabled) {
       return;
     }
-    
+
     const strategy = this.errorState.recoveryStrategies.get(errorRecord.type);
     if (!strategy) {
       return;
     }
-    
+
     if (errorRecord.recoveryAttempts >= strategy.maxRetries) {
-      this.logger.warn(`Max recovery attempts reached for error ${errorRecord.id}`);
+      this.logger.warn(
+        `Max recovery attempts reached for error ${errorRecord.id}`
+      );
       return;
     }
-    
+
     errorRecord.recoveryAttempts++;
-    
+
     // Execute recovery steps
     this.executeRecoverySteps(errorRecord, strategy);
   }
@@ -640,13 +707,13 @@ export class ErrorHandlingSystem {
     if (!this.errorConfig.userNotificationEnabled) {
       return;
     }
-    
+
     const notification = this.createUserNotification(errorRecord);
     this.errorState.userNotifications.set(notification.id, notification);
-    
+
     this.eventBus.emit('error:userNotification', {
       notification,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -662,7 +729,7 @@ export class ErrorHandlingSystem {
       message: this.getUserFriendlyMessage(errorRecord),
       timestamp: Date.now(),
       dismissed: false,
-      actionRequired: this.isActionRequired(errorRecord)
+      actionRequired: this.isActionRequired(errorRecord),
     };
   }
 
@@ -677,9 +744,9 @@ export class ErrorHandlingSystem {
       [this.errorTypes.PERFORMANCE_ERROR]: 'Performance Issue',
       [this.errorTypes.USER_ERROR]: 'User Error',
       [this.errorTypes.SYSTEM_ERROR]: 'System Error',
-      [this.errorTypes.UNKNOWN_ERROR]: 'Unknown Error'
+      [this.errorTypes.UNKNOWN_ERROR]: 'Unknown Error',
     };
-    
+
     return titleMap[errorRecord.type] || 'Error';
   }
 
@@ -688,24 +755,34 @@ export class ErrorHandlingSystem {
    */
   getUserFriendlyMessage(errorRecord) {
     const messageMap = {
-      [this.errorTypes.VALIDATION_ERROR]: 'Please check your input and try again.',
-      [this.errorTypes.NETWORK_ERROR]: 'Please check your internet connection and try again.',
-      [this.errorTypes.RUNTIME_ERROR]: 'An unexpected error occurred. Please refresh the page.',
-      [this.errorTypes.PERFORMANCE_ERROR]: 'The application is running slowly. Please try refreshing the page.',
+      [this.errorTypes.VALIDATION_ERROR]:
+        'Please check your input and try again.',
+      [this.errorTypes.NETWORK_ERROR]:
+        'Please check your internet connection and try again.',
+      [this.errorTypes.RUNTIME_ERROR]:
+        'An unexpected error occurred. Please refresh the page.',
+      [this.errorTypes.PERFORMANCE_ERROR]:
+        'The application is running slowly. Please try refreshing the page.',
       [this.errorTypes.USER_ERROR]: 'Please check your input and try again.',
-      [this.errorTypes.SYSTEM_ERROR]: 'A system error occurred. Please try again later.',
-      [this.errorTypes.UNKNOWN_ERROR]: 'An unknown error occurred. Please try again.'
+      [this.errorTypes.SYSTEM_ERROR]:
+        'A system error occurred. Please try again later.',
+      [this.errorTypes.UNKNOWN_ERROR]:
+        'An unknown error occurred. Please try again.',
     };
-    
-    return messageMap[errorRecord.type] || 'An error occurred. Please try again.';
+
+    return (
+      messageMap[errorRecord.type] || 'An error occurred. Please try again.'
+    );
   }
 
   /**
    * Check if action is required
    */
   isActionRequired(errorRecord) {
-    return errorRecord.severity === this.severityLevels.CRITICAL ||
-           errorRecord.severity === this.severityLevels.HIGH;
+    return (
+      errorRecord.severity === this.severityLevels.CRITICAL ||
+      errorRecord.severity === this.severityLevels.HIGH
+    );
   }
 
   /**
@@ -717,24 +794,24 @@ export class ErrorHandlingSystem {
       this.logger.warn(`Validation rule not found: ${ruleName}`);
       return { valid: true };
     }
-    
+
     const result = this.performValidation(value, rule);
-    
+
     if (result.valid) {
       this.eventBus.emit('validation:passed', {
         ruleName,
         value,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     } else {
       this.eventBus.emit('validation:failed', {
         ruleName,
         value,
         errors: result.errors,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
-    
+
     return result;
   }
 
@@ -743,42 +820,45 @@ export class ErrorHandlingSystem {
    */
   performValidation(value, rule) {
     const errors = [];
-    
+
     // Check required
-    if (rule.required && (value === null || value === undefined || value === '')) {
+    if (
+      rule.required &&
+      (value === null || value === undefined || value === '')
+    ) {
       errors.push('This field is required');
       return { valid: false, errors };
     }
-    
+
     // Check type
     if (rule.type && typeof value !== rule.type) {
       errors.push(`Expected ${rule.type}, got ${typeof value}`);
       return { valid: false, errors };
     }
-    
+
     // Check min/max length
     if (rule.minLength && value.length < rule.minLength) {
       errors.push(`Minimum length is ${rule.minLength}`);
     }
-    
+
     if (rule.maxLength && value.length > rule.maxLength) {
       errors.push(`Maximum length is ${rule.maxLength}`);
     }
-    
+
     // Check min/max value
     if (rule.min !== undefined && value < rule.min) {
       errors.push(`Minimum value is ${rule.min}`);
     }
-    
+
     if (rule.max !== undefined && value > rule.max) {
       errors.push(`Maximum value is ${rule.max}`);
     }
-    
+
     // Check pattern
     if (rule.pattern && !rule.pattern.test(value)) {
       errors.push(rule.message || 'Invalid format');
     }
-    
+
     // Check object properties
     if (rule.properties && typeof value === 'object') {
       for (const [prop, propRule] of Object.entries(rule.properties)) {
@@ -788,10 +868,10 @@ export class ErrorHandlingSystem {
         }
       }
     }
-    
+
     return {
       valid: errors.length === 0,
-      errors: errors.length > 0 ? errors : [rule.message || 'Invalid value']
+      errors: errors.length > 0 ? errors : [rule.message || 'Invalid value'],
     };
   }
 
@@ -802,34 +882,40 @@ export class ErrorHandlingSystem {
     if (!this.errorConfig.performanceMonitoringEnabled) {
       return;
     }
-    
+
     // Update memory usage
     if (performance.memory) {
-      this.performanceMetrics.memoryUsage = performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize;
+      this.performanceMetrics.memoryUsage =
+        performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize;
     }
-    
+
     // Update frame rate
     this.performanceMetrics.frameRate = 1000 / deltaTime;
-    
+
     // Update response time
     this.performanceMetrics.responseTime = deltaTime;
-    
+
     // Update error rate
-    this.performanceMetrics.errorRate = this.errorState.errorCount / (Date.now() - this.performanceMetrics.lastUpdate) * 1000;
-    
+    this.performanceMetrics.errorRate =
+      (this.errorState.errorCount /
+        (Date.now() - this.performanceMetrics.lastUpdate)) *
+      1000;
+
     this.performanceMetrics.lastUpdate = Date.now();
-    
+
     // Add to history
     this.performanceHistory.push({
       ...this.performanceMetrics,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     // Keep only recent history
     if (this.performanceHistory.length > this.maxPerformanceHistory) {
-      this.performanceHistory = this.performanceHistory.slice(-this.maxPerformanceHistory);
+      this.performanceHistory = this.performanceHistory.slice(
+        -this.maxPerformanceHistory
+      );
     }
-    
+
     // Check performance thresholds
     this.checkPerformanceThresholds();
   }
@@ -839,21 +925,33 @@ export class ErrorHandlingSystem {
    */
   checkPerformanceThresholds() {
     const thresholds = this.errorConfig.performanceThresholds;
-    
+
     if (this.performanceMetrics.memoryUsage > thresholds.memoryUsage) {
-      this.handlePerformanceThresholdExceeded('memory', this.performanceMetrics.memoryUsage);
+      this.handlePerformanceThresholdExceeded(
+        'memory',
+        this.performanceMetrics.memoryUsage
+      );
     }
-    
+
     if (this.performanceMetrics.cpuUsage > thresholds.cpuUsage) {
-      this.handlePerformanceThresholdExceeded('cpu', this.performanceMetrics.cpuUsage);
+      this.handlePerformanceThresholdExceeded(
+        'cpu',
+        this.performanceMetrics.cpuUsage
+      );
     }
-    
+
     if (this.performanceMetrics.frameRate < thresholds.frameRate) {
-      this.handlePerformanceThresholdExceeded('frameRate', this.performanceMetrics.frameRate);
+      this.handlePerformanceThresholdExceeded(
+        'frameRate',
+        this.performanceMetrics.frameRate
+      );
     }
-    
+
     if (this.performanceMetrics.responseTime > thresholds.responseTime) {
-      this.handlePerformanceThresholdExceeded('responseTime', this.performanceMetrics.responseTime);
+      this.handlePerformanceThresholdExceeded(
+        'responseTime',
+        this.performanceMetrics.responseTime
+      );
     }
   }
 
@@ -862,7 +960,7 @@ export class ErrorHandlingSystem {
    */
   checkErrorThresholds() {
     const thresholds = this.errorConfig.errorThresholds;
-    
+
     if (this.errorState.errorCount > thresholds.critical) {
       this.handleThresholdExceeded('critical', this.errorState.errorCount);
     } else if (this.errorState.errorCount > thresholds.warning) {
@@ -890,10 +988,12 @@ export class ErrorHandlingSystem {
    */
   updateUserNotifications(deltaTime) {
     const now = Date.now();
-    
-    for (const [notificationId, notification] of this.errorState.userNotifications) {
+
+    for (const [notificationId, notification] of this.errorState
+      .userNotifications) {
       // Auto-dismiss old notifications
-      if (now - notification.timestamp > 30000) { // 30 seconds
+      if (now - notification.timestamp > 30000) {
+        // 30 seconds
         notification.dismissed = true;
       }
     }
@@ -906,7 +1006,7 @@ export class ErrorHandlingSystem {
     if (!this.errorConfig.performanceMonitoringEnabled) {
       return;
     }
-    
+
     this.performanceTimer = setInterval(() => {
       this.updatePerformanceMetrics(16); // Assume 60 FPS
     }, 1000); // Update every second
@@ -926,8 +1026,10 @@ export class ErrorHandlingSystem {
    */
   handleErrorRecovery(data) {
     const { errorId, success } = data;
-    
-    const errorRecord = this.errorState.errorHistory.find(e => e.id === errorId);
+
+    const errorRecord = this.errorState.errorHistory.find(
+      (e) => e.id === errorId
+    );
     if (errorRecord) {
       errorRecord.resolved = success;
       errorRecord.recoveryCompletedAt = Date.now();
@@ -939,13 +1041,13 @@ export class ErrorHandlingSystem {
    */
   handleThresholdExceeded(data) {
     const { threshold, value } = data;
-    
+
     this.logger.warn(`Error threshold exceeded: ${threshold} (${value})`);
-    
+
     this.eventBus.emit('error:threshold_exceeded', {
       threshold,
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -954,7 +1056,7 @@ export class ErrorHandlingSystem {
    */
   handleValidationFailure(data) {
     const { ruleName, value, errors } = data;
-    
+
     this.logger.warn(`Validation failed for ${ruleName}: ${errors.join(', ')}`);
   }
 
@@ -963,7 +1065,7 @@ export class ErrorHandlingSystem {
    */
   handleValidationSuccess(data) {
     const { ruleName, value } = data;
-    
+
     this.logger.debug(`Validation passed for ${ruleName}`);
   }
 
@@ -972,7 +1074,7 @@ export class ErrorHandlingSystem {
    */
   handlePerformanceMetric(data) {
     const { metric, value } = data;
-    
+
     this.performanceMetrics[metric] = value;
   }
 
@@ -981,11 +1083,11 @@ export class ErrorHandlingSystem {
    */
   handlePerformanceThresholdExceeded(metric, value) {
     this.logger.warn(`Performance threshold exceeded: ${metric} (${value})`);
-    
+
     this.eventBus.emit('performance:threshold_exceeded', {
       metric,
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -994,8 +1096,10 @@ export class ErrorHandlingSystem {
    */
   handleRecoveryStarted(data) {
     const { errorId, strategy } = data;
-    
-    this.logger.info(`Recovery started for error ${errorId} using strategy ${strategy}`);
+
+    this.logger.info(
+      `Recovery started for error ${errorId} using strategy ${strategy}`
+    );
   }
 
   /**
@@ -1003,8 +1107,10 @@ export class ErrorHandlingSystem {
    */
   handleRecoveryCompleted(data) {
     const { errorId, success } = data;
-    
-    this.logger.info(`Recovery completed for error ${errorId}: ${success ? 'success' : 'failed'}`);
+
+    this.logger.info(
+      `Recovery completed for error ${errorId}: ${success ? 'success' : 'failed'}`
+    );
   }
 
   /**
@@ -1012,7 +1118,7 @@ export class ErrorHandlingSystem {
    */
   handleRecoveryFailed(data) {
     const { errorId, reason } = data;
-    
+
     this.logger.error(`Recovery failed for error ${errorId}: ${reason}`);
   }
 
@@ -1041,7 +1147,7 @@ export class ErrorHandlingSystem {
       const data = {
         errorCount: this.errorState.errorCount,
         errorHistory: this.errorState.errorHistory.slice(-100), // Keep only recent errors
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       localStorage.setItem('errorData', JSON.stringify(data));
       this.logger.info('Error data saved to storage');
@@ -1060,16 +1166,19 @@ export class ErrorHandlingSystem {
       errorsBySeverity: {},
       errorsByCategory: {},
       recentErrors: this.errorState.errorHistory.slice(-10),
-      performanceMetrics: this.performanceMetrics
+      performanceMetrics: this.performanceMetrics,
     };
-    
+
     // Count errors by type
-    this.errorState.errorHistory.forEach(error => {
-      stats.errorsByType[error.type] = (stats.errorsByType[error.type] || 0) + 1;
-      stats.errorsBySeverity[error.severity] = (stats.errorsBySeverity[error.severity] || 0) + 1;
-      stats.errorsByCategory[error.category] = (stats.errorsByCategory[error.category] || 0) + 1;
+    this.errorState.errorHistory.forEach((error) => {
+      stats.errorsByType[error.type] =
+        (stats.errorsByType[error.type] || 0) + 1;
+      stats.errorsBySeverity[error.severity] =
+        (stats.errorsBySeverity[error.severity] || 0) + 1;
+      stats.errorsByCategory[error.category] =
+        (stats.errorsByCategory[error.category] || 0) + 1;
     });
-    
+
     return stats;
   }
 
@@ -1080,7 +1189,7 @@ export class ErrorHandlingSystem {
     return {
       current: this.performanceMetrics,
       history: this.performanceHistory,
-      thresholds: this.errorConfig.performanceThresholds
+      thresholds: this.errorConfig.performanceThresholds,
     };
   }
 
@@ -1088,8 +1197,9 @@ export class ErrorHandlingSystem {
    * Get user notifications
    */
   getUserNotifications() {
-    return Array.from(this.errorState.userNotifications.values())
-      .filter(notification => !notification.dismissed);
+    return Array.from(this.errorState.userNotifications.values()).filter(
+      (notification) => !notification.dismissed
+    );
   }
 
   /**
@@ -1121,7 +1231,7 @@ export class ErrorHandlingSystem {
       frameRate: 0,
       responseTime: 0,
       errorRate: 0,
-      lastUpdate: Date.now()
+      lastUpdate: Date.now(),
     };
     this.performanceHistory = [];
     this.logger.info('Performance metrics reset');

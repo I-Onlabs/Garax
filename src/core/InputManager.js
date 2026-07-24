@@ -397,7 +397,11 @@ export class InputManager {
     }
 
     // Skip mobile controls setup in test environments
-    if (typeof window !== 'undefined' && window.navigator && window.navigator.userAgent.includes('jsdom')) {
+    if (
+      typeof window !== 'undefined' &&
+      window.navigator &&
+      window.navigator.userAgent.includes('jsdom')
+    ) {
       this.logger.info('Skipping mobile controls setup in test environment');
       return;
     }
@@ -421,11 +425,14 @@ export class InputManager {
    * Detect mobile device
    */
   detectMobileDevice() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
+
     this.isMobile = isMobile || isTouch;
-    
+
     if (this.isMobile) {
       this.logger.info('Mobile device detected');
     }
@@ -451,7 +458,7 @@ export class InputManager {
       z-index: 1000;
       display: ${this.settings.mobileControls.enabled ? 'block' : 'none'};
     `;
-    
+
     // Ensure the element is properly initialized
     if (!this.mobileControlsContainer.nodeType) {
       this.mobileControlsContainer = null;
@@ -565,7 +572,9 @@ export class InputManager {
     buttons.forEach((button) => {
       const buttonElement = document.createElement('button');
       buttonElement.className = `action-button ${button.id}`;
-      buttonElement.textContent = this.settings.mobileControls.showLabels ? button.label : '';
+      buttonElement.textContent = this.settings.mobileControls.showLabels
+        ? button.label
+        : '';
       buttonElement.style.cssText = `
         width: ${this.settings.mobileUI.buttonSize}px;
         height: ${this.settings.mobileUI.buttonSize}px;
@@ -675,7 +684,7 @@ export class InputManager {
     const updateOrientation = () => {
       const isPortrait = window.innerHeight > window.innerWidth;
       this.mobileUI.orientation = isPortrait ? 'portrait' : 'landscape';
-      
+
       // Adjust mobile controls for orientation
       this.adjustMobileControlsForOrientation();
     };
@@ -704,9 +713,11 @@ export class InputManager {
    * Set up gesture recognition
    */
   setupGestureRecognition() {
-    if (!this.settings.gestures.enableSwipe && 
-        !this.settings.gestures.enablePinch && 
-        !this.settings.gestures.enableRotate) {
+    if (
+      !this.settings.gestures.enableSwipe &&
+      !this.settings.gestures.enablePinch &&
+      !this.settings.gestures.enableRotate
+    ) {
       return;
     }
 
@@ -735,7 +746,7 @@ export class InputManager {
       if (e.touches.length === 2 && this.settings.gestures.enablePinch) {
         const currentDistance = this.getDistance(e.touches[0], e.touches[1]);
         const scale = currentDistance / startDistance;
-        
+
         if (Math.abs(scale - 1) > this.settings.gestures.pinchThreshold) {
           this.handlePinchGesture(scale);
         }
@@ -744,7 +755,7 @@ export class InputManager {
       if (e.touches.length === 2 && this.settings.gestures.enableRotate) {
         const currentAngle = this.getAngle(e.touches[0], e.touches[1]);
         const rotation = currentAngle - startAngle;
-        
+
         if (Math.abs(rotation) > this.settings.gestures.rotateThreshold) {
           this.handleRotateGesture(rotation);
         }
@@ -758,7 +769,9 @@ export class InputManager {
       }
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: true,
+    });
     document.addEventListener('touchmove', handleTouchMove, { passive: true });
     document.addEventListener('touchend', handleTouchEnd, { passive: true });
   }
@@ -1487,7 +1500,8 @@ export class InputManager {
    * Load settings from config
    */
   loadSettingsFromConfig() {
-    if (!this.config || typeof this.config.getConfigValue !== 'function') return;
+    if (!this.config || typeof this.config.getConfigValue !== 'function')
+      return;
 
     this.settings = {
       ...this.settings,
@@ -1640,8 +1654,10 @@ export class InputManager {
    */
   handleMobileTouchMove(touch, event) {
     // Update virtual joystick if active
-    if (this.mobileUI.virtualJoystick.active && 
-        this.mobileUI.virtualJoystick.touchId === touch.identifier) {
+    if (
+      this.mobileUI.virtualJoystick.active &&
+      this.mobileUI.virtualJoystick.touchId === touch.identifier
+    ) {
       this.updateVirtualJoystick(touch);
     }
 
@@ -1654,8 +1670,10 @@ export class InputManager {
    */
   handleMobileTouchEnd(touch, event) {
     // Deactivate virtual joystick if it was active
-    if (this.mobileUI.virtualJoystick.active && 
-        this.mobileUI.virtualJoystick.touchId === touch.identifier) {
+    if (
+      this.mobileUI.virtualJoystick.active &&
+      this.mobileUI.virtualJoystick.touchId === touch.identifier
+    ) {
       this.deactivateVirtualJoystick();
     }
 
@@ -1670,10 +1688,12 @@ export class InputManager {
     if (!this.mobileUI.virtualJoystick.element) return false;
 
     const rect = this.mobileUI.virtualJoystick.element.getBoundingClientRect();
-    return touch.clientX >= rect.left && 
-           touch.clientX <= rect.right && 
-           touch.clientY >= rect.top && 
-           touch.clientY <= rect.bottom;
+    return (
+      touch.clientX >= rect.left &&
+      touch.clientX <= rect.right &&
+      touch.clientY >= rect.top &&
+      touch.clientY <= rect.bottom
+    );
   }
 
   /**
@@ -1682,7 +1702,7 @@ export class InputManager {
   activateVirtualJoystick(touch) {
     this.mobileUI.virtualJoystick.active = true;
     this.mobileUI.virtualJoystick.touchId = touch.identifier;
-    
+
     const rect = this.mobileUI.virtualJoystick.element.getBoundingClientRect();
     this.mobileUI.virtualJoystick.center = {
       x: rect.left + rect.width / 2,
@@ -1713,8 +1733,7 @@ export class InputManager {
 
     // Update knob position
     if (this.mobileUI.virtualJoystick.knob) {
-      this.mobileUI.virtualJoystick.knob.style.transform = 
-        `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+      this.mobileUI.virtualJoystick.knob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
     }
 
     // Calculate normalized values
@@ -1730,7 +1749,7 @@ export class InputManager {
     this.eventBus.emit('input:joystickMove', {
       x: finalX,
       y: finalY,
-      angle: angle * 180 / Math.PI,
+      angle: (angle * 180) / Math.PI,
       distance: clampedDistance / maxDistance,
       timestamp: Date.now(),
     });
@@ -1748,7 +1767,8 @@ export class InputManager {
 
     // Reset knob position
     if (this.mobileUI.virtualJoystick.knob) {
-      this.mobileUI.virtualJoystick.knob.style.transform = 'translate(-50%, -50%)';
+      this.mobileUI.virtualJoystick.knob.style.transform =
+        'translate(-50%, -50%)';
     }
 
     // Emit joystick release event
@@ -1786,10 +1806,12 @@ export class InputManager {
   getTouchedButton(touch) {
     for (const [id, button] of this.mobileUI.actionButtons) {
       const rect = button.getBoundingClientRect();
-      if (touch.clientX >= rect.left && 
-          touch.clientX <= rect.right && 
-          touch.clientY >= rect.top && 
-          touch.clientY <= rect.bottom) {
+      if (
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom
+      ) {
         return { id, key: this.getButtonKey(id) };
       }
     }
@@ -1841,13 +1863,16 @@ export class InputManager {
    */
   handleGestureStart(touch, event) {
     const currentTime = Date.now();
-    
+
     // Check for double tap
     if (this.settings.gestures.enableDoubleTap) {
       const timeDiff = currentTime - this.touch.lastTapTime;
       const distance = this.getDistance(touch, this.touch.lastTapPosition);
-      
-      if (timeDiff < this.settings.mobileControls.doubleTapDelay && distance < 50) {
+
+      if (
+        timeDiff < this.settings.mobileControls.doubleTapDelay &&
+        distance < 50
+      ) {
         this.handleDoubleTap(touch);
         return;
       }
@@ -1899,12 +1924,12 @@ export class InputManager {
     const deltaX = endTouch.clientX - startTouch.startX;
     const deltaY = endTouch.clientY - startTouch.startY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
+
     if (distance < this.settings.mobileControls.swipeThreshold) {
       return; // Not a swipe
     }
 
-    const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+    const angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
     let direction = '';
 
     if (angle > -45 && angle <= 45) {
@@ -1998,7 +2023,10 @@ export class InputManager {
    * Get angle between two touch points
    */
   getAngle(touch1, touch2) {
-    return Math.atan2(touch2.clientY - touch1.clientY, touch2.clientX - touch1.clientX);
+    return Math.atan2(
+      touch2.clientY - touch1.clientY,
+      touch2.clientX - touch1.clientX
+    );
   }
 
   /**
@@ -2006,7 +2034,7 @@ export class InputManager {
    */
   updateMobileControlsVisibility(visible) {
     this.mobileUI.isVisible = visible;
-    
+
     if (this.mobileControlsContainer) {
       this.mobileControlsContainer.style.display = visible ? 'block' : 'none';
     }
@@ -2016,9 +2044,18 @@ export class InputManager {
    * Update mobile controls settings
    */
   updateMobileSettings(newSettings) {
-    this.settings.mobileControls = { ...this.settings.mobileControls, ...newSettings };
-    this.settings.gestures = { ...this.settings.gestures, ...newSettings.gestures };
-    this.settings.mobileUI = { ...this.settings.mobileUI, ...newSettings.mobileUI };
+    this.settings.mobileControls = {
+      ...this.settings.mobileControls,
+      ...newSettings,
+    };
+    this.settings.gestures = {
+      ...this.settings.gestures,
+      ...newSettings.gestures,
+    };
+    this.settings.mobileUI = {
+      ...this.settings.mobileUI,
+      ...newSettings.mobileUI,
+    };
 
     // Recreate mobile UI if needed
     if (this.mobileControlsContainer) {

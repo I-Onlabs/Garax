@@ -11,7 +11,14 @@
  * - Mobile controls configuration
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { GameRefactored } from '../src/GameRefactored.js';
 import { InputManager } from '../src/core/InputManager.js';
 import { PerformanceMonitor } from '../src/core/PerformanceMonitor.js';
@@ -42,10 +49,11 @@ const mockMobileDOM = () => {
 // Mock mobile device
 const mockMobileDevice = () => {
   Object.defineProperty(navigator, 'userAgent', {
-    value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+    value:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
     writable: true,
   });
-  
+
   Object.defineProperty(navigator, 'maxTouchPoints', {
     value: 5,
     writable: true,
@@ -166,24 +174,24 @@ describe('Mobile UX Testing', () => {
     it('should handle tap gestures', () => {
       const touch = mockDOM.createTouch(1, 100, 100);
       const event = mockDOM.createTouchEvent('touchstart', [touch]);
-      
+
       inputManager.handleTouchStart(event);
-      
+
       expect(inputManager.touch.touches.has(1)).toBe(true);
     });
 
     it('should handle swipe gestures', () => {
       const startTouch = mockDOM.createTouch(1, 100, 100);
       const endTouch = mockDOM.createTouch(1, 200, 100);
-      
+
       // Start touch
       const startEvent = mockDOM.createTouchEvent('touchstart', [startTouch]);
       inputManager.handleTouchStart(startEvent);
-      
+
       // End touch (swipe)
       const endEvent = mockDOM.createTouchEvent('touchend', [endTouch]);
       inputManager.handleTouchEnd(endEvent);
-      
+
       // Should detect swipe
       expect(inputManager.touch.touches.size).toBe(0);
     });
@@ -191,31 +199,37 @@ describe('Mobile UX Testing', () => {
     it('should handle pinch gestures', () => {
       const touch1 = mockDOM.createTouch(1, 100, 100);
       const touch2 = mockDOM.createTouch(2, 200, 100);
-      
-      const startEvent = mockDOM.createTouchEvent('touchstart', [touch1, touch2]);
+
+      const startEvent = mockDOM.createTouchEvent('touchstart', [
+        touch1,
+        touch2,
+      ]);
       inputManager.handleTouchStart(startEvent);
-      
+
       // Move touches closer together (pinch)
       const moveTouch1 = mockDOM.createTouch(1, 120, 100);
       const moveTouch2 = mockDOM.createTouch(2, 180, 100);
-      const moveEvent = mockDOM.createTouchEvent('touchmove', [moveTouch1, moveTouch2]);
+      const moveEvent = mockDOM.createTouchEvent('touchmove', [
+        moveTouch1,
+        moveTouch2,
+      ]);
       inputManager.handleTouchMove(moveEvent);
-      
+
       expect(inputManager.touch.touches.size).toBe(2);
     });
 
     it('should handle long press gestures', () => {
       const touch = mockDOM.createTouch(1, 100, 100);
       const event = mockDOM.createTouchEvent('touchstart', [touch]);
-      
+
       inputManager.handleTouchStart(event);
-      
+
       // Simulate long press
       setTimeout(() => {
         const endEvent = mockDOM.createTouchEvent('touchend', [touch]);
         inputManager.handleTouchEnd(endEvent);
       }, 600);
-      
+
       expect(inputManager.touch.touches.has(1)).toBe(true);
     });
   });
@@ -224,14 +238,15 @@ describe('Mobile UX Testing', () => {
     beforeEach(() => {
       // Mock the joystick element's bounding rect to include test touch coordinates
       if (inputManager.mobileUI.virtualJoystick.element) {
-        inputManager.mobileUI.virtualJoystick.element.getBoundingClientRect = jest.fn(() => ({
-          left: 0,
-          top: 0,
-          right: 120,
-          bottom: 120,
-          width: 120,
-          height: 120,
-        }));
+        inputManager.mobileUI.virtualJoystick.element.getBoundingClientRect =
+          jest.fn(() => ({
+            left: 0,
+            top: 0,
+            right: 120,
+            bottom: 120,
+            width: 120,
+            height: 120,
+          }));
       }
     });
 
@@ -314,10 +329,10 @@ describe('Mobile UX Testing', () => {
     it('should provide haptic feedback when enabled', () => {
       const mockVibrate = jest.fn();
       navigator.vibrate = mockVibrate;
-      
+
       inputManager.settings.mobileControls.hapticFeedback = true;
       inputManager.handleMobileButtonPress('jump', 'Space', 'down');
-      
+
       expect(mockVibrate).toHaveBeenCalledWith(50);
     });
   });
@@ -339,7 +354,7 @@ describe('Mobile UX Testing', () => {
       // Simulate low FPS
       performanceMonitor.metrics.fps.current = 20;
       performanceMonitor.checkFPSPerformance();
-      
+
       const alerts = performanceMonitor.getAlerts();
       expect(alerts.length).toBeGreaterThan(0);
     });
@@ -437,7 +452,7 @@ describe('Mobile UX Testing', () => {
     it('should support high contrast mode', () => {
       const accessibilityManager = game.getManager('accessibility');
       accessibilityManager.updateSettings({ highContrast: true });
-      
+
       const settings = accessibilityManager.getSettings();
       expect(settings.highContrast).toBe(true);
     });
@@ -487,7 +502,7 @@ describe('Mobile UX Testing', () => {
     it('should optimize for mobile performance', () => {
       const performanceReport = game.getPerformanceReport();
       expect(performanceReport).toBeDefined();
-      
+
       const score = performanceMonitor.getPerformanceScore();
       expect(score).toBeGreaterThanOrEqual(0);
       expect(score).toBeLessThanOrEqual(100);
@@ -497,10 +512,10 @@ describe('Mobile UX Testing', () => {
       // Simulate performance issues
       performanceMonitor.metrics.fps.current = 25;
       performanceMonitor.metrics.memory.used = 150 * 1024 * 1024; // 150MB
-      
+
       performanceMonitor.checkFPSPerformance();
       performanceMonitor.checkMemoryPerformance();
-      
+
       const alerts = performanceMonitor.getAlerts();
       expect(alerts.length).toBeGreaterThan(0);
     });

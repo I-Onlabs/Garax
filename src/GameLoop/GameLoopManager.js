@@ -1,6 +1,6 @@
 /**
  * GameLoopManager - Core game loop management
- * 
+ *
  * TODO: Extract from GameRefactored.js
  * - Move main game loop logic here
  * - Implement frame rate management
@@ -19,7 +19,7 @@ export class GameLoopManager {
     this.lastFrameTime = 0;
     this.deltaTime = 0;
     this.animationFrameId = null;
-    
+
     // TODO: Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
@@ -29,15 +29,15 @@ export class GameLoopManager {
     this.physicsSystem = new PhysicsSystem({
       eventBus: this.eventBus,
       logger: this.logger,
-      config: this.config
+      config: this.config,
     });
-    
+
     // TODO: Add game state management
     this.gameState = {
       currentLevel: 1,
       score: 0,
       lives: 3,
-      isGameOver: false
+      isGameOver: false,
     };
   }
 
@@ -62,14 +62,14 @@ export class GameLoopManager {
    */
   start() {
     if (this.isRunning) return;
-    
+
     this.isRunning = true;
     this.isPaused = false;
     this.lastFrameTime = performance.now();
-    
+
     // TODO: Emit game started event
     this.eventBus?.emit('game:started', this.gameState);
-    
+
     this.loop();
   }
 
@@ -79,17 +79,17 @@ export class GameLoopManager {
    */
   loop() {
     if (!this.isRunning) return;
-    
+
     const currentTime = performance.now();
     this.deltaTime = currentTime - this.lastFrameTime;
-    
+
     if (this.deltaTime >= this.targetFrameTime) {
       if (!this.isPaused) {
         this.update(this.deltaTime);
       }
       this.lastFrameTime = currentTime;
     }
-    
+
     this.animationFrameId = requestAnimationFrame(() => this.loop());
   }
 
@@ -120,7 +120,7 @@ export class GameLoopManager {
    */
   pause() {
     if (!this.isRunning || this.isPaused) return;
-    
+
     this.isPaused = true;
     // TODO: Emit pause event
     this.eventBus?.emit('game:paused', this.gameState);
@@ -132,7 +132,7 @@ export class GameLoopManager {
    */
   resume() {
     if (!this.isRunning || !this.isPaused) return;
-    
+
     this.isPaused = false;
     this.lastFrameTime = performance.now();
     // TODO: Emit resume event
@@ -145,15 +145,15 @@ export class GameLoopManager {
    */
   stop() {
     if (!this.isRunning) return;
-    
+
     this.isRunning = false;
     this.isPaused = false;
-    
+
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
-    
+
     // TODO: Emit stop event
     this.eventBus?.emit('game:stopped', this.gameState);
   }

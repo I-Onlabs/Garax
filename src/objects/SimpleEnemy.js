@@ -27,7 +27,8 @@ export class SimpleEnemy {
     this.y += this.speed * deltaTime;
 
     // Deactivate if off screen
-    if (this.y > 650) { // A bit past screen edge
+    if (this.y > 650) {
+      // A bit past screen edge
       this.active = false;
     }
   }
@@ -58,7 +59,7 @@ export class SimpleEnemy {
       x: this.x,
       y: this.y,
       width: this.width,
-      height: this.height
+      height: this.height,
     };
   }
 

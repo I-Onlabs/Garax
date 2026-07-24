@@ -44,7 +44,7 @@ export class SaveSystem {
       cloudSyncInProgress: false,
       saveData: new Map(),
       cloudData: new Map(),
-      backupData: new Map()
+      backupData: new Map(),
     };
 
     // Save system configuration
@@ -59,7 +59,7 @@ export class SaveSystem {
         'player:itemPickup',
         'player:areaEnter',
         'combat:enemyDefeated',
-        'quest:completed'
+        'quest:completed',
       ],
       saveDataStructure: {
         version: 'string',
@@ -71,14 +71,14 @@ export class SaveSystem {
         inventory: 'array',
         skills: 'object',
         quests: 'array',
-        stats: 'object'
+        stats: 'object',
       },
       validationRules: {
         requiredFields: ['version', 'timestamp', 'player'],
         maxFileSize: 10 * 1024 * 1024, // 10MB
         maxSaveAge: 365 * 24 * 60 * 60 * 1000, // 1 year
-        checksumAlgorithm: 'sha256'
-      }
+        checksumAlgorithm: 'sha256',
+      },
     };
 
     // Initialize save system
@@ -100,19 +100,19 @@ export class SaveSystem {
    */
   async initialize() {
     this.logger.info('Initializing SaveSystem...');
-    
+
     // Initialize storage
     await this.initializeStorage();
-    
+
     // Load save slots
     await this.loadSaveSlots();
-    
+
     // Initialize cloud sync
     await this.initializeCloudSync();
-    
+
     // Start auto-save timer
     this.startAutoSave();
-    
+
     this.logger.info('SaveSystem initialized successfully');
   }
 
@@ -121,22 +121,22 @@ export class SaveSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up SaveSystem...');
-    
+
     // Stop auto-save
     this.stopAutoSave();
-    
+
     // Save current state
     this.saveCurrentState();
-    
+
     // Clear state
     this.saveState.saveSlots.clear();
     this.saveState.saveData.clear();
     this.saveState.cloudData.clear();
     this.saveState.backupData.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('SaveSystem cleaned up');
   }
 
@@ -146,10 +146,10 @@ export class SaveSystem {
   update(deltaTime, gameState) {
     // Update auto-save
     this.updateAutoSave(deltaTime);
-    
+
     // Update cloud sync
     this.updateCloudSync(deltaTime);
-    
+
     // Update save validation
     this.updateSaveValidation(deltaTime);
   }
@@ -170,9 +170,11 @@ export class SaveSystem {
           this.storage = new CloudStorageAdapter(this.saveConfig.cloudConfig);
           break;
         default:
-          throw new Error(`Unsupported storage type: ${this.saveConfig.storageType}`);
+          throw new Error(
+            `Unsupported storage type: ${this.saveConfig.storageType}`
+          );
       }
-      
+
       await this.storage.initialize();
       this.logger.info(`Storage initialized: ${this.saveConfig.storageType}`);
     } catch (error) {
@@ -194,7 +196,7 @@ export class SaveSystem {
         checksum: null,
         cloudSynced: false,
         lastModified: 0,
-        metadata: {}
+        metadata: {},
       });
     }
   }
@@ -206,12 +208,15 @@ export class SaveSystem {
     if (!this.saveState.cloudSyncEnabled) {
       return;
     }
-    
+
     try {
       // Initialize cloud provider
-      this.cloudProvider = new CloudProvider(this.saveConfig.cloudProvider, this.saveConfig.cloudConfig);
+      this.cloudProvider = new CloudProvider(
+        this.saveConfig.cloudProvider,
+        this.saveConfig.cloudConfig
+      );
       await this.cloudProvider.initialize();
-      
+
       this.logger.info('Cloud sync initialized');
     } catch (error) {
       this.logger.error('Failed to initialize cloud sync:', error);
@@ -231,7 +236,9 @@ export class SaveSystem {
    */
   initializeCompression() {
     if (this.saveState.compressionEnabled) {
-      this.compressor = new SaveDataCompressor(this.saveConfig.compressionLevel);
+      this.compressor = new SaveDataCompressor(
+        this.saveConfig.compressionLevel
+      );
     }
   }
 
@@ -253,19 +260,19 @@ export class SaveSystem {
     this.eventBus.on('save:auto', this.handleAutoSave.bind(this));
     this.eventBus.on('save:manual', this.handleManualSave.bind(this));
     this.eventBus.on('save:slot', this.handleSaveSlot.bind(this));
-    
+
     // Load events
     this.eventBus.on('load:request', this.handleLoadRequest.bind(this));
     this.eventBus.on('load:slot', this.handleLoadSlot.bind(this));
     this.eventBus.on('load:latest', this.handleLoadLatest.bind(this));
-    
+
     // Cloud sync events
     this.eventBus.on('cloud:sync', this.handleCloudSync.bind(this));
     this.eventBus.on('cloud:upload', this.handleCloudUpload.bind(this));
     this.eventBus.on('cloud:download', this.handleCloudDownload.bind(this));
-    
+
     // Auto-save triggers
-    this.saveConfig.autoSaveTriggers.forEach(trigger => {
+    this.saveConfig.autoSaveTriggers.forEach((trigger) => {
       this.eventBus.on(trigger, this.handleAutoSaveTrigger.bind(this));
     });
   }
@@ -274,19 +281,40 @@ export class SaveSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('save:request', this.handleSaveRequest.bind(this));
+    this.eventBus.removeListener(
+      'save:request',
+      this.handleSaveRequest.bind(this)
+    );
     this.eventBus.removeListener('save:auto', this.handleAutoSave.bind(this));
-    this.eventBus.removeListener('save:manual', this.handleManualSave.bind(this));
+    this.eventBus.removeListener(
+      'save:manual',
+      this.handleManualSave.bind(this)
+    );
     this.eventBus.removeListener('save:slot', this.handleSaveSlot.bind(this));
-    this.eventBus.removeListener('load:request', this.handleLoadRequest.bind(this));
+    this.eventBus.removeListener(
+      'load:request',
+      this.handleLoadRequest.bind(this)
+    );
     this.eventBus.removeListener('load:slot', this.handleLoadSlot.bind(this));
-    this.eventBus.removeListener('load:latest', this.handleLoadLatest.bind(this));
+    this.eventBus.removeListener(
+      'load:latest',
+      this.handleLoadLatest.bind(this)
+    );
     this.eventBus.removeListener('cloud:sync', this.handleCloudSync.bind(this));
-    this.eventBus.removeListener('cloud:upload', this.handleCloudUpload.bind(this));
-    this.eventBus.removeListener('cloud:download', this.handleCloudDownload.bind(this));
-    
-    this.saveConfig.autoSaveTriggers.forEach(trigger => {
-      this.eventBus.removeListener(trigger, this.handleAutoSaveTrigger.bind(this));
+    this.eventBus.removeListener(
+      'cloud:upload',
+      this.handleCloudUpload.bind(this)
+    );
+    this.eventBus.removeListener(
+      'cloud:download',
+      this.handleCloudDownload.bind(this)
+    );
+
+    this.saveConfig.autoSaveTriggers.forEach((trigger) => {
+      this.eventBus.removeListener(
+        trigger,
+        this.handleAutoSaveTrigger.bind(this)
+      );
     });
   }
 
@@ -298,34 +326,40 @@ export class SaveSystem {
       this.logger.warn('Save already in progress');
       return false;
     }
-    
+
     this.saveState.saveInProgress = true;
-    
+
     try {
       // Validate save data
       if (this.saveState.validationEnabled) {
         const validationResult = this.validator.validate(gameData);
         if (!validationResult.valid) {
-          throw new Error(`Save data validation failed: ${validationResult.errors.join(', ')}`);
+          throw new Error(
+            `Save data validation failed: ${validationResult.errors.join(', ')}`
+          );
         }
       }
-      
+
       // Prepare save data
       const saveData = this.prepareSaveData(gameData, options);
-      
+
       // Compress save data
       if (this.saveState.compressionEnabled) {
         saveData.compressed = await this.compressor.compress(saveData.raw);
       }
-      
+
       // Encrypt save data
       if (this.saveState.encryptionEnabled) {
-        saveData.encrypted = await this.encryptor.encrypt(saveData.compressed || saveData.raw);
+        saveData.encrypted = await this.encryptor.encrypt(
+          saveData.compressed || saveData.raw
+        );
       }
-      
+
       // Calculate checksum
-      const checksum = await this.calculateChecksum(saveData.encrypted || saveData.compressed || saveData.raw);
-      
+      const checksum = await this.calculateChecksum(
+        saveData.encrypted || saveData.compressed || saveData.raw
+      );
+
       // Create save metadata
       const metadata = {
         slotNumber: slotNumber,
@@ -335,40 +369,43 @@ export class SaveSystem {
         checksum: checksum,
         compressed: this.saveState.compressionEnabled,
         encrypted: this.saveState.encryptionEnabled,
-        cloudSynced: false
+        cloudSynced: false,
       };
-      
+
       // Save to storage
-      await this.storage.save(`save_${slotNumber}`, saveData.encrypted || saveData.compressed || saveData.raw);
+      await this.storage.save(
+        `save_${slotNumber}`,
+        saveData.encrypted || saveData.compressed || saveData.raw
+      );
       await this.storage.save(`save_${slotNumber}_meta`, metadata);
-      
+
       // Update save slot info
       this.updateSaveSlotInfo(slotNumber, metadata);
-      
+
       // Cloud sync if enabled
       if (this.saveState.cloudSyncEnabled) {
         this.syncToCloud(slotNumber, saveData, metadata);
       }
-      
+
       this.saveState.lastSaveTime = Date.now();
-      
+
       this.eventBus.emit('save:completed', {
         slotNumber: slotNumber,
         metadata: metadata,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       this.logger.info(`Game saved to slot ${slotNumber}`);
       return true;
     } catch (error) {
       this.logger.error('Failed to save game:', error);
-      
+
       this.eventBus.emit('save:failed', {
         slotNumber: slotNumber,
         error: error.message,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       return false;
     } finally {
       this.saveState.saveInProgress = false;
@@ -383,18 +420,18 @@ export class SaveSystem {
       this.logger.warn('Load already in progress');
       return null;
     }
-    
+
     this.saveState.loadInProgress = true;
-    
+
     try {
       // Load save data
       const saveData = await this.storage.load(`save_${slotNumber}`);
       const metadata = await this.storage.load(`save_${slotNumber}_meta`);
-      
+
       if (!saveData || !metadata) {
         throw new Error(`Save slot ${slotNumber} not found`);
       }
-      
+
       // Validate checksum
       if (this.saveState.validationEnabled) {
         const checksum = await this.calculateChecksum(saveData);
@@ -402,50 +439,52 @@ export class SaveSystem {
           throw new Error('Save data checksum validation failed');
         }
       }
-      
+
       // Decrypt save data
       let decryptedData = saveData;
       if (metadata.encrypted) {
         decryptedData = await this.encryptor.decrypt(saveData);
       }
-      
+
       // Decompress save data
       let decompressedData = decryptedData;
       if (metadata.compressed) {
         decompressedData = await this.compressor.decompress(decryptedData);
       }
-      
+
       // Parse save data
       const gameData = JSON.parse(decompressedData);
-      
+
       // Validate loaded data
       if (this.saveState.validationEnabled) {
         const validationResult = this.validator.validate(gameData);
         if (!validationResult.valid) {
-          throw new Error(`Loaded save data validation failed: ${validationResult.errors.join(', ')}`);
+          throw new Error(
+            `Loaded save data validation failed: ${validationResult.errors.join(', ')}`
+          );
         }
       }
-      
+
       this.saveState.lastLoadTime = Date.now();
-      
+
       this.eventBus.emit('load:completed', {
         slotNumber: slotNumber,
         gameData: gameData,
         metadata: metadata,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       this.logger.info(`Game loaded from slot ${slotNumber}`);
       return gameData;
     } catch (error) {
       this.logger.error('Failed to load game:', error);
-      
+
       this.eventBus.emit('load:failed', {
         slotNumber: slotNumber,
         error: error.message,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       return null;
     } finally {
       this.saveState.loadInProgress = false;
@@ -459,15 +498,15 @@ export class SaveSystem {
     try {
       await this.storage.delete(`save_${slotNumber}`);
       await this.storage.delete(`save_${slotNumber}_meta`);
-      
+
       // Update save slot info
       this.updateSaveSlotInfo(slotNumber, { exists: false });
-      
+
       this.eventBus.emit('save:deleted', {
         slotNumber: slotNumber,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       this.logger.info(`Save slot ${slotNumber} deleted`);
       return true;
     } catch (error) {
@@ -511,15 +550,15 @@ export class SaveSystem {
         userAgent: navigator.userAgent,
         screenResolution: {
           width: screen.width,
-          height: screen.height
-        }
-      }
+          height: screen.height,
+        },
+      },
     };
-    
+
     return {
       raw: JSON.stringify(saveData),
       compressed: null,
-      encrypted: null
+      encrypted: null,
     };
   }
 
@@ -531,7 +570,7 @@ export class SaveSystem {
     const dataBuffer = encoder.encode(data);
     const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   }
 
   /**
@@ -573,7 +612,7 @@ export class SaveSystem {
     if (!this.saveState.autoSaveEnabled) {
       return;
     }
-    
+
     this.autoSaveTimer = setInterval(() => {
       this.performAutoSave();
     }, this.saveState.autoSaveInterval);
@@ -596,14 +635,14 @@ export class SaveSystem {
     if (this.saveState.saveInProgress) {
       return;
     }
-    
+
     try {
       // Get current game data
       const gameData = this.getCurrentGameData();
-      
+
       // Save to auto-save slot
       await this.saveGame(0, gameData, { saveType: 'auto' });
-      
+
       this.logger.info('Auto-save completed');
     } catch (error) {
       this.logger.error('Auto-save failed:', error);
@@ -623,7 +662,7 @@ export class SaveSystem {
       inventory: this.getInventoryData(),
       skills: this.getSkillsData(),
       quests: this.getQuestsData(),
-      stats: this.getStatsData()
+      stats: this.getStatsData(),
     };
   }
 
@@ -698,17 +737,20 @@ export class SaveSystem {
     if (!this.saveState.cloudSyncEnabled || !this.cloudProvider) {
       return;
     }
-    
+
     try {
-      await this.cloudProvider.upload(`save_${slotNumber}`, saveData.encrypted || saveData.compressed || saveData.raw);
+      await this.cloudProvider.upload(
+        `save_${slotNumber}`,
+        saveData.encrypted || saveData.compressed || saveData.raw
+      );
       await this.cloudProvider.upload(`save_${slotNumber}_meta`, metadata);
-      
+
       // Update cloud sync status
       const slotInfo = this.saveState.saveSlots.get(slotNumber);
       if (slotInfo) {
         slotInfo.cloudSynced = true;
       }
-      
+
       this.logger.info(`Save slot ${slotNumber} synced to cloud`);
     } catch (error) {
       this.logger.error('Failed to sync to cloud:', error);
@@ -722,23 +764,25 @@ export class SaveSystem {
     if (!this.saveState.cloudSyncEnabled || !this.cloudProvider) {
       return null;
     }
-    
+
     try {
       const saveData = await this.cloudProvider.download(`save_${slotNumber}`);
-      const metadata = await this.cloudProvider.download(`save_${slotNumber}_meta`);
-      
+      const metadata = await this.cloudProvider.download(
+        `save_${slotNumber}_meta`
+      );
+
       if (saveData && metadata) {
         // Save to local storage
         await this.storage.save(`save_${slotNumber}`, saveData);
         await this.storage.save(`save_${slotNumber}_meta`, metadata);
-        
+
         // Update save slot info
         this.updateSaveSlotInfo(slotNumber, metadata);
-        
+
         this.logger.info(`Save slot ${slotNumber} synced from cloud`);
         return true;
       }
-      
+
       return false;
     } catch (error) {
       this.logger.error('Failed to sync from cloud:', error);
@@ -819,18 +863,18 @@ export class SaveSystem {
    */
   handleLoadLatest(data) {
     const { options } = data;
-    
+
     // Find the most recent save
     let latestSlot = 0;
     let latestTime = 0;
-    
+
     for (const [slotNumber, slotInfo] of this.saveState.saveSlots) {
       if (slotInfo.exists && slotInfo.timestamp > latestTime) {
         latestTime = slotInfo.timestamp;
         latestSlot = slotNumber;
       }
     }
-    
+
     if (latestSlot > 0) {
       this.loadGame(latestSlot, options);
     }
@@ -876,9 +920,9 @@ export class SaveSystem {
     // Save current state to temporary storage
     const currentState = {
       saveState: this.saveState,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     try {
       localStorage.setItem('saveSystemState', JSON.stringify(currentState));
     } catch (error) {
@@ -913,7 +957,7 @@ export class SaveSystem {
    */
   setAutoSaveEnabled(enabled) {
     this.saveState.autoSaveEnabled = enabled;
-    
+
     if (enabled) {
       this.startAutoSave();
     } else {
@@ -995,15 +1039,15 @@ class LocalStorageAdapter {
   async initialize() {
     // LocalStorage is always available
   }
-  
+
   async save(key, data) {
     localStorage.setItem(key, data);
   }
-  
+
   async load(key) {
     return localStorage.getItem(key);
   }
-  
+
   async delete(key) {
     localStorage.removeItem(key);
   }
@@ -1015,17 +1059,17 @@ class IndexedDBAdapter {
     this.dbVersion = 1;
     this.db = null;
   }
-  
+
   async initialize() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.dbName, this.dbVersion);
-      
+
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         this.db = request.result;
         resolve();
       };
-      
+
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         if (!db.objectStoreNames.contains('saves')) {
@@ -1034,26 +1078,26 @@ class IndexedDBAdapter {
       };
     });
   }
-  
+
   async save(key, data) {
     const transaction = this.db.transaction(['saves'], 'readwrite');
     const store = transaction.objectStore('saves');
     store.put({ key, data, timestamp: Date.now() });
   }
-  
+
   async load(key) {
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction(['saves'], 'readonly');
       const store = transaction.objectStore('saves');
       const request = store.get(key);
-      
+
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
         resolve(request.result ? request.result.data : null);
       };
     });
   }
-  
+
   async delete(key) {
     const transaction = this.db.transaction(['saves'], 'readwrite');
     const store = transaction.objectStore('saves');
@@ -1066,21 +1110,21 @@ class CloudStorageAdapter {
     this.config = config;
     this.provider = null;
   }
-  
+
   async initialize() {
     // Initialize cloud provider
     this.provider = new CloudProvider(this.config.provider, this.config);
     await this.provider.initialize();
   }
-  
+
   async save(key, data) {
     return this.provider.upload(key, data);
   }
-  
+
   async load(key) {
     return this.provider.download(key);
   }
-  
+
   async delete(key) {
     return this.provider.delete(key);
   }
@@ -1091,23 +1135,23 @@ class SaveDataValidator {
   constructor(rules) {
     this.rules = rules;
   }
-  
+
   validate(data) {
     const errors = [];
-    
+
     // Check required fields
-    this.rules.requiredFields.forEach(field => {
+    this.rules.requiredFields.forEach((field) => {
       if (!data[field]) {
         errors.push(`Required field missing: ${field}`);
       }
     });
-    
+
     // Check file size
     const dataSize = JSON.stringify(data).length;
     if (dataSize > this.rules.maxFileSize) {
       errors.push(`Save data too large: ${dataSize} bytes`);
     }
-    
+
     // Check save age
     if (data.timestamp) {
       const age = Date.now() - data.timestamp;
@@ -1115,10 +1159,10 @@ class SaveDataValidator {
         errors.push(`Save data too old: ${age} ms`);
       }
     }
-    
+
     return {
       valid: errors.length === 0,
-      errors: errors
+      errors: errors,
     };
   }
 }
@@ -1127,13 +1171,13 @@ class SaveDataCompressor {
   constructor(level) {
     this.level = level;
   }
-  
+
   async compress(data) {
     // Implement compression using a compression library
     // This is a placeholder implementation
     return data;
   }
-  
+
   async decompress(data) {
     // Implement decompression
     return data;
@@ -1144,12 +1188,12 @@ class SaveDataEncryptor {
   constructor(key) {
     this.key = key;
   }
-  
+
   async encrypt(data) {
     // Implement encryption
     return data;
   }
-  
+
   async decrypt(data) {
     // Implement decryption
     return data;
@@ -1161,19 +1205,19 @@ class CloudProvider {
     this.provider = provider;
     this.config = config;
   }
-  
+
   async initialize() {
     // Initialize cloud provider
   }
-  
+
   async upload(key, data) {
     // Upload to cloud
   }
-  
+
   async download(key) {
     // Download from cloud
   }
-  
+
   async delete(key) {
     // Delete from cloud
   }

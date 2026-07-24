@@ -1,6 +1,6 @@
 /**
  * EntitySpawner - Entity spawning and management
- * 
+ *
  * TODO: Extract from GameRefactored.js and systems
  * - Move entity creation logic here
  * - Implement object pooling
@@ -17,7 +17,7 @@ export class EntitySpawner {
     this.entityPools = new Map();
     this.spawnPatterns = new Map();
     this.spawnTimers = new Map();
-    
+
     // Initialize object pools immediately
     this.initializePools();
 
@@ -28,15 +28,14 @@ export class EntitySpawner {
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.config = options.config;
-    
+
     // TODO: Add spawn configuration
     this.spawnConfig = {
       maxEntities: 100,
       spawnRate: 1.0, // entities per second
       spawnDistance: 1000,
-      cleanupDistance: 1500
+      cleanupDistance: 1500,
     };
-
   }
 
   /**
@@ -67,25 +66,34 @@ export class EntitySpawner {
     };
 
     // Enemy pool
-    this.entityPools.set('enemy', new ObjectPool(
-      () => ({ type: 'enemy', active: false }),
-      (enemy) => resetCommon(enemy),
-      20 // Initial size
-    ));
+    this.entityPools.set(
+      'enemy',
+      new ObjectPool(
+        () => ({ type: 'enemy', active: false }),
+        (enemy) => resetCommon(enemy),
+        20 // Initial size
+      )
+    );
 
     // Powerup pool
-    this.entityPools.set('powerup', new ObjectPool(
-      () => ({ type: 'powerup', active: false }),
-      (powerup) => resetCommon(powerup),
-      10
-    ));
+    this.entityPools.set(
+      'powerup',
+      new ObjectPool(
+        () => ({ type: 'powerup', active: false }),
+        (powerup) => resetCommon(powerup),
+        10
+      )
+    );
 
     // Projectile pool
-    this.entityPools.set('projectile', new ObjectPool(
-      () => ({ type: 'projectile', active: false }),
-      (projectile) => resetCommon(projectile),
-      50
-    ));
+    this.entityPools.set(
+      'projectile',
+      new ObjectPool(
+        () => ({ type: 'projectile', active: false }),
+        (projectile) => resetCommon(projectile),
+        50
+      )
+    );
   }
 
   /**
@@ -95,7 +103,7 @@ export class EntitySpawner {
   spawnEntity(type, position, options = {}) {
     const entityId = this.generateEntityId();
     const entity = this.createEntity(type, position, options);
-    
+
     if (entity) {
       this.spawnedEntities.set(entityId, entity);
 
@@ -108,7 +116,7 @@ export class EntitySpawner {
       this.eventBus?.emit('entity:spawned', { id: entityId, type, entity });
       return entityId;
     }
-    
+
     return null;
   }
 
@@ -144,7 +152,7 @@ export class EntitySpawner {
       y: position.y,
       z: position.z || 0,
       logger: this.logger,
-      ...options
+      ...options,
     };
     return new Player(playerConfig);
   }
@@ -288,7 +296,10 @@ export class EntitySpawner {
     // Clean up distant entities
     if (this.playerEntity) {
       // Handle both position object and direct x,y coordinates (Player class uses x,y)
-      const playerPos = this.playerEntity.position || { x: this.playerEntity.x, y: this.playerEntity.y };
+      const playerPos = this.playerEntity.position || {
+        x: this.playerEntity.x,
+        y: this.playerEntity.y,
+      };
       this.cleanupDistantEntities(playerPos);
     }
 
