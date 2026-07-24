@@ -61,6 +61,34 @@ describe('PhysicsSystem', () => {
     );
   });
 
+  test('update should sync player exactly once per frame', () => {
+    const gameState = {
+      player: {
+        id: 'player1',
+        x: 100,
+        y: 200,
+        width: 32,
+        height: 32
+      },
+      gameObjects: []
+    };
+
+    // First frame: one registration, no redundant position update
+    physicsSystem.update(16, gameState);
+    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(1);
+    expect(mockCollisionDetector.updateCollisionObject).not.toHaveBeenCalled();
+
+    // Second frame: exactly one position update
+    gameState.player.x = 110;
+    physicsSystem.update(16, gameState);
+    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(1);
+    expect(mockCollisionDetector.updateCollisionObject).toHaveBeenCalledTimes(1);
+    expect(mockCollisionDetector.updateCollisionObject).toHaveBeenCalledWith('player1', {
+      x: 110,
+      y: 200
+    });
+  });
+
   test('update should sync game objects to collision detector', () => {
     const gameState = {
       player: null,

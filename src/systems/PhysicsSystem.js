@@ -40,10 +40,6 @@ export class PhysicsSystem {
 
     // 1. Sync game objects with collision detector
     // This ensures collision detector has the latest positions
-    if (gameState.player) {
-      this.syncObject(gameState.player);
-    }
-
     const activeIds = new Set();
 
     if (gameState.player) {
