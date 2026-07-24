@@ -41,13 +41,13 @@ export class SoundSystem {
       spatialAudio: {
         enabled: true,
         listener: null,
-        sources: new Map()
+        sources: new Map(),
       },
       voiceChat: {
         enabled: false,
         connected: false,
-        participants: new Map()
-      }
+        participants: new Map(),
+      },
     };
 
     // Sound system configuration
@@ -63,7 +63,7 @@ export class SoundSystem {
       audioQuality: 'high',
       sampleRate: 44100,
       bitDepth: 16,
-      channels: 2
+      channels: 2,
     };
 
     // Initialize sound system
@@ -84,19 +84,19 @@ export class SoundSystem {
    */
   async initialize() {
     this.logger.info('Initializing SoundSystem...');
-    
+
     // Initialize audio context
     await this.initializeAudioContext();
-    
+
     // Load default sounds
     await this.loadDefaultSounds();
-    
+
     // Set up audio nodes
     this.setupAudioNodes();
-    
+
     // Initialize spatial audio
     this.setupSpatialAudio();
-    
+
     this.logger.info('SoundSystem initialized successfully');
   }
 
@@ -105,28 +105,28 @@ export class SoundSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up SoundSystem...');
-    
+
     // Stop all sounds
     this.stopAllSounds();
-    
+
     // Clear sound cache
     this.clearSoundCache();
-    
+
     // Close audio context
     if (this.soundState.audioContext) {
       this.soundState.audioContext.close();
     }
-    
+
     // Clear state
     this.soundState.activeSounds.clear();
     this.soundState.soundCache.clear();
     this.soundState.audioNodes.clear();
     this.soundState.spatialAudio.sources.clear();
     this.soundState.voiceChat.participants.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('SoundSystem cleaned up');
   }
 
@@ -136,13 +136,13 @@ export class SoundSystem {
   update(deltaTime, gameState) {
     // Update active sounds
     this.updateActiveSounds(deltaTime);
-    
+
     // Update spatial audio
     this.updateSpatialAudio(deltaTime);
-    
+
     // Update voice chat
     this.updateVoiceChat(deltaTime);
-    
+
     // Update audio nodes
     this.updateAudioNodes(deltaTime);
   }
@@ -153,16 +153,17 @@ export class SoundSystem {
   async initializeAudioContext() {
     try {
       // Create audio context
-      this.soundState.audioContext = new (window.AudioContext || window.webkitAudioContext)({
+      this.soundState.audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)({
         sampleRate: this.soundConfig.sampleRate,
-        latencyHint: 'interactive'
+        latencyHint: 'interactive',
       });
-      
+
       // Resume context if suspended
       if (this.soundState.audioContext.state === 'suspended') {
         await this.soundState.audioContext.resume();
       }
-      
+
       this.logger.info('Audio context initialized');
     } catch (error) {
       this.logger.error('Failed to initialize audio context:', error);
@@ -181,7 +182,7 @@ export class SoundSystem {
         loop: true,
         priority: 1,
         fadeIn: 2000,
-        fadeOut: 3000
+        fadeOut: 3000,
       },
       sfx: {
         name: 'Sound Effects',
@@ -189,7 +190,7 @@ export class SoundSystem {
         loop: false,
         priority: 2,
         fadeIn: 0,
-        fadeOut: 0
+        fadeOut: 0,
       },
       ambient: {
         name: 'Ambient',
@@ -197,7 +198,7 @@ export class SoundSystem {
         loop: true,
         priority: 3,
         fadeIn: 5000,
-        fadeOut: 5000
+        fadeOut: 5000,
       },
       voice: {
         name: 'Voice',
@@ -205,7 +206,7 @@ export class SoundSystem {
         loop: false,
         priority: 4,
         fadeIn: 0,
-        fadeOut: 0
+        fadeOut: 0,
       },
       ui: {
         name: 'UI Sounds',
@@ -213,8 +214,8 @@ export class SoundSystem {
         loop: false,
         priority: 5,
         fadeIn: 0,
-        fadeOut: 0
-      }
+        fadeOut: 0,
+      },
     };
   }
 
@@ -223,28 +224,33 @@ export class SoundSystem {
    */
   initializeAudioNodes() {
     const audioContext = this.soundState.audioContext;
-    
+
     // Master gain node
     this.soundState.audioNodes.masterGain = audioContext.createGain();
     this.soundState.audioNodes.masterGain.connect(audioContext.destination);
-    
+
     // Category gain nodes
-    Object.keys(this.soundCategories).forEach(category => {
+    Object.keys(this.soundCategories).forEach((category) => {
       const gainNode = audioContext.createGain();
       gainNode.connect(this.soundState.audioNodes.masterGain);
       this.soundState.audioNodes[category] = gainNode;
     });
-    
+
     // Reverb node
     if (this.soundConfig.reverbEnabled) {
       this.soundState.audioNodes.reverb = audioContext.createConvolver();
-      this.soundState.audioNodes.reverb.connect(this.soundState.audioNodes.masterGain);
+      this.soundState.audioNodes.reverb.connect(
+        this.soundState.audioNodes.masterGain
+      );
     }
-    
+
     // Compressor node
     if (this.soundConfig.compressionEnabled) {
-      this.soundState.audioNodes.compressor = audioContext.createDynamicsCompressor();
-      this.soundState.audioNodes.compressor.connect(this.soundState.audioNodes.masterGain);
+      this.soundState.audioNodes.compressor =
+        audioContext.createDynamicsCompressor();
+      this.soundState.audioNodes.compressor.connect(
+        this.soundState.audioNodes.masterGain
+      );
     }
   }
 
@@ -253,17 +259,18 @@ export class SoundSystem {
    */
   initializeSpatialAudio() {
     const audioContext = this.soundState.audioContext;
-    
+
     // Create panner node for spatial audio
     this.soundState.spatialAudio.panner = audioContext.createPanner();
     this.soundState.spatialAudio.panner.panningModel = 'HRTF';
     this.soundState.spatialAudio.panner.distanceModel = 'exponential';
-    this.soundState.spatialAudio.panner.maxDistance = this.soundConfig.spatialAudioDistance;
+    this.soundState.spatialAudio.panner.maxDistance =
+      this.soundConfig.spatialAudioDistance;
     this.soundState.spatialAudio.panner.rolloffFactor = 1;
     this.soundState.spatialAudio.panner.coneInnerAngle = 360;
     this.soundState.spatialAudio.panner.coneOuterAngle = 0;
     this.soundState.spatialAudio.panner.coneOuterGain = 0;
-    
+
     // Create listener
     this.soundState.spatialAudio.listener = audioContext.listener;
   }
@@ -280,7 +287,7 @@ export class SoundSystem {
       remoteStreams: new Map(),
       audioContext: null,
       mediaStreamSource: null,
-      mediaStreamDestination: null
+      mediaStreamDestination: null,
     };
   }
 
@@ -294,16 +301,16 @@ export class SoundSystem {
     this.eventBus.on('sound:pause', this.handlePauseSound.bind(this));
     this.eventBus.on('sound:resume', this.handleResumeSound.bind(this));
     this.eventBus.on('sound:volume', this.handleVolumeChange.bind(this));
-    
+
     // Music events
     this.eventBus.on('music:play', this.handlePlayMusic.bind(this));
     this.eventBus.on('music:stop', this.handleStopMusic.bind(this));
     this.eventBus.on('music:fade', this.handleFadeMusic.bind(this));
-    
+
     // Spatial audio events
     this.eventBus.on('audio:position', this.handlePositionUpdate.bind(this));
     this.eventBus.on('audio:listener', this.handleListenerUpdate.bind(this));
-    
+
     // Voice chat events
     this.eventBus.on('voice:join', this.handleVoiceJoin.bind(this));
     this.eventBus.on('voice:leave', this.handleVoiceLeave.bind(this));
@@ -317,18 +324,39 @@ export class SoundSystem {
   removeEventHandlers() {
     this.eventBus.removeListener('sound:play', this.handlePlaySound.bind(this));
     this.eventBus.removeListener('sound:stop', this.handleStopSound.bind(this));
-    this.eventBus.removeListener('sound:pause', this.handlePauseSound.bind(this));
-    this.eventBus.removeListener('sound:resume', this.handleResumeSound.bind(this));
-    this.eventBus.removeListener('sound:volume', this.handleVolumeChange.bind(this));
+    this.eventBus.removeListener(
+      'sound:pause',
+      this.handlePauseSound.bind(this)
+    );
+    this.eventBus.removeListener(
+      'sound:resume',
+      this.handleResumeSound.bind(this)
+    );
+    this.eventBus.removeListener(
+      'sound:volume',
+      this.handleVolumeChange.bind(this)
+    );
     this.eventBus.removeListener('music:play', this.handlePlayMusic.bind(this));
     this.eventBus.removeListener('music:stop', this.handleStopMusic.bind(this));
     this.eventBus.removeListener('music:fade', this.handleFadeMusic.bind(this));
-    this.eventBus.removeListener('audio:position', this.handlePositionUpdate.bind(this));
-    this.eventBus.removeListener('audio:listener', this.handleListenerUpdate.bind(this));
+    this.eventBus.removeListener(
+      'audio:position',
+      this.handlePositionUpdate.bind(this)
+    );
+    this.eventBus.removeListener(
+      'audio:listener',
+      this.handleListenerUpdate.bind(this)
+    );
     this.eventBus.removeListener('voice:join', this.handleVoiceJoin.bind(this));
-    this.eventBus.removeListener('voice:leave', this.handleVoiceLeave.bind(this));
+    this.eventBus.removeListener(
+      'voice:leave',
+      this.handleVoiceLeave.bind(this)
+    );
     this.eventBus.removeListener('voice:mute', this.handleVoiceMute.bind(this));
-    this.eventBus.removeListener('voice:unmute', this.handleVoiceUnmute.bind(this));
+    this.eventBus.removeListener(
+      'voice:unmute',
+      this.handleVoiceUnmute.bind(this)
+    );
   }
 
   /**
@@ -337,40 +365,49 @@ export class SoundSystem {
   async loadDefaultSounds() {
     const defaultSounds = {
       // Music
-      'main_theme': { category: 'music', file: 'audio/music/main_theme.mp3' },
-      'combat_theme': { category: 'music', file: 'audio/music/combat_theme.mp3' },
-      'boss_theme': { category: 'music', file: 'audio/music/boss_theme.mp3' },
-      'victory_theme': { category: 'music', file: 'audio/music/victory_theme.mp3' },
-      
+      main_theme: { category: 'music', file: 'audio/music/main_theme.mp3' },
+      combat_theme: { category: 'music', file: 'audio/music/combat_theme.mp3' },
+      boss_theme: { category: 'music', file: 'audio/music/boss_theme.mp3' },
+      victory_theme: {
+        category: 'music',
+        file: 'audio/music/victory_theme.mp3',
+      },
+
       // Ambient
-      'forest_ambient': { category: 'ambient', file: 'audio/ambient/forest.mp3' },
-      'desert_ambient': { category: 'ambient', file: 'audio/ambient/desert.mp3' },
-      'mountain_ambient': { category: 'ambient', file: 'audio/ambient/mountain.mp3' },
-      'dungeon_ambient': { category: 'ambient', file: 'audio/ambient/dungeon.mp3' },
-      
+      forest_ambient: { category: 'ambient', file: 'audio/ambient/forest.mp3' },
+      desert_ambient: { category: 'ambient', file: 'audio/ambient/desert.mp3' },
+      mountain_ambient: {
+        category: 'ambient',
+        file: 'audio/ambient/mountain.mp3',
+      },
+      dungeon_ambient: {
+        category: 'ambient',
+        file: 'audio/ambient/dungeon.mp3',
+      },
+
       // Combat SFX
-      'sword_hit': { category: 'sfx', file: 'audio/sfx/sword_hit.mp3' },
-      'bow_shoot': { category: 'sfx', file: 'audio/sfx/bow_shoot.mp3' },
-      'spell_cast': { category: 'sfx', file: 'audio/sfx/spell_cast.mp3' },
-      'explosion': { category: 'sfx', file: 'audio/sfx/explosion.mp3' },
-      'heal': { category: 'sfx', file: 'audio/sfx/heal.mp3' },
-      'critical_hit': { category: 'sfx', file: 'audio/sfx/critical_hit.mp3' },
-      
+      sword_hit: { category: 'sfx', file: 'audio/sfx/sword_hit.mp3' },
+      bow_shoot: { category: 'sfx', file: 'audio/sfx/bow_shoot.mp3' },
+      spell_cast: { category: 'sfx', file: 'audio/sfx/spell_cast.mp3' },
+      explosion: { category: 'sfx', file: 'audio/sfx/explosion.mp3' },
+      heal: { category: 'sfx', file: 'audio/sfx/heal.mp3' },
+      critical_hit: { category: 'sfx', file: 'audio/sfx/critical_hit.mp3' },
+
       // UI SFX
-      'button_click': { category: 'ui', file: 'audio/sfx/button_click.mp3' },
-      'button_hover': { category: 'ui', file: 'audio/sfx/button_hover.mp3' },
-      'item_pickup': { category: 'ui', file: 'audio/sfx/item_pickup.mp3' },
-      'level_up': { category: 'ui', file: 'audio/sfx/level_up.mp3' },
-      'achievement': { category: 'ui', file: 'audio/sfx/achievement.mp3' },
-      
+      button_click: { category: 'ui', file: 'audio/sfx/button_click.mp3' },
+      button_hover: { category: 'ui', file: 'audio/sfx/button_hover.mp3' },
+      item_pickup: { category: 'ui', file: 'audio/sfx/item_pickup.mp3' },
+      level_up: { category: 'ui', file: 'audio/sfx/level_up.mp3' },
+      achievement: { category: 'ui', file: 'audio/sfx/achievement.mp3' },
+
       // Environmental SFX
-      'footstep_grass': { category: 'sfx', file: 'audio/sfx/footstep_grass.mp3' },
-      'footstep_stone': { category: 'sfx', file: 'audio/sfx/footstep_stone.mp3' },
-      'water_splash': { category: 'sfx', file: 'audio/sfx/water_splash.mp3' },
-      'wind': { category: 'sfx', file: 'audio/sfx/wind.mp3' },
-      'rain': { category: 'sfx', file: 'audio/sfx/rain.mp3' }
+      footstep_grass: { category: 'sfx', file: 'audio/sfx/footstep_grass.mp3' },
+      footstep_stone: { category: 'sfx', file: 'audio/sfx/footstep_stone.mp3' },
+      water_splash: { category: 'sfx', file: 'audio/sfx/water_splash.mp3' },
+      wind: { category: 'sfx', file: 'audio/sfx/wind.mp3' },
+      rain: { category: 'sfx', file: 'audio/sfx/rain.mp3' },
     };
-    
+
     for (const [soundId, soundData] of Object.entries(defaultSounds)) {
       try {
         await this.loadSound(soundId, soundData.file, soundData.category);
@@ -386,7 +423,7 @@ export class SoundSystem {
   async loadSound(soundId, filePath, category) {
     try {
       const audioBuffer = await this.fetchAudioBuffer(filePath);
-      
+
       const sound = {
         id: soundId,
         filePath: filePath,
@@ -394,11 +431,11 @@ export class SoundSystem {
         buffer: audioBuffer,
         duration: audioBuffer.duration,
         loaded: true,
-        loadTime: Date.now()
+        loadTime: Date.now(),
       };
-      
+
       this.soundState.soundCache.set(soundId, sound);
-      
+
       this.logger.info(`Sound loaded: ${soundId}`);
       return sound;
     } catch (error) {
@@ -415,10 +452,11 @@ export class SoundSystem {
     if (!response.ok) {
       throw new Error(`Failed to fetch audio file: ${filePath}`);
     }
-    
+
     const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await this.soundState.audioContext.decodeAudioData(arrayBuffer);
-    
+    const audioBuffer =
+      await this.soundState.audioContext.decodeAudioData(arrayBuffer);
+
     return audioBuffer;
   }
 
@@ -431,35 +469,37 @@ export class SoundSystem {
       this.logger.warn(`Sound not found: ${soundId}`);
       return null;
     }
-    
+
     if (this.soundState.muted) {
       return null;
     }
-    
+
     // Check concurrent sound limit
-    if (this.soundState.activeSounds.size >= this.soundConfig.maxConcurrentSounds) {
+    if (
+      this.soundState.activeSounds.size >= this.soundConfig.maxConcurrentSounds
+    ) {
       this.logger.warn('Maximum concurrent sounds reached');
       return null;
     }
-    
+
     const audioContext = this.soundState.audioContext;
     const source = audioContext.createBufferSource();
     const gainNode = audioContext.createGain();
-    
+
     // Configure source
     source.buffer = sound.buffer;
     source.loop = options.loop || this.soundCategories[sound.category].loop;
-    
+
     // Configure gain
     const categoryVolume = this.soundCategories[sound.category].volume;
     const masterVolume = this.soundState.masterVolume;
     const soundVolume = options.volume || 1.0;
-    
+
     gainNode.gain.value = categoryVolume * masterVolume * soundVolume;
-    
+
     // Connect nodes
     source.connect(gainNode);
-    
+
     // Apply spatial audio if enabled
     if (options.position && this.soundState.spatialAudio.enabled) {
       const panner = this.createPannerNode(options.position);
@@ -468,10 +508,10 @@ export class SoundSystem {
     } else {
       gainNode.connect(this.soundState.audioNodes[sound.category]);
     }
-    
+
     // Start playback
     source.start(0);
-    
+
     // Create sound instance
     const soundInstance = {
       id: `sound_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -483,16 +523,16 @@ export class SoundSystem {
       volume: soundVolume,
       position: options.position || null,
       loop: source.loop,
-      active: true
+      active: true,
     };
-    
+
     this.soundState.activeSounds.set(soundInstance.id, soundInstance);
-    
+
     // Handle end event
     source.onended = () => {
       this.soundState.activeSounds.delete(soundInstance.id);
     };
-    
+
     return soundInstance;
   }
 
@@ -504,7 +544,7 @@ export class SoundSystem {
     if (!soundInstance) {
       return;
     }
-    
+
     soundInstance.source.stop();
     soundInstance.active = false;
     this.soundState.activeSounds.delete(soundInstanceId);
@@ -518,7 +558,7 @@ export class SoundSystem {
     if (!soundInstance) {
       return;
     }
-    
+
     soundInstance.gainNode.gain.value = 0;
     soundInstance.paused = true;
   }
@@ -531,10 +571,11 @@ export class SoundSystem {
     if (!soundInstance) {
       return;
     }
-    
+
     const categoryVolume = this.soundCategories[soundInstance.soundId].volume;
     const masterVolume = this.soundState.masterVolume;
-    soundInstance.gainNode.gain.value = categoryVolume * masterVolume * soundInstance.volume;
+    soundInstance.gainNode.gain.value =
+      categoryVolume * masterVolume * soundInstance.volume;
     soundInstance.paused = false;
   }
 
@@ -546,23 +587,23 @@ export class SoundSystem {
     if (this.soundState.currentMusic) {
       this.stopMusic();
     }
-    
+
     // Play new music
     const musicInstance = this.playSound(musicId, {
       ...options,
       category: 'music',
-      loop: true
+      loop: true,
     });
-    
+
     if (musicInstance) {
       this.soundState.currentMusic = musicInstance;
-      
+
       // Fade in
       if (this.soundCategories.music.fadeIn > 0) {
         this.fadeIn(musicInstance.id, this.soundCategories.music.fadeIn);
       }
     }
-    
+
     return musicInstance;
   }
 
@@ -573,14 +614,17 @@ export class SoundSystem {
     if (!this.soundState.currentMusic) {
       return;
     }
-    
+
     // Fade out
     if (this.soundCategories.music.fadeOut > 0) {
-      this.fadeOut(this.soundState.currentMusic.id, this.soundCategories.music.fadeOut);
+      this.fadeOut(
+        this.soundState.currentMusic.id,
+        this.soundCategories.music.fadeOut
+      );
     } else {
       this.stopSound(this.soundState.currentMusic.id);
     }
-    
+
     this.soundState.currentMusic = null;
   }
 
@@ -592,12 +636,15 @@ export class SoundSystem {
     if (!soundInstance) {
       return;
     }
-    
+
     const gainNode = soundInstance.gainNode;
     const targetVolume = gainNode.gain.value;
-    
+
     gainNode.gain.value = 0;
-    gainNode.gain.linearRampToValueAtTime(targetVolume, this.soundState.audioContext.currentTime + duration / 1000);
+    gainNode.gain.linearRampToValueAtTime(
+      targetVolume,
+      this.soundState.audioContext.currentTime + duration / 1000
+    );
   }
 
   /**
@@ -608,12 +655,15 @@ export class SoundSystem {
     if (!soundInstance) {
       return;
     }
-    
+
     const gainNode = soundInstance.gainNode;
     const currentVolume = gainNode.gain.value;
-    
-    gainNode.gain.linearRampToValueAtTime(0, this.soundState.audioContext.currentTime + duration / 1000);
-    
+
+    gainNode.gain.linearRampToValueAtTime(
+      0,
+      this.soundState.audioContext.currentTime + duration / 1000
+    );
+
     // Stop after fade out
     setTimeout(() => {
       this.stopSound(soundInstanceId);
@@ -629,11 +679,11 @@ export class SoundSystem {
     panner.distanceModel = 'exponential';
     panner.maxDistance = this.soundConfig.spatialAudioDistance;
     panner.rolloffFactor = 1;
-    
+
     panner.positionX.value = position.x;
     panner.positionY.value = position.y;
     panner.positionZ.value = position.z || 0;
-    
+
     return panner;
   }
 
@@ -642,10 +692,13 @@ export class SoundSystem {
    */
   updateActiveSounds(deltaTime) {
     const now = Date.now();
-    
+
     for (const [id, soundInstance] of this.soundState.activeSounds) {
       // Check if sound has ended
-      if (now - soundInstance.startTime > soundInstance.duration * 1000 && !soundInstance.loop) {
+      if (
+        now - soundInstance.startTime > soundInstance.duration * 1000 &&
+        !soundInstance.loop
+      ) {
         this.soundState.activeSounds.delete(id);
       }
     }
@@ -658,13 +711,13 @@ export class SoundSystem {
     if (!this.soundState.spatialAudio.enabled) {
       return;
     }
-    
+
     // Update listener position
     if (this.soundState.spatialAudio.listener) {
       // Update listener position based on player position
       // This would be called from the game loop
     }
-    
+
     // Update sound source positions
     for (const [id, soundInstance] of this.soundState.activeSounds) {
       if (soundInstance.position) {
@@ -681,7 +734,7 @@ export class SoundSystem {
     if (!this.voiceChat.enabled) {
       return;
     }
-    
+
     // Update voice chat participants
     // This would handle voice chat updates
   }
@@ -699,7 +752,8 @@ export class SoundSystem {
    */
   setMasterVolume(volume) {
     this.soundState.masterVolume = Math.max(0, Math.min(1, volume));
-    this.soundState.audioNodes.masterGain.gain.value = this.soundState.masterVolume;
+    this.soundState.audioNodes.masterGain.gain.value =
+      this.soundState.masterVolume;
   }
 
   /**
@@ -708,7 +762,8 @@ export class SoundSystem {
   setCategoryVolume(category, volume) {
     if (this.soundCategories[category]) {
       this.soundCategories[category].volume = Math.max(0, Math.min(1, volume));
-      this.soundState.audioNodes[category].gain.value = this.soundCategories[category].volume;
+      this.soundState.audioNodes[category].gain.value =
+        this.soundCategories[category].volume;
     }
   }
 
@@ -725,7 +780,8 @@ export class SoundSystem {
    */
   unmute() {
     this.soundState.muted = false;
-    this.soundState.audioNodes.masterGain.gain.value = this.soundState.masterVolume;
+    this.soundState.audioNodes.masterGain.gain.value =
+      this.soundState.masterVolume;
   }
 
   /**
@@ -781,7 +837,7 @@ export class SoundSystem {
    */
   handleVolumeChange(data) {
     const { category, volume } = data;
-    
+
     if (category === 'master') {
       this.setMasterVolume(volume);
     } else {
@@ -809,7 +865,7 @@ export class SoundSystem {
    */
   handleFadeMusic(data) {
     const { musicId, fadeIn, fadeOut } = data;
-    
+
     if (fadeIn) {
       this.playMusic(musicId, { fadeIn: fadeIn });
     } else if (fadeOut) {
@@ -822,7 +878,7 @@ export class SoundSystem {
    */
   handlePositionUpdate(data) {
     const { soundInstanceId, position } = data;
-    
+
     const soundInstance = this.soundState.activeSounds.get(soundInstanceId);
     if (soundInstance) {
       soundInstance.position = position;
@@ -835,16 +891,19 @@ export class SoundSystem {
    */
   handleListenerUpdate(data) {
     const { position, orientation } = data;
-    
+
     if (this.soundState.spatialAudio.listener) {
       this.soundState.spatialAudio.listener.positionX.value = position.x;
       this.soundState.spatialAudio.listener.positionY.value = position.y;
       this.soundState.spatialAudio.listener.positionZ.value = position.z || 0;
-      
+
       if (orientation) {
-        this.soundState.spatialAudio.listener.forwardX.value = orientation.forward.x;
-        this.soundState.spatialAudio.listener.forwardY.value = orientation.forward.y;
-        this.soundState.spatialAudio.listener.forwardZ.value = orientation.forward.z;
+        this.soundState.spatialAudio.listener.forwardX.value =
+          orientation.forward.x;
+        this.soundState.spatialAudio.listener.forwardY.value =
+          orientation.forward.y;
+        this.soundState.spatialAudio.listener.forwardZ.value =
+          orientation.forward.z;
         this.soundState.spatialAudio.listener.upX.value = orientation.up.x;
         this.soundState.spatialAudio.listener.upY.value = orientation.up.y;
         this.soundState.spatialAudio.listener.upZ.value = orientation.up.z;
@@ -857,13 +916,13 @@ export class SoundSystem {
    */
   handleVoiceJoin(data) {
     const { participantId, stream } = data;
-    
+
     if (this.voiceChat.enabled) {
       this.voiceChat.participants.set(participantId, {
         id: participantId,
         stream: stream,
         muted: false,
-        volume: 1.0
+        volume: 1.0,
       });
     }
   }
@@ -873,7 +932,7 @@ export class SoundSystem {
    */
   handleVoiceLeave(data) {
     const { participantId } = data;
-    
+
     this.voiceChat.participants.delete(participantId);
   }
 
@@ -882,7 +941,7 @@ export class SoundSystem {
    */
   handleVoiceMute(data) {
     const { participantId } = data;
-    
+
     const participant = this.voiceChat.participants.get(participantId);
     if (participant) {
       participant.muted = true;
@@ -894,7 +953,7 @@ export class SoundSystem {
    */
   handleVoiceUnmute(data) {
     const { participantId } = data;
-    
+
     const participant = this.voiceChat.participants.get(participantId);
     if (participant) {
       participant.muted = false;
@@ -978,7 +1037,7 @@ export class SoundSystem {
    */
   setAudioQuality(quality) {
     this.soundConfig.audioQuality = quality;
-    
+
     switch (quality) {
       case 'low':
         this.soundConfig.sampleRate = 22050;

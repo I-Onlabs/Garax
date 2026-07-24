@@ -1,6 +1,6 @@
 /**
  * AudioManager - Audio management and playback
- * 
+ *
  * TODO: Extract from AudioSystem.js and SoundSystem.js
  * - Move audio management logic here
  * - Implement audio pooling and caching
@@ -19,21 +19,21 @@ export class AudioManager {
       master: 1.0,
       music: 0.8,
       sfx: 1.0,
-      voice: 0.9
+      voice: 0.9,
     };
-    
+
     // TODO: Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.config = options.config;
-    
+
     // TODO: Add audio configuration
     this.audioConfig = {
       enableAudio: true,
       enable3D: false,
       enableSpatialAudio: false,
       maxConcurrentSounds: 32,
-      audioFormat: 'mp3'
+      audioFormat: 'mp3',
     };
   }
 
@@ -43,17 +43,18 @@ export class AudioManager {
    */
   async initialize() {
     if (!this.audioConfig.enableAudio) return;
-    
+
     try {
       // TODO: Create audio context
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
+      this.audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+
       // TODO: Load audio assets
       await this.loadAudioAssets();
-      
+
       // TODO: Set up audio pools
       this.setupAudioPools();
-      
+
       console.log('AudioManager initialized');
     } catch (error) {
       console.error('Failed to initialize AudioManager:', error);
@@ -68,19 +69,30 @@ export class AudioManager {
   async loadAudioAssets() {
     // TODO: Load sound effects
     const soundEffects = [
-      'jump', 'collect', 'hit', 'explosion', 'powerup',
-      'button_click', 'button_hover', 'menu_open', 'menu_close'
+      'jump',
+      'collect',
+      'hit',
+      'explosion',
+      'powerup',
+      'button_click',
+      'button_hover',
+      'menu_open',
+      'menu_close',
     ];
-    
+
     for (const sound of soundEffects) {
       await this.loadSound(sound);
     }
-    
+
     // TODO: Load background music
     const musicTracks = [
-      'main_theme', 'level_1', 'level_2', 'boss_theme', 'victory'
+      'main_theme',
+      'level_1',
+      'level_2',
+      'boss_theme',
+      'victory',
     ];
-    
+
     for (const track of musicTracks) {
       await this.loadMusic(track);
     }
@@ -92,10 +104,12 @@ export class AudioManager {
    */
   async loadSound(name) {
     try {
-      const audio = new Audio(`/audio/sfx/${name}.${this.audioConfig.audioFormat}`);
+      const audio = new Audio(
+        `/audio/sfx/${name}.${this.audioConfig.audioFormat}`
+      );
       audio.preload = 'auto';
       audio.volume = this.volumeSettings.sfx;
-      
+
       this.sounds.set(name, audio);
       console.log(`Loaded sound: ${name}`);
     } catch (error) {
@@ -109,11 +123,13 @@ export class AudioManager {
    */
   async loadMusic(name) {
     try {
-      const audio = new Audio(`/audio/music/${name}.${this.audioConfig.audioFormat}`);
+      const audio = new Audio(
+        `/audio/music/${name}.${this.audioConfig.audioFormat}`
+      );
       audio.preload = 'auto';
       audio.volume = this.volumeSettings.music;
       audio.loop = true;
-      
+
       this.music.set(name, audio);
       console.log(`Loaded music: ${name}`);
     } catch (error) {
@@ -128,7 +144,7 @@ export class AudioManager {
   setupAudioPools() {
     // TODO: Create audio pools for frequently used sounds
     const poolSounds = ['jump', 'collect', 'hit'];
-    
+
     for (const soundName of poolSounds) {
       const pool = [];
       for (let i = 0; i < 5; i++) {
@@ -147,32 +163,35 @@ export class AudioManager {
    */
   playSound(name, options = {}) {
     if (!this.audioConfig.enableAudio) return;
-    
+
     const sound = this.getSoundFromPool(name) || this.sounds.get(name);
     if (!sound) {
       console.warn(`Sound not found: ${name}`);
       return;
     }
-    
+
     // TODO: Apply options
     if (options.volume !== undefined) {
       sound.volume = options.volume * this.volumeSettings.sfx;
     }
-    
+
     if (options.pitch !== undefined) {
       sound.playbackRate = options.pitch;
     }
-    
+
     // TODO: Reset audio to beginning
     sound.currentTime = 0;
-    
+
     // TODO: Play sound
-    sound.play().then(() => {
-      this.activeSounds.push({ name, sound });
-    }).catch(error => {
-      console.warn(`Failed to play sound: ${name}`, error);
-    });
-    
+    sound
+      .play()
+      .then(() => {
+        this.activeSounds.push({ name, sound });
+      })
+      .catch((error) => {
+        console.warn(`Failed to play sound: ${name}`, error);
+      });
+
     // TODO: Emit sound played event
     this.eventBus?.emit('audio:soundPlayed', { name, options });
   }
@@ -183,29 +202,29 @@ export class AudioManager {
    */
   playMusic(name, options = {}) {
     if (!this.audioConfig.enableAudio) return;
-    
+
     // TODO: Stop current music
     this.stopMusic();
-    
+
     const music = this.music.get(name);
     if (!music) {
       console.warn(`Music not found: ${name}`);
       return;
     }
-    
+
     // TODO: Apply options
     if (options.volume !== undefined) {
       music.volume = options.volume * this.volumeSettings.music;
     }
-    
+
     if (options.fadeIn !== undefined) {
       this.fadeInMusic(music, options.fadeIn);
     } else {
-      music.play().catch(error => {
+      music.play().catch((error) => {
         console.warn(`Failed to play music: ${name}`, error);
       });
     }
-    
+
     // TODO: Emit music played event
     this.eventBus?.emit('audio:musicPlayed', { name, options });
   }
@@ -233,24 +252,24 @@ export class AudioManager {
    */
   fadeInMusic(music, duration) {
     music.volume = 0;
-    music.play().catch(error => {
+    music.play().catch((error) => {
       console.warn('Failed to play music during fade in', error);
     });
-    
+
     const startTime = Date.now();
     const targetVolume = this.volumeSettings.music;
-    
+
     const fadeIn = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       music.volume = targetVolume * progress;
-      
+
       if (progress < 1) {
         requestAnimationFrame(fadeIn);
       }
     };
-    
+
     fadeIn();
   }
 
@@ -261,13 +280,13 @@ export class AudioManager {
   fadeOutMusic(music, duration) {
     const startTime = Date.now();
     const startVolume = music.volume;
-    
+
     const fadeOut = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       music.volume = startVolume * (1 - progress);
-      
+
       if (progress < 1) {
         requestAnimationFrame(fadeOut);
       } else {
@@ -275,7 +294,7 @@ export class AudioManager {
         music.currentTime = 0;
       }
     };
-    
+
     fadeOut();
   }
 
@@ -286,7 +305,7 @@ export class AudioManager {
   getSoundFromPool(name) {
     const pool = this.audioPools.get(name);
     if (!pool || pool.length === 0) return null;
-    
+
     return pool.pop();
   }
 
@@ -309,10 +328,10 @@ export class AudioManager {
    */
   setVolume(type, volume) {
     this.volumeSettings[type] = Math.max(0, Math.min(1, volume));
-    
+
     // TODO: Apply volume to existing audio
     this.applyVolumeSettings();
-    
+
     // TODO: Emit volume changed event
     this.eventBus?.emit('audio:volumeChanged', { type, volume });
   }
@@ -326,7 +345,7 @@ export class AudioManager {
     for (const [name, sound] of this.sounds) {
       sound.volume = this.volumeSettings.sfx;
     }
-    
+
     // TODO: Apply volume to music
     for (const [name, music] of this.music) {
       music.volume = this.volumeSettings.music;
@@ -348,7 +367,7 @@ export class AudioManager {
   mute() {
     this.volumeSettings.master = 0;
     this.applyVolumeSettings();
-    
+
     // TODO: Emit mute event
     this.eventBus?.emit('audio:muted');
   }
@@ -360,7 +379,7 @@ export class AudioManager {
   unmute() {
     this.volumeSettings.master = 1;
     this.applyVolumeSettings();
-    
+
     // TODO: Emit unmute event
     this.eventBus?.emit('audio:unmuted');
   }
@@ -392,12 +411,12 @@ export class AudioManager {
     // TODO: Close audio context
     // TODO: Clear audio pools
     this.stopMusic();
-    
+
     if (this.audioContext) {
       this.audioContext.close();
       this.audioContext = null;
     }
-    
+
     this.sounds.clear();
     this.music.clear();
     this.audioPools.clear();

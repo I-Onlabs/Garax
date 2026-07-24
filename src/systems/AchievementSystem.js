@@ -38,16 +38,16 @@ export class AchievementSystem {
         enabled: false,
         sharingEnabled: false,
         leaderboardsEnabled: false,
-        friendsEnabled: false
+        friendsEnabled: false,
       },
       notifications: {
         enabled: true,
         showProgress: true,
         showCompletion: true,
-        showRewards: true
+        showRewards: true,
       },
       autoSave: true,
-      lastSaveTime: 0
+      lastSaveTime: 0,
     };
 
     // Achievement system configuration
@@ -66,7 +66,7 @@ export class AchievementSystem {
         progression: 'Progression',
         special: 'Special',
         seasonal: 'Seasonal',
-        hidden: 'Hidden'
+        hidden: 'Hidden',
       },
       rarityLevels: {
         common: { name: 'Common', color: '#ffffff', points: 10 },
@@ -74,7 +74,7 @@ export class AchievementSystem {
         rare: { name: 'Rare', color: '#0070dd', points: 50 },
         epic: { name: 'Epic', color: '#a335ee', points: 100 },
         legendary: { name: 'Legendary', color: '#ff8000', points: 250 },
-        mythic: { name: 'Mythic', color: '#e6cc80', points: 500 }
+        mythic: { name: 'Mythic', color: '#e6cc80', points: 500 },
       },
       rewardTypes: {
         experience: 'Experience Points',
@@ -83,8 +83,8 @@ export class AchievementSystem {
         titles: 'Titles',
         cosmetics: 'Cosmetics',
         unlocks: 'Unlocks',
-        currency: 'Currency'
-      }
+        currency: 'Currency',
+      },
     };
 
     // Initialize achievement system
@@ -106,16 +106,16 @@ export class AchievementSystem {
    */
   async initialize() {
     this.logger.info('Initializing AchievementSystem...');
-    
+
     // Load achievement data
     await this.loadAchievementData();
-    
+
     // Initialize progress tracking
     this.initializeProgressTracking();
-    
+
     // Start auto-save
     this.startAutoSave();
-    
+
     this.logger.info('AchievementSystem initialized successfully');
   }
 
@@ -124,13 +124,13 @@ export class AchievementSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up AchievementSystem...');
-    
+
     // Save achievement data
     this.saveAchievementData();
-    
+
     // Stop auto-save
     this.stopAutoSave();
-    
+
     // Clear state
     this.achievementState.achievements.clear();
     this.achievementState.completedAchievements.clear();
@@ -139,10 +139,10 @@ export class AchievementSystem {
     this.achievementState.rarityLevels.clear();
     this.achievementState.rewards.clear();
     this.achievementState.statistics.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('AchievementSystem cleaned up');
   }
 
@@ -152,13 +152,13 @@ export class AchievementSystem {
   update(deltaTime, gameState) {
     // Update progress tracking
     this.updateProgressTracking(deltaTime);
-    
+
     // Update statistics
     this.updateStatistics(deltaTime);
-    
+
     // Update social features
     this.updateSocialFeatures(deltaTime);
-    
+
     // Update notifications
     this.updateNotifications(deltaTime);
   }
@@ -177,14 +177,14 @@ export class AchievementSystem {
       points: 10,
       requirements: {
         type: 'kill_enemies',
-        count: 1
+        count: 1,
       },
       rewards: {
         experience: 100,
-        gold: 50
+        gold: 50,
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -196,15 +196,15 @@ export class AchievementSystem {
       points: 25,
       requirements: {
         type: 'kill_streak',
-        count: 10
+        count: 10,
       },
       rewards: {
         experience: 500,
         gold: 200,
-        title: 'Killer'
+        title: 'Killer',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -216,16 +216,16 @@ export class AchievementSystem {
       points: 250,
       requirements: {
         type: 'defeat_boss',
-        boss: 'dragon_king'
+        boss: 'dragon_king',
       },
       rewards: {
         experience: 5000,
         gold: 2000,
         title: 'Dragon Slayer',
-        items: ['dragon_king_crown']
+        items: ['dragon_king_crown'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     // Exploration achievements
@@ -238,14 +238,14 @@ export class AchievementSystem {
       points: 10,
       requirements: {
         type: 'visit_areas',
-        count: 10
+        count: 10,
       },
       rewards: {
         experience: 200,
-        gold: 100
+        gold: 100,
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -257,15 +257,15 @@ export class AchievementSystem {
       points: 50,
       requirements: {
         type: 'visit_biomes',
-        biomes: ['forest', 'desert', 'mountain', 'swamp', 'arctic', 'volcanic']
+        biomes: ['forest', 'desert', 'mountain', 'swamp', 'arctic', 'volcanic'],
       },
       rewards: {
         experience: 1000,
         gold: 500,
-        title: 'World Traveler'
+        title: 'World Traveler',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -277,16 +277,16 @@ export class AchievementSystem {
       points: 100,
       requirements: {
         type: 'complete_dungeons',
-        count: 50
+        count: 50,
       },
       rewards: {
         experience: 2000,
         gold: 1000,
         title: 'Dungeon Master',
-        items: ['dungeon_master_key']
+        items: ['dungeon_master_key'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     // Collection achievements
@@ -299,14 +299,14 @@ export class AchievementSystem {
       points: 10,
       requirements: {
         type: 'collect_items',
-        count: 100
+        count: 100,
       },
       rewards: {
         experience: 300,
-        gold: 150
+        gold: 150,
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -318,15 +318,15 @@ export class AchievementSystem {
       points: 100,
       requirements: {
         type: 'collect_legendary_items',
-        count: 10
+        count: 10,
       },
       rewards: {
         experience: 1500,
         gold: 750,
-        title: 'Treasure Hunter'
+        title: 'Treasure Hunter',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -337,16 +337,16 @@ export class AchievementSystem {
       rarity: 'mythic',
       points: 500,
       requirements: {
-        type: 'collect_all_unique_items'
+        type: 'collect_all_unique_items',
       },
       rewards: {
         experience: 5000,
         gold: 2500,
         title: 'Completionist',
-        items: ['completionist_crown']
+        items: ['completionist_crown'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     // Social achievements
@@ -359,15 +359,15 @@ export class AchievementSystem {
       points: 25,
       requirements: {
         type: 'complete_trades',
-        count: 10
+        count: 10,
       },
       rewards: {
         experience: 400,
         gold: 200,
-        title: 'Trader'
+        title: 'Trader',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -379,15 +379,15 @@ export class AchievementSystem {
       points: 50,
       requirements: {
         type: 'win_auctions',
-        count: 25
+        count: 25,
       },
       rewards: {
         experience: 800,
         gold: 400,
-        title: 'Auction Master'
+        title: 'Auction Master',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -399,16 +399,16 @@ export class AchievementSystem {
       points: 100,
       requirements: {
         type: 'win_pvp_matches',
-        count: 100
+        count: 100,
       },
       rewards: {
         experience: 2000,
         gold: 1000,
         title: 'PvP Champion',
-        items: ['champion_armor']
+        items: ['champion_armor'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     // Progression achievements
@@ -421,14 +421,14 @@ export class AchievementSystem {
       points: 10,
       requirements: {
         type: 'reach_level',
-        level: 10
+        level: 10,
       },
       rewards: {
         experience: 0,
-        gold: 100
+        gold: 100,
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -440,15 +440,15 @@ export class AchievementSystem {
       points: 50,
       requirements: {
         type: 'reach_level',
-        level: 50
+        level: 50,
       },
       rewards: {
         experience: 0,
         gold: 1000,
-        title: 'Veteran'
+        title: 'Veteran',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -460,16 +460,16 @@ export class AchievementSystem {
       points: 250,
       requirements: {
         type: 'reach_level',
-        level: 100
+        level: 100,
       },
       rewards: {
         experience: 0,
         gold: 5000,
         title: 'Master',
-        items: ['master_crown']
+        items: ['master_crown'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     // Special achievements
@@ -481,15 +481,15 @@ export class AchievementSystem {
       rarity: 'epic',
       points: 100,
       requirements: {
-        type: 'find_legendary_first_try'
+        type: 'find_legendary_first_try',
       },
       rewards: {
         experience: 1000,
         gold: 500,
-        title: 'Lucky'
+        title: 'Lucky',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -501,15 +501,15 @@ export class AchievementSystem {
       points: 50,
       requirements: {
         type: 'survive_low_health',
-        duration: 300000 // 5 minutes
+        duration: 300000, // 5 minutes
       },
       rewards: {
         experience: 500,
         gold: 250,
-        title: 'Survivor'
+        title: 'Survivor',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -521,15 +521,15 @@ export class AchievementSystem {
       points: 100,
       requirements: {
         type: 'complete_dungeon_fast',
-        time: 120000 // 2 minutes
+        time: 120000, // 2 minutes
       },
       rewards: {
         experience: 1000,
         gold: 500,
-        title: 'Speed Demon'
+        title: 'Speed Demon',
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     // Hidden achievements
@@ -541,16 +541,16 @@ export class AchievementSystem {
       rarity: 'mythic',
       points: 500,
       requirements: {
-        type: 'secret_requirement'
+        type: 'secret_requirement',
       },
       rewards: {
         experience: 5000,
         gold: 2500,
         title: 'Mystery',
-        items: ['secret_item']
+        items: ['secret_item'],
       },
       hidden: true,
-      secret: true
+      secret: true,
     });
 
     // Seasonal achievements
@@ -563,16 +563,16 @@ export class AchievementSystem {
       points: 50,
       requirements: {
         type: 'complete_seasonal_event',
-        event: 'winter_festival'
+        event: 'winter_festival',
       },
       rewards: {
         experience: 800,
         gold: 400,
         title: 'Winter Warrior',
-        items: ['winter_crown']
+        items: ['winter_crown'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
 
     this.addAchievement({
@@ -584,16 +584,16 @@ export class AchievementSystem {
       points: 50,
       requirements: {
         type: 'complete_seasonal_event',
-        event: 'summer_solstice'
+        event: 'summer_solstice',
       },
       rewards: {
         experience: 800,
         gold: 400,
         title: 'Summer Solstice',
-        items: ['sun_crown']
+        items: ['sun_crown'],
       },
       hidden: false,
-      secret: false
+      secret: false,
     });
   }
 
@@ -601,38 +601,44 @@ export class AchievementSystem {
    * Initialize categories
    */
   initializeCategories() {
-    Object.entries(this.achievementConfig.achievementCategories).forEach(([key, name]) => {
-      this.achievementState.categories.set(key, {
-        id: key,
-        name: name,
-        achievements: [],
-        completed: 0,
-        total: 0
-      });
-    });
+    Object.entries(this.achievementConfig.achievementCategories).forEach(
+      ([key, name]) => {
+        this.achievementState.categories.set(key, {
+          id: key,
+          name: name,
+          achievements: [],
+          completed: 0,
+          total: 0,
+        });
+      }
+    );
   }
 
   /**
    * Initialize rarity levels
    */
   initializeRarityLevels() {
-    Object.entries(this.achievementConfig.rarityLevels).forEach(([key, level]) => {
-      this.achievementState.rarityLevels.set(key, level);
-    });
+    Object.entries(this.achievementConfig.rarityLevels).forEach(
+      ([key, level]) => {
+        this.achievementState.rarityLevels.set(key, level);
+      }
+    );
   }
 
   /**
    * Initialize rewards
    */
   initializeRewards() {
-    Object.entries(this.achievementConfig.rewardTypes).forEach(([key, name]) => {
-      this.achievementState.rewards.set(key, {
-        id: key,
-        name: name,
-        given: 0,
-        total: 0
-      });
-    });
+    Object.entries(this.achievementConfig.rewardTypes).forEach(
+      ([key, name]) => {
+        this.achievementState.rewards.set(key, {
+          id: key,
+          name: name,
+          given: 0,
+          total: 0,
+        });
+      }
+    );
   }
 
   /**
@@ -646,7 +652,7 @@ export class AchievementSystem {
         current: 0,
         target: this.getRequirementTarget(achievement.requirements),
         progress: 0,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       });
     }
   }
@@ -670,45 +676,120 @@ export class AchievementSystem {
   setupEventHandlers() {
     // Achievement events
     this.eventBus.on('achievement:check', this.checkAchievements.bind(this));
-    this.eventBus.on('achievement:complete', this.completeAchievement.bind(this));
+    this.eventBus.on(
+      'achievement:complete',
+      this.completeAchievement.bind(this)
+    );
     this.eventBus.on('achievement:progress', this.updateProgress.bind(this));
     this.eventBus.on('achievement:reward', this.giveReward.bind(this));
-    
+
     // Game events
     this.eventBus.on('player:levelUp', this.handlePlayerLevelUp.bind(this));
     this.eventBus.on('player:killEnemy', this.handlePlayerKillEnemy.bind(this));
-    this.eventBus.on('player:collectItem', this.handlePlayerCollectItem.bind(this));
+    this.eventBus.on(
+      'player:collectItem',
+      this.handlePlayerCollectItem.bind(this)
+    );
     this.eventBus.on('player:visitArea', this.handlePlayerVisitArea.bind(this));
-    this.eventBus.on('player:completeDungeon', this.handlePlayerCompleteDungeon.bind(this));
-    this.eventBus.on('player:completeTrade', this.handlePlayerCompleteTrade.bind(this));
+    this.eventBus.on(
+      'player:completeDungeon',
+      this.handlePlayerCompleteDungeon.bind(this)
+    );
+    this.eventBus.on(
+      'player:completeTrade',
+      this.handlePlayerCompleteTrade.bind(this)
+    );
     this.eventBus.on('player:winPvP', this.handlePlayerWinPvP.bind(this));
-    this.eventBus.on('player:winAuction', this.handlePlayerWinAuction.bind(this));
-    this.eventBus.on('player:findLegendary', this.handlePlayerFindLegendary.bind(this));
-    this.eventBus.on('player:surviveLowHealth', this.handlePlayerSurviveLowHealth.bind(this));
-    this.eventBus.on('player:completeDungeonFast', this.handlePlayerCompleteDungeonFast.bind(this));
-    this.eventBus.on('player:completeSeasonalEvent', this.handlePlayerCompleteSeasonalEvent.bind(this));
+    this.eventBus.on(
+      'player:winAuction',
+      this.handlePlayerWinAuction.bind(this)
+    );
+    this.eventBus.on(
+      'player:findLegendary',
+      this.handlePlayerFindLegendary.bind(this)
+    );
+    this.eventBus.on(
+      'player:surviveLowHealth',
+      this.handlePlayerSurviveLowHealth.bind(this)
+    );
+    this.eventBus.on(
+      'player:completeDungeonFast',
+      this.handlePlayerCompleteDungeonFast.bind(this)
+    );
+    this.eventBus.on(
+      'player:completeSeasonalEvent',
+      this.handlePlayerCompleteSeasonalEvent.bind(this)
+    );
   }
 
   /**
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('achievement:check', this.checkAchievements.bind(this));
-    this.eventBus.removeListener('achievement:complete', this.completeAchievement.bind(this));
-    this.eventBus.removeListener('achievement:progress', this.updateProgress.bind(this));
-    this.eventBus.removeListener('achievement:reward', this.giveReward.bind(this));
-    this.eventBus.removeListener('player:levelUp', this.handlePlayerLevelUp.bind(this));
-    this.eventBus.removeListener('player:killEnemy', this.handlePlayerKillEnemy.bind(this));
-    this.eventBus.removeListener('player:collectItem', this.handlePlayerCollectItem.bind(this));
-    this.eventBus.removeListener('player:visitArea', this.handlePlayerVisitArea.bind(this));
-    this.eventBus.removeListener('player:completeDungeon', this.handlePlayerCompleteDungeon.bind(this));
-    this.eventBus.removeListener('player:completeTrade', this.handlePlayerCompleteTrade.bind(this));
-    this.eventBus.removeListener('player:winPvP', this.handlePlayerWinPvP.bind(this));
-    this.eventBus.removeListener('player:winAuction', this.handlePlayerWinAuction.bind(this));
-    this.eventBus.removeListener('player:findLegendary', this.handlePlayerFindLegendary.bind(this));
-    this.eventBus.removeListener('player:surviveLowHealth', this.handlePlayerSurviveLowHealth.bind(this));
-    this.eventBus.removeListener('player:completeDungeonFast', this.handlePlayerCompleteDungeonFast.bind(this));
-    this.eventBus.removeListener('player:completeSeasonalEvent', this.handlePlayerCompleteSeasonalEvent.bind(this));
+    this.eventBus.removeListener(
+      'achievement:check',
+      this.checkAchievements.bind(this)
+    );
+    this.eventBus.removeListener(
+      'achievement:complete',
+      this.completeAchievement.bind(this)
+    );
+    this.eventBus.removeListener(
+      'achievement:progress',
+      this.updateProgress.bind(this)
+    );
+    this.eventBus.removeListener(
+      'achievement:reward',
+      this.giveReward.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:levelUp',
+      this.handlePlayerLevelUp.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:killEnemy',
+      this.handlePlayerKillEnemy.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:collectItem',
+      this.handlePlayerCollectItem.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:visitArea',
+      this.handlePlayerVisitArea.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:completeDungeon',
+      this.handlePlayerCompleteDungeon.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:completeTrade',
+      this.handlePlayerCompleteTrade.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:winPvP',
+      this.handlePlayerWinPvP.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:winAuction',
+      this.handlePlayerWinAuction.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:findLegendary',
+      this.handlePlayerFindLegendary.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:surviveLowHealth',
+      this.handlePlayerSurviveLowHealth.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:completeDungeonFast',
+      this.handlePlayerCompleteDungeonFast.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:completeSeasonalEvent',
+      this.handlePlayerCompleteSeasonalEvent.bind(this)
+    );
   }
 
   /**
@@ -728,25 +809,25 @@ export class AchievementSystem {
       secret: achievementData.secret || false,
       completed: false,
       completedAt: null,
-      progress: 0
+      progress: 0,
     };
-    
+
     this.achievementState.achievements.set(achievement.id, achievement);
-    
+
     // Add to category
     const category = this.achievementState.categories.get(achievement.category);
     if (category) {
       category.achievements.push(achievement.id);
       category.total++;
     }
-    
+
     // Initialize progress tracking
     this.achievementState.progressTracking.set(achievement.id, {
       achievementId: achievement.id,
       current: 0,
       target: this.getRequirementTarget(achievement.requirements),
       progress: 0,
-      lastUpdated: Date.now()
+      lastUpdated: Date.now(),
     });
   }
 
@@ -789,12 +870,12 @@ export class AchievementSystem {
       if (achievement.completed) {
         continue;
       }
-      
+
       const progress = this.achievementState.progressTracking.get(id);
       if (!progress) {
         continue;
       }
-      
+
       if (this.checkAchievementRequirements(achievement, progress)) {
         this.completeAchievement(id);
       }
@@ -806,7 +887,7 @@ export class AchievementSystem {
    */
   checkAchievementRequirements(achievement, progress) {
     const requirements = achievement.requirements;
-    
+
     switch (requirements.type) {
       case 'kill_enemies':
       case 'kill_streak':
@@ -847,33 +928,33 @@ export class AchievementSystem {
     if (!achievement || achievement.completed) {
       return;
     }
-    
+
     achievement.completed = true;
     achievement.completedAt = Date.now();
-    
+
     this.achievementState.completedAchievements.set(achievementId, achievement);
-    
+
     // Update category
     const category = this.achievementState.categories.get(achievement.category);
     if (category) {
       category.completed++;
     }
-    
+
     // Give rewards
     this.giveRewards(achievement);
-    
+
     // Update statistics
     this.updateStatistics();
-    
+
     // Show notification
     this.showAchievementNotification(achievement);
-    
+
     // Emit event
     this.eventBus.emit('achievement:completed', {
       achievement: achievement,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Achievement completed: ${achievement.name}`);
   }
 
@@ -882,21 +963,21 @@ export class AchievementSystem {
    */
   giveRewards(achievement) {
     const rewards = achievement.rewards;
-    
+
     if (rewards.experience) {
       this.giveReward('experience', rewards.experience);
     }
-    
+
     if (rewards.gold) {
       this.giveReward('gold', rewards.gold);
     }
-    
+
     if (rewards.title) {
       this.giveReward('title', rewards.title);
     }
-    
+
     if (rewards.items) {
-      rewards.items.forEach(item => {
+      rewards.items.forEach((item) => {
         this.giveReward('item', item);
       });
     }
@@ -911,11 +992,11 @@ export class AchievementSystem {
       reward.given += amount;
       reward.total += amount;
     }
-    
+
     this.eventBus.emit('achievement:rewardGiven', {
       type: type,
       amount: amount,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -927,15 +1008,15 @@ export class AchievementSystem {
     if (!progress) {
       return;
     }
-    
+
     progress.current = Math.min(progress.current + amount, progress.target);
     progress.progress = (progress.current / progress.target) * 100;
     progress.lastUpdated = Date.now();
-    
+
     this.eventBus.emit('achievement:progressUpdated', {
       achievementId: achievementId,
       progress: progress,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -943,10 +1024,13 @@ export class AchievementSystem {
    * Show achievement notification
    */
   showAchievementNotification(achievement) {
-    if (!this.achievementState.notifications.enabled || !this.achievementState.notifications.showCompletion) {
+    if (
+      !this.achievementState.notifications.enabled ||
+      !this.achievementState.notifications.showCompletion
+    ) {
       return;
     }
-    
+
     const notification = {
       id: `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type: 'achievement',
@@ -956,9 +1040,9 @@ export class AchievementSystem {
       rarity: achievement.rarity,
       points: achievement.points,
       duration: this.achievementConfig.notificationDuration,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     this.eventBus.emit('achievement:notification', notification);
   }
 
@@ -967,14 +1051,25 @@ export class AchievementSystem {
    */
   updateStatistics() {
     const totalAchievements = this.achievementState.achievements.size;
-    const completedAchievements = this.achievementState.completedAchievements.size;
-    const totalPoints = Array.from(this.achievementState.completedAchievements.values())
-      .reduce((sum, achievement) => sum + achievement.points, 0);
-    
-    this.achievementState.statistics.set('total_achievements', totalAchievements);
-    this.achievementState.statistics.set('completed_achievements', completedAchievements);
+    const completedAchievements =
+      this.achievementState.completedAchievements.size;
+    const totalPoints = Array.from(
+      this.achievementState.completedAchievements.values()
+    ).reduce((sum, achievement) => sum + achievement.points, 0);
+
+    this.achievementState.statistics.set(
+      'total_achievements',
+      totalAchievements
+    );
+    this.achievementState.statistics.set(
+      'completed_achievements',
+      completedAchievements
+    );
     this.achievementState.statistics.set('total_points', totalPoints);
-    this.achievementState.statistics.set('completion_percentage', (completedAchievements / totalAchievements) * 100);
+    this.achievementState.statistics.set(
+      'completion_percentage',
+      (completedAchievements / totalAchievements) * 100
+    );
   }
 
   /**
@@ -982,7 +1077,7 @@ export class AchievementSystem {
    */
   handlePlayerLevelUp(data) {
     const { level } = data;
-    
+
     // Update level achievements
     this.updateProgress('level_10', level >= 10 ? 1 : 0);
     this.updateProgress('level_50', level >= 50 ? 1 : 0);
@@ -994,11 +1089,11 @@ export class AchievementSystem {
    */
   handlePlayerKillEnemy(data) {
     const { enemy, streak } = data;
-    
+
     // Update kill achievements
     this.updateProgress('first_kill', 1);
     this.updateProgress('killing_spree', streak || 0);
-    
+
     // Update boss achievements
     if (enemy.type === 'boss') {
       this.updateProgress('dragon_slayer', 1);
@@ -1010,13 +1105,13 @@ export class AchievementSystem {
    */
   handlePlayerCollectItem(data) {
     const { item, isFirstTry } = data;
-    
+
     // Update collection achievements
     this.updateProgress('hoarder', 1);
-    
+
     if (item.rarity === 'legendary') {
       this.updateProgress('treasure_hunter', 1);
-      
+
       if (isFirstTry) {
         this.updateProgress('lucky_find', 1);
       }
@@ -1028,10 +1123,10 @@ export class AchievementSystem {
    */
   handlePlayerVisitArea(data) {
     const { area, biome } = data;
-    
+
     // Update exploration achievements
     this.updateProgress('explorer', 1);
-    
+
     if (biome) {
       this.updateProgress('world_traveler', 1);
     }
@@ -1042,11 +1137,12 @@ export class AchievementSystem {
    */
   handlePlayerCompleteDungeon(data) {
     const { dungeon, time } = data;
-    
+
     // Update dungeon achievements
     this.updateProgress('dungeon_master', 1);
-    
-    if (time && time <= 120000) { // 2 minutes
+
+    if (time && time <= 120000) {
+      // 2 minutes
       this.updateProgress('speed_demon', 1);
     }
   }
@@ -1077,7 +1173,7 @@ export class AchievementSystem {
    */
   handlePlayerFindLegendary(data) {
     const { isFirstTry } = data;
-    
+
     if (isFirstTry) {
       this.updateProgress('lucky_find', 1);
     }
@@ -1088,8 +1184,9 @@ export class AchievementSystem {
    */
   handlePlayerSurviveLowHealth(data) {
     const { duration } = data;
-    
-    if (duration >= 300000) { // 5 minutes
+
+    if (duration >= 300000) {
+      // 5 minutes
       this.updateProgress('survivor', 1);
     }
   }
@@ -1099,8 +1196,9 @@ export class AchievementSystem {
    */
   handlePlayerCompleteDungeonFast(data) {
     const { time } = data;
-    
-    if (time <= 120000) { // 2 minutes
+
+    if (time <= 120000) {
+      // 2 minutes
       this.updateProgress('speed_demon', 1);
     }
   }
@@ -1110,7 +1208,7 @@ export class AchievementSystem {
    */
   handlePlayerCompleteSeasonalEvent(data) {
     const { event } = data;
-    
+
     if (event === 'winter_festival') {
       this.updateProgress('winter_warrior', 1);
     } else if (event === 'summer_solstice') {
@@ -1146,7 +1244,7 @@ export class AchievementSystem {
     if (!this.achievementState.autoSave) {
       return;
     }
-    
+
     this.autoSaveTimer = setInterval(() => {
       this.saveAchievementData();
     }, this.achievementConfig.autoSaveInterval);
@@ -1169,15 +1267,19 @@ export class AchievementSystem {
     try {
       const data = {
         achievements: Array.from(this.achievementState.achievements.entries()),
-        completedAchievements: Array.from(this.achievementState.completedAchievements.entries()),
-        progressTracking: Array.from(this.achievementState.progressTracking.entries()),
+        completedAchievements: Array.from(
+          this.achievementState.completedAchievements.entries()
+        ),
+        progressTracking: Array.from(
+          this.achievementState.progressTracking.entries()
+        ),
         statistics: Array.from(this.achievementState.statistics.entries()),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       localStorage.setItem('achievementData', JSON.stringify(data));
       this.achievementState.lastSaveTime = Date.now();
-      
+
       this.logger.info('Achievement data saved');
     } catch (error) {
       this.logger.error('Failed to save achievement data:', error);
@@ -1192,27 +1294,31 @@ export class AchievementSystem {
       const savedData = localStorage.getItem('achievementData');
       if (savedData) {
         const data = JSON.parse(savedData);
-        
+
         // Load achievements
         if (data.achievements) {
           this.achievementState.achievements = new Map(data.achievements);
         }
-        
+
         // Load completed achievements
         if (data.completedAchievements) {
-          this.achievementState.completedAchievements = new Map(data.completedAchievements);
+          this.achievementState.completedAchievements = new Map(
+            data.completedAchievements
+          );
         }
-        
+
         // Load progress tracking
         if (data.progressTracking) {
-          this.achievementState.progressTracking = new Map(data.progressTracking);
+          this.achievementState.progressTracking = new Map(
+            data.progressTracking
+          );
         }
-        
+
         // Load statistics
         if (data.statistics) {
           this.achievementState.statistics = new Map(data.statistics);
         }
-        
+
         this.logger.info('Achievement data loaded');
       }
     } catch (error) {
@@ -1249,16 +1355,19 @@ export class AchievementSystem {
     if (!categoryData) {
       return [];
     }
-    
-    return categoryData.achievements.map(id => this.achievementState.achievements.get(id));
+
+    return categoryData.achievements.map((id) =>
+      this.achievementState.achievements.get(id)
+    );
   }
 
   /**
    * Get achievements by rarity
    */
   getAchievementsByRarity(rarity) {
-    return Array.from(this.achievementState.achievements.values())
-      .filter(achievement => achievement.rarity === rarity);
+    return Array.from(this.achievementState.achievements.values()).filter(
+      (achievement) => achievement.rarity === rarity
+    );
   }
 
   /**
@@ -1288,8 +1397,9 @@ export class AchievementSystem {
    * Get total points
    */
   getTotalPoints() {
-    return Array.from(this.achievementState.completedAchievements.values())
-      .reduce((sum, achievement) => sum + achievement.points, 0);
+    return Array.from(
+      this.achievementState.completedAchievements.values()
+    ).reduce((sum, achievement) => sum + achievement.points, 0);
   }
 
   /**

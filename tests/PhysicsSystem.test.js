@@ -1,4 +1,3 @@
-
 import { PhysicsSystem } from '../src/systems/PhysicsSystem.js';
 
 class MockCollisionDetector {
@@ -21,14 +20,14 @@ describe('PhysicsSystem', () => {
     mockEventBus = {
       emit: jest.fn(),
       on: jest.fn(),
-      off: jest.fn()
+      off: jest.fn(),
     };
 
     mockCollisionDetector = new MockCollisionDetector();
 
     physicsSystem = new PhysicsSystem({
       eventBus: mockEventBus,
-      collisionDetector: mockCollisionDetector
+      collisionDetector: mockCollisionDetector,
     });
   });
 
@@ -44,9 +43,9 @@ describe('PhysicsSystem', () => {
         x: 100,
         y: 200,
         width: 32,
-        height: 32
+        height: 32,
       },
-      gameObjects: []
+      gameObjects: [],
     };
 
     physicsSystem.update(16, gameState);
@@ -56,8 +55,45 @@ describe('PhysicsSystem', () => {
       expect.objectContaining({
         id: 'player1',
         position: { x: 100, y: 200 },
-        size: { width: 32, height: 32 }
+        size: { width: 32, height: 32 },
       })
+    );
+  });
+
+  test('update should sync player exactly once per frame', () => {
+    const gameState = {
+      player: {
+        id: 'player1',
+        x: 100,
+        y: 200,
+        width: 32,
+        height: 32,
+      },
+      gameObjects: [],
+    };
+
+    // First frame: one registration, no redundant position update
+    physicsSystem.update(16, gameState);
+    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(
+      1
+    );
+    expect(mockCollisionDetector.updateCollisionObject).not.toHaveBeenCalled();
+
+    // Second frame: exactly one position update
+    gameState.player.x = 110;
+    physicsSystem.update(16, gameState);
+    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(
+      1
+    );
+    expect(mockCollisionDetector.updateCollisionObject).toHaveBeenCalledTimes(
+      1
+    );
+    expect(mockCollisionDetector.updateCollisionObject).toHaveBeenCalledWith(
+      'player1',
+      {
+        x: 110,
+        y: 200,
+      }
     );
   });
 
@@ -70,9 +106,9 @@ describe('PhysicsSystem', () => {
           x: 50,
           y: 60,
           width: 20,
-          height: 20
-        }
-      ]
+          height: 20,
+        },
+      ],
     };
 
     physicsSystem.update(16, gameState);
@@ -82,7 +118,7 @@ describe('PhysicsSystem', () => {
       expect.objectContaining({
         id: 'enemy1',
         position: { x: 50, y: 60 },
-        size: { width: 20, height: 20 }
+        size: { width: 20, height: 20 },
       })
     );
   });
@@ -92,21 +128,25 @@ describe('PhysicsSystem', () => {
       player: {
         id: 'player1',
         x: 100,
-        y: 200
+        y: 200,
       },
-      gameObjects: []
+      gameObjects: [],
     };
 
     // First update registers
     physicsSystem.update(16, gameState);
-    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(1);
+    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(
+      1
+    );
 
     // Change position
     gameState.player.x = 105;
 
     // Second update updates
     physicsSystem.update(16, gameState);
-    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(1); // No new registration
+    expect(mockCollisionDetector.registerCollisionObject).toHaveBeenCalledTimes(
+      1
+    ); // No new registration
     expect(mockCollisionDetector.updateCollisionObject).toHaveBeenCalledWith(
       'player1',
       { x: 105, y: 200 }
@@ -125,9 +165,9 @@ describe('PhysicsSystem', () => {
         {
           id: 'obj1',
           x: 0,
-          y: 0
-        }
-      ]
+          y: 0,
+        },
+      ],
     };
 
     // Register obj1
@@ -142,7 +182,9 @@ describe('PhysicsSystem', () => {
 
     // Update should trigger removal
     physicsSystem.update(16, gameState);
-    expect(mockCollisionDetector.unregisterCollisionObject).toHaveBeenCalledWith('obj1');
+    expect(
+      mockCollisionDetector.unregisterCollisionObject
+    ).toHaveBeenCalledWith('obj1');
   });
 
   test('cleanup should call collisionDetector.cleanup', () => {

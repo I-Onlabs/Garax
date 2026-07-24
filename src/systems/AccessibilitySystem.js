@@ -37,7 +37,7 @@ export class AccessibilitySystem {
           reducedMotion: false,
           colorFilters: false,
           focusIndicators: true,
-          screenReader: false
+          screenReader: false,
         },
         motor: {
           keyboardNavigation: false,
@@ -46,7 +46,7 @@ export class AccessibilitySystem {
           stickyKeys: false,
           slowKeys: false,
           mouseKeys: false,
-          oneHandedMode: false
+          oneHandedMode: false,
         },
         cognitive: {
           simplifiedUI: false,
@@ -55,7 +55,7 @@ export class AccessibilitySystem {
           tooltips: true,
           hints: true,
           progressIndicators: true,
-          errorPrevention: true
+          errorPrevention: true,
         },
         audio: {
           subtitles: false,
@@ -63,8 +63,8 @@ export class AccessibilitySystem {
           visualIndicators: false,
           captions: false,
           volumeControl: true,
-          audioCues: true
-        }
+          audioCues: true,
+        },
       },
       settings: {
         fontSize: 'medium',
@@ -73,14 +73,14 @@ export class AccessibilitySystem {
         motion: 'normal',
         sound: 'normal',
         language: 'en',
-        voice: 'default'
+        voice: 'default',
       },
       profiles: new Map(),
       currentProfile: 'default',
       shortcuts: new Map(),
       announcements: [],
       focusManager: null,
-      screenReader: null
+      screenReader: null,
     };
 
     // Accessibility system configuration
@@ -90,32 +90,32 @@ export class AccessibilitySystem {
         medium: 1.0,
         large: 1.2,
         xlarge: 1.4,
-        xxlarge: 1.6
+        xxlarge: 1.6,
       },
       colorSchemes: {
         default: 'default',
         highContrast: 'high-contrast',
         dark: 'dark',
         light: 'light',
-        colorblind: 'colorblind'
+        colorblind: 'colorblind',
       },
       contrastLevels: {
         normal: 1.0,
         high: 1.5,
         veryHigh: 2.0,
-        maximum: 3.0
+        maximum: 3.0,
       },
       motionLevels: {
         normal: 1.0,
         reduced: 0.5,
         minimal: 0.1,
-        none: 0.0
+        none: 0.0,
       },
       soundLevels: {
         quiet: 0.3,
         normal: 0.7,
         loud: 1.0,
-        maximum: 1.0
+        maximum: 1.0,
       },
       languages: {
         en: 'English',
@@ -127,15 +127,15 @@ export class AccessibilitySystem {
         ru: 'Russian',
         ja: 'Japanese',
         ko: 'Korean',
-        zh: 'Chinese'
+        zh: 'Chinese',
       },
       voices: {
         default: 'Default',
         male: 'Male',
         female: 'Female',
         child: 'Child',
-        elderly: 'Elderly'
-      }
+        elderly: 'Elderly',
+      },
     };
 
     // Initialize accessibility system
@@ -156,16 +156,16 @@ export class AccessibilitySystem {
    */
   async initialize() {
     this.logger.info('Initializing AccessibilitySystem...');
-    
+
     // Load accessibility settings
     await this.loadAccessibilitySettings();
-    
+
     // Initialize screen reader
     await this.initializeScreenReader();
-    
+
     // Apply initial settings
     this.applyAccessibilitySettings();
-    
+
     this.logger.info('AccessibilitySystem initialized successfully');
   }
 
@@ -174,24 +174,24 @@ export class AccessibilitySystem {
    */
   cleanup() {
     this.logger.info('Cleaning up AccessibilitySystem...');
-    
+
     // Save accessibility settings
     this.saveAccessibilitySettings();
-    
+
     // Clean up screen reader
     this.cleanupScreenReader();
-    
+
     // Clean up focus manager
     this.cleanupFocusManager();
-    
+
     // Clear state
     this.accessibilityState.profiles.clear();
     this.accessibilityState.shortcuts.clear();
     this.accessibilityState.announcements = [];
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('AccessibilitySystem cleaned up');
   }
 
@@ -201,13 +201,13 @@ export class AccessibilitySystem {
   update(deltaTime, gameState) {
     // Update focus manager
     this.updateFocusManager(deltaTime);
-    
+
     // Update screen reader
     this.updateScreenReader(deltaTime);
-    
+
     // Update announcements
     this.updateAnnouncements(deltaTime);
-    
+
     // Update accessibility features
     this.updateAccessibilityFeatures(deltaTime);
   }
@@ -226,49 +226,49 @@ export class AccessibilitySystem {
           protanopia: 'Protanopia (Red-blind)',
           deuteranopia: 'Deuteranopia (Green-blind)',
           tritanopia: 'Tritanopia (Blue-blind)',
-          monochromacy: 'Monochromacy (Total color blindness)'
-        }
+          monochromacy: 'Monochromacy (Total color blindness)',
+        },
       },
       highContrast: {
         name: 'High Contrast',
         description: 'Increase contrast for better visibility',
         enabled: false,
-        level: 'normal'
+        level: 'normal',
       },
       textScaling: {
         name: 'Text Scaling',
         description: 'Scale text size for better readability',
         enabled: false,
-        level: 1.0
+        level: 1.0,
       },
       largeText: {
         name: 'Large Text',
         description: 'Use larger text throughout the interface',
-        enabled: false
+        enabled: false,
       },
       reducedMotion: {
         name: 'Reduced Motion',
         description: 'Reduce or eliminate motion effects',
         enabled: false,
-        level: 'normal'
+        level: 'normal',
       },
       colorFilters: {
         name: 'Color Filters',
         description: 'Apply color filters for better visibility',
         enabled: false,
-        filter: 'none'
+        filter: 'none',
       },
       focusIndicators: {
         name: 'Focus Indicators',
         description: 'Show clear focus indicators',
         enabled: true,
-        style: 'outline'
+        style: 'outline',
       },
       screenReader: {
         name: 'Screen Reader',
         description: 'Enable screen reader support',
-        enabled: false
-      }
+        enabled: false,
+      },
     };
 
     // Motor accessibility features
@@ -277,41 +277,41 @@ export class AccessibilitySystem {
         name: 'Keyboard Navigation',
         description: 'Navigate using only the keyboard',
         enabled: false,
-        shortcuts: new Map()
+        shortcuts: new Map(),
       },
       customControls: {
         name: 'Custom Controls',
         description: 'Customize control schemes',
         enabled: false,
-        schemes: new Map()
+        schemes: new Map(),
       },
       assistiveInput: {
         name: 'Assistive Input',
         description: 'Use assistive input devices',
         enabled: false,
-        devices: []
+        devices: [],
       },
       stickyKeys: {
         name: 'Sticky Keys',
         description: 'Allow key combinations to be pressed one at a time',
-        enabled: false
+        enabled: false,
       },
       slowKeys: {
         name: 'Slow Keys',
         description: 'Add delay before key press is registered',
         enabled: false,
-        delay: 1000
+        delay: 1000,
       },
       mouseKeys: {
         name: 'Mouse Keys',
         description: 'Control mouse with keyboard',
-        enabled: false
+        enabled: false,
       },
       oneHandedMode: {
         name: 'One-Handed Mode',
         description: 'Optimize interface for one-handed use',
-        enabled: false
-      }
+        enabled: false,
+      },
     };
 
     // Cognitive accessibility features
@@ -320,41 +320,41 @@ export class AccessibilitySystem {
         name: 'Simplified UI',
         description: 'Simplify the user interface',
         enabled: false,
-        level: 'normal'
+        level: 'normal',
       },
       clearLanguage: {
         name: 'Clear Language',
         description: 'Use clear, simple language',
-        enabled: false
+        enabled: false,
       },
       readingAssistance: {
         name: 'Reading Assistance',
         description: 'Provide reading assistance features',
         enabled: false,
-        features: ['highlight', 'read-aloud', 'dictionary']
+        features: ['highlight', 'read-aloud', 'dictionary'],
       },
       tooltips: {
         name: 'Tooltips',
         description: 'Show helpful tooltips',
         enabled: true,
-        duration: 5000
+        duration: 5000,
       },
       hints: {
         name: 'Hints',
         description: 'Show contextual hints',
         enabled: true,
-        level: 'normal'
+        level: 'normal',
       },
       progressIndicators: {
         name: 'Progress Indicators',
         description: 'Show progress indicators',
-        enabled: true
+        enabled: true,
       },
       errorPrevention: {
         name: 'Error Prevention',
         description: 'Prevent common errors',
-        enabled: true
-      }
+        enabled: true,
+      },
     };
 
     // Audio accessibility features
@@ -363,22 +363,22 @@ export class AccessibilitySystem {
         name: 'Subtitles',
         description: 'Show subtitles for dialogue',
         enabled: false,
-        style: 'default'
+        style: 'default',
       },
       audioDescriptions: {
         name: 'Audio Descriptions',
         description: 'Describe visual elements',
-        enabled: false
+        enabled: false,
       },
       visualIndicators: {
         name: 'Visual Indicators',
         description: 'Show visual indicators for audio cues',
-        enabled: false
+        enabled: false,
       },
       captions: {
         name: 'Captions',
         description: 'Show captions for all audio',
-        enabled: false
+        enabled: false,
       },
       volumeControl: {
         name: 'Volume Control',
@@ -387,13 +387,13 @@ export class AccessibilitySystem {
         master: 1.0,
         music: 0.7,
         sfx: 0.8,
-        voice: 0.9
+        voice: 0.9,
       },
       audioCues: {
         name: 'Audio Cues',
         description: 'Provide audio cues for events',
-        enabled: true
-      }
+        enabled: true,
+      },
     };
   }
 
@@ -409,8 +409,8 @@ export class AccessibilitySystem {
         visual: { focusIndicators: true, screenReader: false },
         motor: { keyboardNavigation: false, customControls: false },
         cognitive: { tooltips: true, hints: true, progressIndicators: true },
-        audio: { volumeControl: true, audioCues: true }
-      }
+        audio: { volumeControl: true, audioCues: true },
+      },
     });
 
     // Visual impairment profile
@@ -418,17 +418,17 @@ export class AccessibilitySystem {
       name: 'Visual Impairment',
       description: 'Settings for users with visual impairments',
       features: {
-        visual: { 
-          highContrast: true, 
-          largeText: true, 
+        visual: {
+          highContrast: true,
+          largeText: true,
           textScaling: 1.2,
           focusIndicators: true,
-          screenReader: true
+          screenReader: true,
         },
         motor: { keyboardNavigation: true },
         cognitive: { tooltips: true, hints: true },
-        audio: { audioCues: true, audioDescriptions: true }
-      }
+        audio: { audioCues: true, audioDescriptions: true },
+      },
     });
 
     // Motor impairment profile
@@ -437,16 +437,16 @@ export class AccessibilitySystem {
       description: 'Settings for users with motor impairments',
       features: {
         visual: { focusIndicators: true },
-        motor: { 
-          keyboardNavigation: true, 
+        motor: {
+          keyboardNavigation: true,
           customControls: true,
           stickyKeys: true,
           slowKeys: true,
-          oneHandedMode: true
+          oneHandedMode: true,
         },
         cognitive: { tooltips: true, hints: true },
-        audio: { audioCues: true }
-      }
+        audio: { audioCues: true },
+      },
     });
 
     // Cognitive impairment profile
@@ -456,17 +456,17 @@ export class AccessibilitySystem {
       features: {
         visual: { focusIndicators: true },
         motor: { keyboardNavigation: false },
-        cognitive: { 
+        cognitive: {
           simplifiedUI: true,
           clearLanguage: true,
           readingAssistance: true,
           tooltips: true,
           hints: true,
           progressIndicators: true,
-          errorPrevention: true
+          errorPrevention: true,
         },
-        audio: { audioCues: true, subtitles: true }
-      }
+        audio: { audioCues: true, subtitles: true },
+      },
     });
 
     // Hearing impairment profile
@@ -477,12 +477,12 @@ export class AccessibilitySystem {
         visual: { focusIndicators: true },
         motor: { keyboardNavigation: false },
         cognitive: { tooltips: true, hints: true },
-        audio: { 
+        audio: {
           subtitles: true,
           captions: true,
-          visualIndicators: true
-        }
-      }
+          visualIndicators: true,
+        },
+      },
     });
 
     // Colorblind profile
@@ -490,15 +490,15 @@ export class AccessibilitySystem {
       name: 'Colorblind',
       description: 'Settings for colorblind users',
       features: {
-        visual: { 
+        visual: {
           colorblindSupport: true,
           highContrast: true,
-          focusIndicators: true
+          focusIndicators: true,
         },
         motor: { keyboardNavigation: false },
         cognitive: { tooltips: true, hints: true },
-        audio: { audioCues: true }
-      }
+        audio: { audioCues: true },
+      },
     });
   }
 
@@ -508,7 +508,11 @@ export class AccessibilitySystem {
   initializeShortcuts() {
     // Navigation shortcuts
     this.addShortcut('tab', 'nextElement', 'Move to next element');
-    this.addShortcut('shift+tab', 'previousElement', 'Move to previous element');
+    this.addShortcut(
+      'shift+tab',
+      'previousElement',
+      'Move to previous element'
+    );
     this.addShortcut('enter', 'activateElement', 'Activate focused element');
     this.addShortcut('space', 'activateElement', 'Activate focused element');
     this.addShortcut('escape', 'closeDialog', 'Close current dialog');
@@ -524,7 +528,7 @@ export class AccessibilitySystem {
     this.addShortcut('f10', 'map', 'Open map');
     this.addShortcut('f11', 'fullscreen', 'Toggle fullscreen');
     this.addShortcut('f12', 'debug', 'Toggle debug mode');
-    
+
     // Accessibility shortcuts
     this.addShortcut('ctrl+plus', 'increaseTextSize', 'Increase text size');
     this.addShortcut('ctrl+minus', 'decreaseTextSize', 'Decrease text size');
@@ -532,9 +536,21 @@ export class AccessibilitySystem {
     this.addShortcut('ctrl+shift+c', 'toggleContrast', 'Toggle high contrast');
     this.addShortcut('ctrl+shift+m', 'toggleMotion', 'Toggle reduced motion');
     this.addShortcut('ctrl+shift+s', 'toggleSubtitles', 'Toggle subtitles');
-    this.addShortcut('ctrl+shift+a', 'toggleAudioDescriptions', 'Toggle audio descriptions');
-    this.addShortcut('ctrl+shift+k', 'toggleKeyboardNavigation', 'Toggle keyboard navigation');
-    this.addShortcut('ctrl+shift+p', 'toggleProfile', 'Toggle accessibility profile');
+    this.addShortcut(
+      'ctrl+shift+a',
+      'toggleAudioDescriptions',
+      'Toggle audio descriptions'
+    );
+    this.addShortcut(
+      'ctrl+shift+k',
+      'toggleKeyboardNavigation',
+      'Toggle keyboard navigation'
+    );
+    this.addShortcut(
+      'ctrl+shift+p',
+      'toggleProfile',
+      'Toggle accessibility profile'
+    );
   }
 
   /**
@@ -550,7 +566,7 @@ export class AccessibilitySystem {
       voice: 'default',
       rate: 1.0,
       pitch: 1.0,
-      volume: 1.0
+      volume: 1.0,
     };
   }
 
@@ -564,7 +580,7 @@ export class AccessibilitySystem {
       focusableElements: [],
       focusHistory: [],
       focusTrap: false,
-      focusVisible: true
+      focusVisible: true,
     };
   }
 
@@ -573,25 +589,34 @@ export class AccessibilitySystem {
    */
   setupEventHandlers() {
     // Accessibility events
-    this.eventBus.on('accessibility:enable', this.enableAccessibility.bind(this));
-    this.eventBus.on('accessibility:disable', this.disableAccessibility.bind(this));
+    this.eventBus.on(
+      'accessibility:enable',
+      this.enableAccessibility.bind(this)
+    );
+    this.eventBus.on(
+      'accessibility:disable',
+      this.disableAccessibility.bind(this)
+    );
     this.eventBus.on('accessibility:feature', this.toggleFeature.bind(this));
     this.eventBus.on('accessibility:profile', this.setProfile.bind(this));
     this.eventBus.on('accessibility:setting', this.setSetting.bind(this));
-    
+
     // Keyboard events
     this.eventBus.on('keyboard:keydown', this.handleKeyDown.bind(this));
     this.eventBus.on('keyboard:keyup', this.handleKeyUp.bind(this));
-    
+
     // Focus events
     this.eventBus.on('focus:change', this.handleFocusChange.bind(this));
     this.eventBus.on('focus:lost', this.handleFocusLost.bind(this));
-    
+
     // UI events
     this.eventBus.on('ui:elementCreated', this.handleElementCreated.bind(this));
     this.eventBus.on('ui:elementUpdated', this.handleElementUpdated.bind(this));
-    this.eventBus.on('ui:elementDestroyed', this.handleElementDestroyed.bind(this));
-    
+    this.eventBus.on(
+      'ui:elementDestroyed',
+      this.handleElementDestroyed.bind(this)
+    );
+
     // Game events
     this.eventBus.on('game:stateChange', this.handleGameStateChange.bind(this));
     this.eventBus.on('game:event', this.handleGameEvent.bind(this));
@@ -601,19 +626,52 @@ export class AccessibilitySystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('accessibility:enable', this.enableAccessibility.bind(this));
-    this.eventBus.removeListener('accessibility:disable', this.disableAccessibility.bind(this));
-    this.eventBus.removeListener('accessibility:feature', this.toggleFeature.bind(this));
-    this.eventBus.removeListener('accessibility:profile', this.setProfile.bind(this));
-    this.eventBus.removeListener('accessibility:setting', this.setSetting.bind(this));
-    this.eventBus.removeListener('keyboard:keydown', this.handleKeyDown.bind(this));
+    this.eventBus.removeListener(
+      'accessibility:enable',
+      this.enableAccessibility.bind(this)
+    );
+    this.eventBus.removeListener(
+      'accessibility:disable',
+      this.disableAccessibility.bind(this)
+    );
+    this.eventBus.removeListener(
+      'accessibility:feature',
+      this.toggleFeature.bind(this)
+    );
+    this.eventBus.removeListener(
+      'accessibility:profile',
+      this.setProfile.bind(this)
+    );
+    this.eventBus.removeListener(
+      'accessibility:setting',
+      this.setSetting.bind(this)
+    );
+    this.eventBus.removeListener(
+      'keyboard:keydown',
+      this.handleKeyDown.bind(this)
+    );
     this.eventBus.removeListener('keyboard:keyup', this.handleKeyUp.bind(this));
-    this.eventBus.removeListener('focus:change', this.handleFocusChange.bind(this));
+    this.eventBus.removeListener(
+      'focus:change',
+      this.handleFocusChange.bind(this)
+    );
     this.eventBus.removeListener('focus:lost', this.handleFocusLost.bind(this));
-    this.eventBus.removeListener('ui:elementCreated', this.handleElementCreated.bind(this));
-    this.eventBus.removeListener('ui:elementUpdated', this.handleElementUpdated.bind(this));
-    this.eventBus.removeListener('ui:elementDestroyed', this.handleElementDestroyed.bind(this));
-    this.eventBus.removeListener('game:stateChange', this.handleGameStateChange.bind(this));
+    this.eventBus.removeListener(
+      'ui:elementCreated',
+      this.handleElementCreated.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementUpdated',
+      this.handleElementUpdated.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementDestroyed',
+      this.handleElementDestroyed.bind(this)
+    );
+    this.eventBus.removeListener(
+      'game:stateChange',
+      this.handleGameStateChange.bind(this)
+    );
     this.eventBus.removeListener('game:event', this.handleGameEvent.bind(this));
   }
 
@@ -623,11 +681,11 @@ export class AccessibilitySystem {
   enableAccessibility() {
     this.accessibilityState.enabled = true;
     this.applyAccessibilitySettings();
-    
+
     this.eventBus.emit('accessibility:enabled', {
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info('Accessibility enabled');
   }
 
@@ -637,11 +695,11 @@ export class AccessibilitySystem {
   disableAccessibility() {
     this.accessibilityState.enabled = false;
     this.removeAccessibilitySettings();
-    
+
     this.eventBus.emit('accessibility:disabled', {
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info('Accessibility disabled');
   }
 
@@ -650,17 +708,19 @@ export class AccessibilitySystem {
    */
   toggleFeature(data) {
     const { category, feature, enabled } = data;
-    
-    if (this.accessibilityState.features[category] && 
-        this.accessibilityState.features[category][feature] !== undefined) {
+
+    if (
+      this.accessibilityState.features[category] &&
+      this.accessibilityState.features[category][feature] !== undefined
+    ) {
       this.accessibilityState.features[category][feature] = enabled;
       this.applyFeature(category, feature, enabled);
-      
+
       this.eventBus.emit('accessibility:featureToggled', {
         category,
         feature,
         enabled,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
   }
@@ -674,15 +734,15 @@ export class AccessibilitySystem {
       this.logger.warn(`Profile not found: ${profileId}`);
       return;
     }
-    
+
     this.accessibilityState.currentProfile = profileId;
     this.applyProfile(profile);
-    
+
     this.eventBus.emit('accessibility:profileChanged', {
       profile: profile,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Accessibility profile changed to: ${profile.name}`);
   }
 
@@ -691,15 +751,15 @@ export class AccessibilitySystem {
    */
   setSetting(data) {
     const { setting, value } = data;
-    
+
     if (this.accessibilityState.settings.hasOwnProperty(setting)) {
       this.accessibilityState.settings[setting] = value;
       this.applySetting(setting, value);
-      
+
       this.eventBus.emit('accessibility:settingChanged', {
         setting,
         value,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
   }
@@ -711,16 +771,16 @@ export class AccessibilitySystem {
     if (!this.accessibilityState.enabled) {
       return;
     }
-    
+
     // Apply visual settings
     this.applyVisualSettings();
-    
+
     // Apply motor settings
     this.applyMotorSettings();
-    
+
     // Apply cognitive settings
     this.applyCognitiveSettings();
-    
+
     // Apply audio settings
     this.applyAudioSettings();
   }
@@ -730,42 +790,42 @@ export class AccessibilitySystem {
    */
   applyVisualSettings() {
     const visual = this.accessibilityState.features.visual;
-    
+
     // Apply colorblind support
     if (visual.colorblindSupport) {
       this.applyColorblindSupport();
     }
-    
+
     // Apply high contrast
     if (visual.highContrast) {
       this.applyHighContrast();
     }
-    
+
     // Apply text scaling
     if (visual.textScaling !== 1.0) {
       this.applyTextScaling(visual.textScaling);
     }
-    
+
     // Apply large text
     if (visual.largeText) {
       this.applyLargeText();
     }
-    
+
     // Apply reduced motion
     if (visual.reducedMotion) {
       this.applyReducedMotion();
     }
-    
+
     // Apply color filters
     if (visual.colorFilters) {
       this.applyColorFilters();
     }
-    
+
     // Apply focus indicators
     if (visual.focusIndicators) {
       this.applyFocusIndicators();
     }
-    
+
     // Apply screen reader
     if (visual.screenReader) {
       this.enableScreenReader();
@@ -777,37 +837,37 @@ export class AccessibilitySystem {
    */
   applyMotorSettings() {
     const motor = this.accessibilityState.features.motor;
-    
+
     // Apply keyboard navigation
     if (motor.keyboardNavigation) {
       this.enableKeyboardNavigation();
     }
-    
+
     // Apply custom controls
     if (motor.customControls) {
       this.enableCustomControls();
     }
-    
+
     // Apply assistive input
     if (motor.assistiveInput) {
       this.enableAssistiveInput();
     }
-    
+
     // Apply sticky keys
     if (motor.stickyKeys) {
       this.enableStickyKeys();
     }
-    
+
     // Apply slow keys
     if (motor.slowKeys) {
       this.enableSlowKeys();
     }
-    
+
     // Apply mouse keys
     if (motor.mouseKeys) {
       this.enableMouseKeys();
     }
-    
+
     // Apply one-handed mode
     if (motor.oneHandedMode) {
       this.enableOneHandedMode();
@@ -819,37 +879,37 @@ export class AccessibilitySystem {
    */
   applyCognitiveSettings() {
     const cognitive = this.accessibilityState.features.cognitive;
-    
+
     // Apply simplified UI
     if (cognitive.simplifiedUI) {
       this.applySimplifiedUI();
     }
-    
+
     // Apply clear language
     if (cognitive.clearLanguage) {
       this.applyClearLanguage();
     }
-    
+
     // Apply reading assistance
     if (cognitive.readingAssistance) {
       this.enableReadingAssistance();
     }
-    
+
     // Apply tooltips
     if (cognitive.tooltips) {
       this.enableTooltips();
     }
-    
+
     // Apply hints
     if (cognitive.hints) {
       this.enableHints();
     }
-    
+
     // Apply progress indicators
     if (cognitive.progressIndicators) {
       this.enableProgressIndicators();
     }
-    
+
     // Apply error prevention
     if (cognitive.errorPrevention) {
       this.enableErrorPrevention();
@@ -861,32 +921,32 @@ export class AccessibilitySystem {
    */
   applyAudioSettings() {
     const audio = this.accessibilityState.features.audio;
-    
+
     // Apply subtitles
     if (audio.subtitles) {
       this.enableSubtitles();
     }
-    
+
     // Apply audio descriptions
     if (audio.audioDescriptions) {
       this.enableAudioDescriptions();
     }
-    
+
     // Apply visual indicators
     if (audio.visualIndicators) {
       this.enableVisualIndicators();
     }
-    
+
     // Apply captions
     if (audio.captions) {
       this.enableCaptions();
     }
-    
+
     // Apply volume control
     if (audio.volumeControl) {
       this.enableVolumeControl();
     }
-    
+
     // Apply audio cues
     if (audio.audioCues) {
       this.enableAudioCues();
@@ -1048,7 +1108,7 @@ export class AccessibilitySystem {
   applyColorblindSupport() {
     const type = this.accessibilityState.features.visual.colorblindSupport;
     const filter = this.getColorblindFilter(type);
-    
+
     document.body.style.filter = filter;
   }
 
@@ -1060,9 +1120,9 @@ export class AccessibilitySystem {
       protanopia: 'hue-rotate(90deg) saturate(1.5)',
       deuteranopia: 'hue-rotate(180deg) saturate(1.5)',
       tritanopia: 'hue-rotate(270deg) saturate(1.5)',
-      monochromacy: 'grayscale(100%)'
+      monochromacy: 'grayscale(100%)',
     };
-    
+
     return filters[type] || 'none';
   }
 
@@ -1133,7 +1193,7 @@ export class AccessibilitySystem {
       height: 1px;
       overflow: hidden;
     `;
-    
+
     document.body.appendChild(screenReaderElement);
     this.screenReader.element = screenReaderElement;
   }
@@ -1145,9 +1205,9 @@ export class AccessibilitySystem {
     if (!this.screenReader.enabled || !this.screenReader.element) {
       return;
     }
-    
+
     this.screenReader.element.textContent = text;
-    
+
     // Clear after announcement
     setTimeout(() => {
       this.screenReader.element.textContent = '';
@@ -1167,8 +1227,11 @@ export class AccessibilitySystem {
    */
   setupKeyboardNavigation() {
     // Add keyboard event listeners
-    document.addEventListener('keydown', this.handleKeyboardNavigation.bind(this));
-    
+    document.addEventListener(
+      'keydown',
+      this.handleKeyboardNavigation.bind(this)
+    );
+
     // Find focusable elements
     this.updateFocusableElements();
   }
@@ -1180,10 +1243,10 @@ export class AccessibilitySystem {
     if (!this.focusManager.enabled) {
       return;
     }
-    
+
     const key = event.key;
     const shortcut = this.getShortcut(event);
-    
+
     if (shortcut) {
       event.preventDefault();
       this.executeShortcut(shortcut);
@@ -1211,15 +1274,18 @@ export class AccessibilitySystem {
    */
   navigateFocus(direction) {
     const focusableElements = this.getFocusableElements();
-    const currentIndex = focusableElements.indexOf(this.focusManager.currentElement);
-    
+    const currentIndex = focusableElements.indexOf(
+      this.focusManager.currentElement
+    );
+
     let nextIndex;
     if (direction === 'next') {
       nextIndex = (currentIndex + 1) % focusableElements.length;
     } else {
-      nextIndex = currentIndex === 0 ? focusableElements.length - 1 : currentIndex - 1;
+      nextIndex =
+        currentIndex === 0 ? focusableElements.length - 1 : currentIndex - 1;
     }
-    
+
     const nextElement = focusableElements[nextIndex];
     if (nextElement) {
       this.setFocus(nextElement);
@@ -1233,10 +1299,10 @@ export class AccessibilitySystem {
     if (this.focusManager.currentElement) {
       this.focusManager.currentElement.blur();
     }
-    
+
     element.focus();
     this.focusManager.currentElement = element;
-    
+
     // Announce focus change
     this.announce(this.getElementDescription(element));
   }
@@ -1245,13 +1311,14 @@ export class AccessibilitySystem {
    * Get element description
    */
   getElementDescription(element) {
-    const label = element.getAttribute('aria-label') || 
-                  element.getAttribute('title') || 
-                  element.textContent || 
-                  element.tagName;
-    
+    const label =
+      element.getAttribute('aria-label') ||
+      element.getAttribute('title') ||
+      element.textContent ||
+      element.tagName;
+
     const role = element.getAttribute('role') || element.tagName.toLowerCase();
-    
+
     return `${label}, ${role}`;
   }
 
@@ -1269,11 +1336,12 @@ export class AccessibilitySystem {
       '[role="button"]',
       '[role="link"]',
       '[role="menuitem"]',
-      '[role="tab"]'
+      '[role="tab"]',
     ];
-    
-    return Array.from(document.querySelectorAll(focusableSelectors.join(', ')))
-      .filter(element => !element.disabled && element.offsetParent !== null);
+
+    return Array.from(
+      document.querySelectorAll(focusableSelectors.join(', '))
+    ).filter((element) => !element.disabled && element.offsetParent !== null);
   }
 
   /**
@@ -1289,13 +1357,14 @@ export class AccessibilitySystem {
   getShortcut(event) {
     const key = event.key.toLowerCase();
     const modifiers = [];
-    
+
     if (event.ctrlKey) modifiers.push('ctrl');
     if (event.shiftKey) modifiers.push('shift');
     if (event.altKey) modifiers.push('alt');
     if (event.metaKey) modifiers.push('meta');
-    
-    const shortcutKey = modifiers.length > 0 ? `${modifiers.join('+')}+${key}` : key;
+
+    const shortcutKey =
+      modifiers.length > 0 ? `${modifiers.join('+')}+${key}` : key;
     return this.accessibilityState.shortcuts.get(shortcutKey);
   }
 
@@ -1378,7 +1447,7 @@ export class AccessibilitySystem {
     this.accessibilityState.shortcuts.set(key, {
       action,
       description,
-      key
+      key,
     });
   }
 
@@ -1389,7 +1458,7 @@ export class AccessibilitySystem {
     if (!this.focusManager.enabled) {
       return;
     }
-    
+
     // Update focus manager logic
   }
 
@@ -1400,7 +1469,7 @@ export class AccessibilitySystem {
     if (!this.screenReader.enabled) {
       return;
     }
-    
+
     // Update screen reader logic
   }
 
@@ -1496,9 +1565,9 @@ export class AccessibilitySystem {
         features: this.accessibilityState.features,
         settings: this.accessibilityState.settings,
         currentProfile: this.accessibilityState.currentProfile,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       localStorage.setItem('accessibilitySettings', JSON.stringify(data));
       this.logger.info('Accessibility settings saved');
     } catch (error) {
@@ -1514,12 +1583,19 @@ export class AccessibilitySystem {
       const savedData = localStorage.getItem('accessibilitySettings');
       if (savedData) {
         const data = JSON.parse(savedData);
-        
+
         this.accessibilityState.enabled = data.enabled || false;
-        this.accessibilityState.features = { ...this.accessibilityState.features, ...data.features };
-        this.accessibilityState.settings = { ...this.accessibilityState.settings, ...data.settings };
-        this.accessibilityState.currentProfile = data.currentProfile || 'default';
-        
+        this.accessibilityState.features = {
+          ...this.accessibilityState.features,
+          ...data.features,
+        };
+        this.accessibilityState.settings = {
+          ...this.accessibilityState.settings,
+          ...data.settings,
+        };
+        this.accessibilityState.currentProfile =
+          data.currentProfile || 'default';
+
         this.logger.info('Accessibility settings loaded');
       }
     } catch (error) {
@@ -1552,8 +1628,10 @@ export class AccessibilitySystem {
    * Is feature enabled
    */
   isFeatureEnabled(category, feature) {
-    return this.accessibilityState.features[category] && 
-           this.accessibilityState.features[category][feature];
+    return (
+      this.accessibilityState.features[category] &&
+      this.accessibilityState.features[category][feature]
+    );
   }
 
   /**
@@ -1567,7 +1645,9 @@ export class AccessibilitySystem {
    * Get current profile
    */
   getCurrentProfile() {
-    return this.accessibilityState.profiles.get(this.accessibilityState.currentProfile);
+    return this.accessibilityState.profiles.get(
+      this.accessibilityState.currentProfile
+    );
   }
 }
 

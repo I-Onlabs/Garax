@@ -1,6 +1,6 @@
 /**
  * InputHandler - Input handling and mapping
- * 
+ *
  * TODO: Extract from InputManager.js and GameRefactored.js
  * - Move input handling logic here
  * - Implement input mapping system
@@ -17,21 +17,21 @@ export class InputHandler {
       keys: new Map(),
       mouse: { x: 0, y: 0, buttons: new Map() },
       touch: { touches: [], gestures: [] },
-      gamepad: { connected: false, buttons: [], axes: [] }
+      gamepad: { connected: false, buttons: [], axes: [] },
     };
-    
+
     // Internal touch state for gesture recognition
     this.touchContext = {
       activeTouches: new Map(),
       startDistance: 0,
-      startAngle: 0
+      startAngle: 0,
     };
 
     // TODO: Inject dependencies
     this.eventBus = options.eventBus;
     this.logger = options.logger;
     this.config = options.config;
-    
+
     // TODO: Add input configuration
     this.inputConfig = {
       enableKeyboard: true,
@@ -48,8 +48,8 @@ export class InputHandler {
         swipeTimeThreshold: 500, // ms - max time for a swipe
         pinchThreshold: 0.1,
         rotateThreshold: 5,
-        ...options.config?.gestures
-      }
+        ...options.config?.gestures,
+      },
     };
   }
 
@@ -76,23 +76,32 @@ export class InputHandler {
       document.addEventListener('keydown', this.handleKeyDown.bind(this));
       document.addEventListener('keyup', this.handleKeyUp.bind(this));
     }
-    
+
     if (this.inputConfig.enableMouse) {
       document.addEventListener('mousemove', this.handleMouseMove.bind(this));
       document.addEventListener('mousedown', this.handleMouseDown.bind(this));
       document.addEventListener('mouseup', this.handleMouseUp.bind(this));
-      document.addEventListener('contextmenu', this.handleContextMenu.bind(this));
+      document.addEventListener(
+        'contextmenu',
+        this.handleContextMenu.bind(this)
+      );
     }
-    
+
     if (this.inputConfig.enableTouch) {
       document.addEventListener('touchstart', this.handleTouchStart.bind(this));
       document.addEventListener('touchmove', this.handleTouchMove.bind(this));
       document.addEventListener('touchend', this.handleTouchEnd.bind(this));
     }
-    
+
     if (this.inputConfig.enableGamepad) {
-      window.addEventListener('gamepadconnected', this.handleGamepadConnected.bind(this));
-      window.addEventListener('gamepaddisconnected', this.handleGamepadDisconnected.bind(this));
+      window.addEventListener(
+        'gamepadconnected',
+        this.handleGamepadConnected.bind(this)
+      );
+      window.addEventListener(
+        'gamepaddisconnected',
+        this.handleGamepadDisconnected.bind(this)
+      );
     }
   }
 
@@ -106,15 +115,15 @@ export class InputHandler {
       pressed: true,
       timestamp: Date.now(),
       repeat: event.repeat,
-      lastRepeatTime: Date.now()
+      lastRepeatTime: Date.now(),
     });
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('keydown', key, event);
-    
+
     // TODO: Emit input event
     this.eventBus?.emit('input:keydown', { key, event });
-    
+
     // TODO: Prevent default for game keys
     if (this.isGameKey(key)) {
       event.preventDefault();
@@ -130,12 +139,12 @@ export class InputHandler {
     this.inputState.keys.set(key, {
       pressed: false,
       timestamp: Date.now(),
-      repeat: false
+      repeat: false,
     });
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('keyup', key, event);
-    
+
     // TODO: Emit input event
     this.eventBus?.emit('input:keyup', { key, event });
   }
@@ -147,9 +156,12 @@ export class InputHandler {
   handleMouseMove(event) {
     this.inputState.mouse.x = event.clientX;
     this.inputState.mouse.y = event.clientY;
-    
+
     // TODO: Emit mouse move event
-    this.eventBus?.emit('input:mousemove', { x: event.clientX, y: event.clientY });
+    this.eventBus?.emit('input:mousemove', {
+      x: event.clientX,
+      y: event.clientY,
+    });
   }
 
   /**
@@ -160,14 +172,18 @@ export class InputHandler {
     const button = event.button;
     this.inputState.mouse.buttons.set(button, {
       pressed: true,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('mousedown', button, event);
-    
+
     // TODO: Emit input event
-    this.eventBus?.emit('input:mousedown', { button, x: event.clientX, y: event.clientY });
+    this.eventBus?.emit('input:mousedown', {
+      button,
+      x: event.clientX,
+      y: event.clientY,
+    });
   }
 
   /**
@@ -178,14 +194,18 @@ export class InputHandler {
     const button = event.button;
     this.inputState.mouse.buttons.set(button, {
       pressed: false,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('mouseup', button, event);
-    
+
     // TODO: Emit input event
-    this.eventBus?.emit('input:mouseup', { button, x: event.clientX, y: event.clientY });
+    this.eventBus?.emit('input:mouseup', {
+      button,
+      x: event.clientX,
+      y: event.clientY,
+    });
   }
 
   /**
@@ -210,10 +230,10 @@ export class InputHandler {
 
     // Process touch gestures
     this.processTouchGestures('start', event, touches);
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('touchstart', touches, event);
-    
+
     // TODO: Emit input event
     this.eventBus?.emit('input:touchstart', { touches });
   }
@@ -229,10 +249,10 @@ export class InputHandler {
 
     // Process touch gestures
     this.processTouchGestures('move', event, touches);
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('touchmove', touches, event);
-    
+
     // TODO: Emit input event
     this.eventBus?.emit('input:touchmove', { touches });
   }
@@ -248,10 +268,10 @@ export class InputHandler {
 
     // Process touch gestures
     this.processTouchGestures('end', event, touches);
-    
+
     // TODO: Add to input buffer
     this.addToBuffer('touchend', touches, event);
-    
+
     // TODO: Emit input event
     this.eventBus?.emit('input:touchend', { touches });
   }
@@ -273,7 +293,9 @@ export class InputHandler {
   handleGamepadDisconnected(event) {
     this.inputState.gamepad.connected = false;
     // TODO: Emit gamepad disconnected event
-    this.eventBus?.emit('input:gamepaddisconnected', { gamepad: event.gamepad });
+    this.eventBus?.emit('input:gamepaddisconnected', {
+      gamepad: event.gamepad,
+    });
   }
 
   /**
@@ -286,7 +308,7 @@ export class InputHandler {
         this.touchContext.activeTouches.set(touch.identifier, {
           startX: touch.clientX,
           startY: touch.clientY,
-          startTime: Date.now()
+          startTime: Date.now(),
         });
       }
 
@@ -304,7 +326,10 @@ export class InputHandler {
         const currentAngle = this.getAngle(t1, t2);
 
         // Pinch
-        if (this.inputConfig.gestures.enablePinch && this.touchContext.startDistance > 0) {
+        if (
+          this.inputConfig.gestures.enablePinch &&
+          this.touchContext.startDistance > 0
+        ) {
           const scale = currentDistance / this.touchContext.startDistance;
           if (Math.abs(scale - 1) > this.inputConfig.gestures.pinchThreshold) {
             this.eventBus?.emit('input:pinch', { scale });
@@ -331,7 +356,9 @@ export class InputHandler {
       // Handle Swipe
       if (this.inputConfig.gestures.enableSwipe) {
         for (const touch of event.changedTouches) {
-          const startData = this.touchContext.activeTouches.get(touch.identifier);
+          const startData = this.touchContext.activeTouches.get(
+            touch.identifier
+          );
           if (startData) {
             const deltaX = touch.clientX - startData.startX;
             const deltaY = touch.clientY - startData.startY;
@@ -339,10 +366,11 @@ export class InputHandler {
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
             // Check for valid swipe (enough distance and short enough time)
-            if (distance > this.inputConfig.gestures.swipeThreshold &&
-                timeDiff < this.inputConfig.gestures.swipeTimeThreshold) {
-
-              const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+            if (
+              distance > this.inputConfig.gestures.swipeThreshold &&
+              timeDiff < this.inputConfig.gestures.swipeTimeThreshold
+            ) {
+              const angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
               let direction = '';
 
               if (angle > -45 && angle <= 45) {
@@ -364,10 +392,10 @@ export class InputHandler {
           this.touchContext.activeTouches.delete(touch.identifier);
         }
       } else {
-          // Just clean up
-          for (const touch of event.changedTouches) {
-             this.touchContext.activeTouches.delete(touch.identifier);
-          }
+        // Just clean up
+        for (const touch of event.changedTouches) {
+          this.touchContext.activeTouches.delete(touch.identifier);
+        }
       }
     }
   }
@@ -379,7 +407,14 @@ export class InputHandler {
   }
 
   getAngle(touch1, touch2) {
-    return Math.atan2(touch2.clientY - touch1.clientY, touch2.clientX - touch1.clientX) * 180 / Math.PI;
+    return (
+      (Math.atan2(
+        touch2.clientY - touch1.clientY,
+        touch2.clientX - touch1.clientX
+      ) *
+        180) /
+      Math.PI
+    );
   }
 
   /**
@@ -388,14 +423,14 @@ export class InputHandler {
    */
   addToBuffer(type, data, event) {
     if (!this.inputConfig.bufferInputs) return;
-    
+
     this.inputBuffer.push({
       type,
       data,
       timestamp: Date.now(),
-      event
+      event,
     });
-    
+
     // TODO: Limit buffer size
     if (this.inputBuffer.length > this.maxBufferSize) {
       this.inputBuffer.shift();
@@ -427,7 +462,7 @@ export class InputHandler {
   getMousePosition() {
     return {
       x: this.inputState.mouse.x,
-      y: this.inputState.mouse.y
+      y: this.inputState.mouse.y,
     };
   }
 
@@ -453,7 +488,15 @@ export class InputHandler {
    */
   isGameKey(key) {
     // TODO: Define game keys
-    const gameKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter', 'Escape'];
+    const gameKeys = [
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'Space',
+      'Enter',
+      'Escape',
+    ];
     return gameKeys.includes(key);
   }
 
@@ -484,7 +527,7 @@ export class InputHandler {
     if (this.inputBuffer.length > 0) {
       this.eventBus?.emit('input:batch', {
         events: [...this.inputBuffer],
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       this.clearInputBuffer();
     }
@@ -501,7 +544,7 @@ export class InputHandler {
         if (now - state.lastRepeatTime > this.inputConfig.inputRepeatDelay) {
           this.eventBus?.emit('input:repeat', {
             key,
-            timestamp: now
+            timestamp: now,
           });
           state.lastRepeatTime = now;
         }
@@ -515,7 +558,7 @@ export class InputHandler {
    */
   updateGamepadState() {
     if (!this.inputState.gamepad.connected) return;
-    
+
     const gamepads = navigator.getGamepads();
     if (gamepads[0]) {
       // TODO: Update gamepad state

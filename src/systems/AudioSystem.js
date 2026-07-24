@@ -1,6 +1,6 @@
 /**
  * AudioSystem.js - Comprehensive audio management system
- * 
+ *
  * Provides audio playback, volume control, and audio effects management
  * with proper integration with the UI system and game events.
  */
@@ -12,10 +12,14 @@ export class AudioSystem {
   constructor(config = {}) {
     // Validate required dependencies
     if (!config.eventBus || !(config.eventBus instanceof EventBus)) {
-      throw new Error('AudioSystem: eventBus is required and must be an EventBus instance');
+      throw new Error(
+        'AudioSystem: eventBus is required and must be an EventBus instance'
+      );
     }
     if (!config.logger || !(config.logger instanceof Logger)) {
-      throw new Error('AudioSystem: logger is required and must be a Logger instance');
+      throw new Error(
+        'AudioSystem: logger is required and must be a Logger instance'
+      );
     }
 
     this.eventBus = config.eventBus;
@@ -29,7 +33,7 @@ export class AudioSystem {
       sfxVolume: 0.9,
       muteAll: false,
       muteMusic: false,
-      muteSfx: false
+      muteSfx: false,
     };
     this.currentMusic = null;
     this.isInitialized = false;
@@ -63,8 +67,9 @@ export class AudioSystem {
   async initialize() {
     try {
       // Create audio context
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
+      this.audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+
       // Resume audio context if suspended (required for some browsers)
       if (this.audioContext.state === 'suspended') {
         await this.audioContext.resume();
@@ -140,7 +145,7 @@ export class AudioSystem {
    */
   handleSettingsChange(data) {
     const { path, value } = data;
-    
+
     switch (path) {
       case 'audio.masterVolume':
         this.setMasterVolume(value);
@@ -189,14 +194,14 @@ export class AudioSystem {
       'achievement',
       'buttonClick',
       'buttonHover',
-      'error'
+      'error',
     ];
 
     const defaultMusic = [
       'mainTheme',
       'menuTheme',
       'gameplayTheme',
-      'victoryTheme'
+      'victoryTheme',
     ];
 
     // Load sounds (using placeholder data URLs for demo)
@@ -206,7 +211,10 @@ export class AudioSystem {
 
     // Load music
     for (const musicName of defaultMusic) {
-      await this.loadMusic(musicName, this.generatePlaceholderAudio(musicName, true));
+      await this.loadMusic(
+        musicName,
+        this.generatePlaceholderAudio(musicName, true)
+      );
     }
 
     this.logger.info('Default audio assets loaded');
@@ -223,14 +231,14 @@ export class AudioSystem {
     const samples = sampleRate * duration;
     const buffer = new ArrayBuffer(44 + samples * 2);
     const view = new DataView(buffer);
-    
+
     // WAV header
     const writeString = (offset, string) => {
       for (let i = 0; i < string.length; i++) {
         view.setUint8(offset + i, string.charCodeAt(i));
       }
     };
-    
+
     writeString(0, 'RIFF');
     view.setUint32(4, 36 + samples * 2, true);
     writeString(8, 'WAVE');
@@ -244,13 +252,13 @@ export class AudioSystem {
     view.setUint16(34, 16, true);
     writeString(36, 'data');
     view.setUint32(40, samples * 2, true);
-    
+
     // Generate simple sine wave
     for (let i = 0; i < samples; i++) {
-      const sample = Math.sin(2 * Math.PI * 440 * i / sampleRate) * 0.1; // 440Hz tone
+      const sample = Math.sin((2 * Math.PI * 440 * i) / sampleRate) * 0.1; // 440Hz tone
       view.setInt16(44 + i * 2, sample * 32767, true);
     }
-    
+
     const blob = new Blob([buffer], { type: 'audio/wav' });
     return URL.createObjectURL(blob);
   }
@@ -262,13 +270,14 @@ export class AudioSystem {
     try {
       const audio = new Audio(url);
       audio.preload = 'auto';
-      audio.volume = this.audioSettings.sfxVolume * this.audioSettings.masterVolume;
-      
+      audio.volume =
+        this.audioSettings.sfxVolume * this.audioSettings.masterVolume;
+
       await new Promise((resolve, reject) => {
         audio.addEventListener('canplaythrough', resolve);
         audio.addEventListener('error', reject);
       });
-      
+
       this.sounds.set(name, audio);
       this.logger.debug(`Sound loaded: ${name}`);
     } catch (error) {
@@ -285,13 +294,14 @@ export class AudioSystem {
       const audio = new Audio(url);
       audio.preload = 'auto';
       audio.loop = true;
-      audio.volume = this.audioSettings.musicVolume * this.audioSettings.masterVolume;
-      
+      audio.volume =
+        this.audioSettings.musicVolume * this.audioSettings.masterVolume;
+
       await new Promise((resolve, reject) => {
         audio.addEventListener('canplaythrough', resolve);
         audio.addEventListener('error', reject);
       });
-      
+
       this.music.set(name, audio);
       this.logger.debug(`Music loaded: ${name}`);
     } catch (error) {
@@ -324,7 +334,7 @@ export class AudioSystem {
       const soundClone = sound.cloneNode();
       soundClone.volume = sound.volume * volume;
       soundClone.play();
-      
+
       this.eventBus.emit('audio:soundPlayed', { name, volume });
       this.logger.debug(`Playing sound: ${name}`);
     } catch (error) {
@@ -358,7 +368,7 @@ export class AudioSystem {
       }
 
       this.currentMusic = music;
-      
+
       if (fadeIn) {
         music.volume = 0;
         music.play();
@@ -366,7 +376,7 @@ export class AudioSystem {
       } else {
         music.play();
       }
-      
+
       this.eventBus.emit('audio:musicStarted', { name });
       this.logger.debug(`Playing music: ${name}`);
     } catch (error) {
@@ -414,18 +424,19 @@ export class AudioSystem {
   fadeIn(audio, duration = 2000) {
     const startTime = Date.now();
     const startVolume = audio.volume;
-    const targetVolume = this.audioSettings.musicVolume * this.audioSettings.masterVolume;
-    
+    const targetVolume =
+      this.audioSettings.musicVolume * this.audioSettings.masterVolume;
+
     const fade = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       audio.volume = startVolume + (targetVolume - startVolume) * progress;
-      
+
       if (progress < 1) {
         requestAnimationFrame(fade);
       }
     };
-    
+
     fade();
   }
 
@@ -435,12 +446,12 @@ export class AudioSystem {
   fadeOut(audio, duration = 2000) {
     const startTime = Date.now();
     const startVolume = audio.volume;
-    
+
     const fade = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       audio.volume = startVolume * (1 - progress);
-      
+
       if (progress < 1) {
         requestAnimationFrame(fade);
       } else {
@@ -448,7 +459,7 @@ export class AudioSystem {
         audio.currentTime = 0;
       }
     };
-    
+
     fade();
   }
 
@@ -458,8 +469,13 @@ export class AudioSystem {
   setMasterVolume(volume) {
     this.audioSettings.masterVolume = Math.max(0, Math.min(1, volume));
     this.updateAllVolumes();
-    this.eventBus.emit('audio:masterVolumeChanged', this.audioSettings.masterVolume);
-    this.logger.debug(`Master volume set to: ${this.audioSettings.masterVolume}`);
+    this.eventBus.emit(
+      'audio:masterVolumeChanged',
+      this.audioSettings.masterVolume
+    );
+    this.logger.debug(
+      `Master volume set to: ${this.audioSettings.masterVolume}`
+    );
   }
 
   /**
@@ -468,7 +484,10 @@ export class AudioSystem {
   setMusicVolume(volume) {
     this.audioSettings.musicVolume = Math.max(0, Math.min(1, volume));
     this.updateMusicVolumes();
-    this.eventBus.emit('audio:musicVolumeChanged', this.audioSettings.musicVolume);
+    this.eventBus.emit(
+      'audio:musicVolumeChanged',
+      this.audioSettings.musicVolume
+    );
     this.logger.debug(`Music volume set to: ${this.audioSettings.musicVolume}`);
   }
 
@@ -494,7 +513,8 @@ export class AudioSystem {
    * Update music volumes
    */
   updateMusicVolumes() {
-    const volume = this.audioSettings.musicVolume * this.audioSettings.masterVolume;
+    const volume =
+      this.audioSettings.musicVolume * this.audioSettings.masterVolume;
     for (const music of this.music.values()) {
       music.volume = volume;
     }
@@ -504,7 +524,8 @@ export class AudioSystem {
    * Update SFX volumes
    */
   updateSfxVolumes() {
-    const volume = this.audioSettings.sfxVolume * this.audioSettings.masterVolume;
+    const volume =
+      this.audioSettings.sfxVolume * this.audioSettings.masterVolume;
     for (const sound of this.sounds.values()) {
       sound.volume = volume;
     }
@@ -605,7 +626,8 @@ export class AudioSystem {
    * Check if audio is playing
    */
   isPlaying(name, type = 'sound') {
-    const audio = type === 'music' ? this.music.get(name) : this.sounds.get(name);
+    const audio =
+      type === 'music' ? this.music.get(name) : this.sounds.get(name);
     return audio && !audio.paused;
   }
 
@@ -615,16 +637,16 @@ export class AudioSystem {
   cleanup() {
     // Stop all audio
     this.stopMusic();
-    
+
     // Clean up audio context
     if (this.audioContext) {
       this.audioContext.close();
     }
-    
+
     // Clear audio maps
     this.sounds.clear();
     this.music.clear();
-    
+
     this.eventBus.emit('audio:cleanup');
     this.logger.info('AudioSystem cleaned up');
   }

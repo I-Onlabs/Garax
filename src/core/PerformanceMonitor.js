@@ -207,9 +207,15 @@ export class PerformanceMonitor {
     this.eventBus.on('performance:frame', this.handleFrame.bind(this));
     this.eventBus.on('performance:memory', this.handleMemoryUpdate.bind(this));
     this.eventBus.on('performance:audio', this.handleAudioUpdate.bind(this));
-    this.eventBus.on('performance:rendering', this.handleRenderingUpdate.bind(this));
+    this.eventBus.on(
+      'performance:rendering',
+      this.handleRenderingUpdate.bind(this)
+    );
     this.eventBus.on('performance:input', this.handleInputUpdate.bind(this));
-    this.eventBus.on('performance:network', this.handleNetworkUpdate.bind(this));
+    this.eventBus.on(
+      'performance:network',
+      this.handleNetworkUpdate.bind(this)
+    );
   }
 
   /**
@@ -407,17 +413,27 @@ export class PerformanceMonitor {
 
     // Calculate average FPS
     if (this.metrics.fps.history.length > 0) {
-      this.metrics.fps.average = this.metrics.fps.history.reduce((a, b) => a + b, 0) / this.metrics.fps.history.length;
+      this.metrics.fps.average =
+        this.metrics.fps.history.reduce((a, b) => a + b, 0) /
+        this.metrics.fps.history.length;
     }
 
     // Update frame time metrics
     this.metrics.frameTime.current = frameTime;
     this.metrics.frameTime.history.push(frameTime);
-    this.metrics.frameTime.min = Math.min(this.metrics.frameTime.min, frameTime);
-    this.metrics.frameTime.max = Math.max(this.metrics.frameTime.max, frameTime);
+    this.metrics.frameTime.min = Math.min(
+      this.metrics.frameTime.min,
+      frameTime
+    );
+    this.metrics.frameTime.max = Math.max(
+      this.metrics.frameTime.max,
+      frameTime
+    );
 
     if (this.metrics.frameTime.history.length > 0) {
-      this.metrics.frameTime.average = this.metrics.frameTime.history.reduce((a, b) => a + b, 0) / this.metrics.frameTime.history.length;
+      this.metrics.frameTime.average =
+        this.metrics.frameTime.history.reduce((a, b) => a + b, 0) /
+        this.metrics.frameTime.history.length;
     }
 
     // Check for dropped frames
@@ -441,7 +457,8 @@ export class PerformanceMonitor {
   updateMemoryMetrics(memory) {
     this.metrics.memory.used = memory.usedJSHeapSize;
     this.metrics.memory.total = memory.totalJSHeapSize;
-    this.metrics.memory.available = memory.jsHeapSizeLimit - memory.usedJSHeapSize;
+    this.metrics.memory.available =
+      memory.jsHeapSizeLimit - memory.usedJSHeapSize;
 
     this.metrics.memory.history.push({
       used: memory.usedJSHeapSize,
@@ -489,8 +506,11 @@ export class PerformanceMonitor {
 
     // Calculate average response time
     if (this.metrics.input.eventCount > 0) {
-      this.metrics.input.averageResponseTime = 
-        (this.metrics.input.averageResponseTime * (this.metrics.input.eventCount - 1) + responseTime) / this.metrics.input.eventCount;
+      this.metrics.input.averageResponseTime =
+        (this.metrics.input.averageResponseTime *
+          (this.metrics.input.eventCount - 1) +
+          responseTime) /
+        this.metrics.input.eventCount;
     }
 
     // Check for input performance issues
@@ -517,16 +537,31 @@ export class PerformanceMonitor {
     const frameTime = this.metrics.frameTime.current;
 
     if (fps < this.config.fpsCriticalThreshold) {
-      this.addPerformanceAlert('critical', 'FPS critically low', { fps, threshold: this.config.fpsCriticalThreshold });
-      this.suggestOptimization('fps', 'Consider reducing graphics quality or disabling non-essential features');
+      this.addPerformanceAlert('critical', 'FPS critically low', {
+        fps,
+        threshold: this.config.fpsCriticalThreshold,
+      });
+      this.suggestOptimization(
+        'fps',
+        'Consider reducing graphics quality or disabling non-essential features'
+      );
     } else if (fps < this.config.fpsWarningThreshold) {
-      this.addPerformanceAlert('warning', 'FPS below target', { fps, threshold: this.config.fpsWarningThreshold });
+      this.addPerformanceAlert('warning', 'FPS below target', {
+        fps,
+        threshold: this.config.fpsWarningThreshold,
+      });
     }
 
     if (frameTime > this.config.frameTimeCriticalThreshold) {
-      this.addPerformanceAlert('critical', 'Frame time too high', { frameTime, threshold: this.config.frameTimeCriticalThreshold });
+      this.addPerformanceAlert('critical', 'Frame time too high', {
+        frameTime,
+        threshold: this.config.frameTimeCriticalThreshold,
+      });
     } else if (frameTime > this.config.frameTimeWarningThreshold) {
-      this.addPerformanceAlert('warning', 'Frame time above target', { frameTime, threshold: this.config.frameTimeWarningThreshold });
+      this.addPerformanceAlert('warning', 'Frame time above target', {
+        frameTime,
+        threshold: this.config.frameTimeWarningThreshold,
+      });
     }
   }
 
@@ -537,10 +572,19 @@ export class PerformanceMonitor {
     const used = this.metrics.memory.used;
 
     if (used > this.config.memoryCriticalThreshold) {
-      this.addPerformanceAlert('critical', 'Memory usage critically high', { used, threshold: this.config.memoryCriticalThreshold });
-      this.suggestOptimization('memory', 'Consider reducing texture quality or clearing unused assets');
+      this.addPerformanceAlert('critical', 'Memory usage critically high', {
+        used,
+        threshold: this.config.memoryCriticalThreshold,
+      });
+      this.suggestOptimization(
+        'memory',
+        'Consider reducing texture quality or clearing unused assets'
+      );
     } else if (used > this.config.memoryWarningThreshold) {
-      this.addPerformanceAlert('warning', 'Memory usage high', { used, threshold: this.config.memoryWarningThreshold });
+      this.addPerformanceAlert('warning', 'Memory usage high', {
+        used,
+        threshold: this.config.memoryWarningThreshold,
+      });
     }
   }
 
@@ -549,12 +593,21 @@ export class PerformanceMonitor {
    */
   checkAudioPerformance() {
     if (this.metrics.audio.contextRecreations > 5) {
-      this.addPerformanceAlert('warning', 'Audio context recreated multiple times', { recreations: this.metrics.audio.contextRecreations });
-      this.suggestOptimization('audio', 'Consider implementing audio context pooling or lazy initialization');
+      this.addPerformanceAlert(
+        'warning',
+        'Audio context recreated multiple times',
+        { recreations: this.metrics.audio.contextRecreations }
+      );
+      this.suggestOptimization(
+        'audio',
+        'Consider implementing audio context pooling or lazy initialization'
+      );
     }
 
     if (this.metrics.audio.bufferUnderruns > 10) {
-      this.addPerformanceAlert('warning', 'Audio buffer underruns detected', { underruns: this.metrics.audio.bufferUnderruns });
+      this.addPerformanceAlert('warning', 'Audio buffer underruns detected', {
+        underruns: this.metrics.audio.bufferUnderruns,
+      });
     }
   }
 
@@ -566,7 +619,10 @@ export class PerformanceMonitor {
 
     if (lag > 100) {
       this.addPerformanceAlert('warning', 'Input lag detected', { lag });
-      this.suggestOptimization('input', 'Consider optimizing input handling or reducing input processing overhead');
+      this.suggestOptimization(
+        'input',
+        'Consider optimizing input handling or reducing input processing overhead'
+      );
     }
   }
 
@@ -587,8 +643,13 @@ export class PerformanceMonitor {
     if (isIncreasing) {
       this.metrics.memory.leakDetected = true;
       this.metrics.memory.leakCount++;
-      this.addPerformanceAlert('warning', 'Potential memory leak detected', { leakCount: this.metrics.memory.leakCount });
-      this.suggestOptimization('memory', 'Check for circular references or unremoved event listeners');
+      this.addPerformanceAlert('warning', 'Potential memory leak detected', {
+        leakCount: this.metrics.memory.leakCount,
+      });
+      this.suggestOptimization(
+        'memory',
+        'Check for circular references or unremoved event listeners'
+      );
     }
   }
 
@@ -601,9 +662,14 @@ export class PerformanceMonitor {
     const contextState = 'running'; // This would be the actual context state
 
     if (contextState !== this.metrics.audio.contextState) {
-      if (this.metrics.audio.contextState === 'suspended' && contextState === 'running') {
+      if (
+        this.metrics.audio.contextState === 'suspended' &&
+        contextState === 'running'
+      ) {
         this.metrics.audio.contextRecreations++;
-        this.addPerformanceAlert('info', 'Audio context recreated', { recreations: this.metrics.audio.contextRecreations });
+        this.addPerformanceAlert('info', 'Audio context recreated', {
+          recreations: this.metrics.audio.contextRecreations,
+        });
       }
       this.metrics.audio.contextState = contextState;
     }

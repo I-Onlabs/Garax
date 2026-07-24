@@ -19,10 +19,14 @@ export class PerformanceOptimizationSystem {
 
     // Validate required dependencies
     if (!this.eventBus) {
-      throw new Error('PerformanceOptimizationSystem requires eventBus dependency');
+      throw new Error(
+        'PerformanceOptimizationSystem requires eventBus dependency'
+      );
     }
     if (!this.logger) {
-      throw new Error('PerformanceOptimizationSystem requires logger dependency');
+      throw new Error(
+        'PerformanceOptimizationSystem requires logger dependency'
+      );
     }
 
     // Performance state
@@ -61,7 +65,7 @@ export class PerformanceOptimizationSystem {
       optimizationLevels: {
         low: { maxFPS: 30, quality: 0.5, effects: false, shadows: false },
         medium: { maxFPS: 45, quality: 0.7, effects: true, shadows: false },
-        high: { maxFPS: 60, quality: 1.0, effects: true, shadows: true }
+        high: { maxFPS: 60, quality: 1.0, effects: true, shadows: true },
       },
       monitoringInterval: 1000, // 1 second
       profilingInterval: 100, // 100ms
@@ -86,19 +90,19 @@ export class PerformanceOptimizationSystem {
    */
   async initialize() {
     this.logger.info('Initializing PerformanceOptimizationSystem...');
-    
+
     // Start performance monitoring
     this.startPerformanceMonitoring();
-    
+
     // Initialize resource pools
     this.initializeResourcePools();
-    
+
     // Set up asset cache
     this.setupAssetCache();
-    
+
     // Start optimization processes
     this.startOptimizationProcesses();
-    
+
     this.logger.info('PerformanceOptimizationSystem initialized successfully');
   }
 
@@ -107,19 +111,19 @@ export class PerformanceOptimizationSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up PerformanceOptimizationSystem...');
-    
+
     // Stop performance monitoring
     this.stopPerformanceMonitoring();
-    
+
     // Stop optimization processes
     this.stopOptimizationProcesses();
-    
+
     // Clear resource pools
     this.clearResourcePools();
-    
+
     // Clear asset cache
     this.clearAssetCache();
-    
+
     // Clear state
     this.performanceState.metrics.clear();
     this.performanceState.thresholds.clear();
@@ -128,10 +132,10 @@ export class PerformanceOptimizationSystem {
     this.performanceState.assetCache.clear();
     this.performanceState.renderQueue = [];
     this.performanceState.updateQueue = [];
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('PerformanceOptimizationSystem cleaned up');
   }
 
@@ -141,16 +145,16 @@ export class PerformanceOptimizationSystem {
   update(deltaTime, gameState) {
     // Update performance metrics
     this.updatePerformanceMetrics(deltaTime);
-    
+
     // Check performance thresholds
     this.checkPerformanceThresholds();
-    
+
     // Apply optimizations
     this.applyOptimizations(deltaTime);
-    
+
     // Update resource pools
     this.updateResourcePools(deltaTime);
-    
+
     // Update asset cache
     this.updateAssetCache(deltaTime);
   }
@@ -172,8 +176,8 @@ export class PerformanceOptimizationSystem {
         memoryUsage: 0,
         cpuUsage: 0,
         renderTime: 0,
-        updateTime: 0
-      }
+        updateTime: 0,
+      },
     };
   }
 
@@ -191,8 +195,8 @@ export class PerformanceOptimizationSystem {
         totalAllocated: 0,
         totalFreed: 0,
         currentUsage: 0,
-        peakUsage: 0
-      }
+        peakUsage: 0,
+      },
     };
   }
 
@@ -211,7 +215,7 @@ export class PerformanceOptimizationSystem {
       shaderOptimization: true,
       renderQueue: [],
       visibleObjects: [],
-      culledObjects: []
+      culledObjects: [],
     };
   }
 
@@ -231,8 +235,8 @@ export class PerformanceOptimizationSystem {
         totalLoaded: 0,
         totalSize: 0,
         cacheHits: 0,
-        cacheMisses: 0
-      }
+        cacheMisses: 0,
+      },
     };
   }
 
@@ -247,8 +251,8 @@ export class PerformanceOptimizationSystem {
         totalPools: 0,
         totalObjects: 0,
         activeObjects: 0,
-        pooledObjects: 0
-      }
+        pooledObjects: 0,
+      },
     };
   }
 
@@ -257,25 +261,34 @@ export class PerformanceOptimizationSystem {
    */
   setupEventHandlers() {
     // Performance events
-    this.eventBus.on('performance:metric', this.handlePerformanceMetric.bind(this));
-    this.eventBus.on('performance:threshold', this.handlePerformanceThreshold.bind(this));
-    this.eventBus.on('performance:optimize', this.handlePerformanceOptimize.bind(this));
-    
+    this.eventBus.on(
+      'performance:metric',
+      this.handlePerformanceMetric.bind(this)
+    );
+    this.eventBus.on(
+      'performance:threshold',
+      this.handlePerformanceThreshold.bind(this)
+    );
+    this.eventBus.on(
+      'performance:optimize',
+      this.handlePerformanceOptimize.bind(this)
+    );
+
     // Memory events
     this.eventBus.on('memory:allocate', this.handleMemoryAllocate.bind(this));
     this.eventBus.on('memory:free', this.handleMemoryFree.bind(this));
     this.eventBus.on('memory:leak', this.handleMemoryLeak.bind(this));
-    
+
     // Rendering events
     this.eventBus.on('render:object', this.handleRenderObject.bind(this));
     this.eventBus.on('render:batch', this.handleRenderBatch.bind(this));
     this.eventBus.on('render:cull', this.handleRenderCull.bind(this));
-    
+
     // Asset events
     this.eventBus.on('asset:load', this.handleAssetLoad.bind(this));
     this.eventBus.on('asset:unload', this.handleAssetUnload.bind(this));
     this.eventBus.on('asset:cache', this.handleAssetCache.bind(this));
-    
+
     // Resource events
     this.eventBus.on('resource:create', this.handleResourceCreate.bind(this));
     this.eventBus.on('resource:destroy', this.handleResourceDestroy.bind(this));
@@ -286,21 +299,63 @@ export class PerformanceOptimizationSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('performance:metric', this.handlePerformanceMetric.bind(this));
-    this.eventBus.removeListener('performance:threshold', this.handlePerformanceThreshold.bind(this));
-    this.eventBus.removeListener('performance:optimize', this.handlePerformanceOptimize.bind(this));
-    this.eventBus.removeListener('memory:allocate', this.handleMemoryAllocate.bind(this));
-    this.eventBus.removeListener('memory:free', this.handleMemoryFree.bind(this));
-    this.eventBus.removeListener('memory:leak', this.handleMemoryLeak.bind(this));
-    this.eventBus.removeListener('render:object', this.handleRenderObject.bind(this));
-    this.eventBus.removeListener('render:batch', this.handleRenderBatch.bind(this));
-    this.eventBus.removeListener('render:cull', this.handleRenderCull.bind(this));
+    this.eventBus.removeListener(
+      'performance:metric',
+      this.handlePerformanceMetric.bind(this)
+    );
+    this.eventBus.removeListener(
+      'performance:threshold',
+      this.handlePerformanceThreshold.bind(this)
+    );
+    this.eventBus.removeListener(
+      'performance:optimize',
+      this.handlePerformanceOptimize.bind(this)
+    );
+    this.eventBus.removeListener(
+      'memory:allocate',
+      this.handleMemoryAllocate.bind(this)
+    );
+    this.eventBus.removeListener(
+      'memory:free',
+      this.handleMemoryFree.bind(this)
+    );
+    this.eventBus.removeListener(
+      'memory:leak',
+      this.handleMemoryLeak.bind(this)
+    );
+    this.eventBus.removeListener(
+      'render:object',
+      this.handleRenderObject.bind(this)
+    );
+    this.eventBus.removeListener(
+      'render:batch',
+      this.handleRenderBatch.bind(this)
+    );
+    this.eventBus.removeListener(
+      'render:cull',
+      this.handleRenderCull.bind(this)
+    );
     this.eventBus.removeListener('asset:load', this.handleAssetLoad.bind(this));
-    this.eventBus.removeListener('asset:unload', this.handleAssetUnload.bind(this));
-    this.eventBus.removeListener('asset:cache', this.handleAssetCache.bind(this));
-    this.eventBus.removeListener('resource:create', this.handleResourceCreate.bind(this));
-    this.eventBus.removeListener('resource:destroy', this.handleResourceDestroy.bind(this));
-    this.eventBus.removeListener('resource:pool', this.handleResourcePool.bind(this));
+    this.eventBus.removeListener(
+      'asset:unload',
+      this.handleAssetUnload.bind(this)
+    );
+    this.eventBus.removeListener(
+      'asset:cache',
+      this.handleAssetCache.bind(this)
+    );
+    this.eventBus.removeListener(
+      'resource:create',
+      this.handleResourceCreate.bind(this)
+    );
+    this.eventBus.removeListener(
+      'resource:destroy',
+      this.handleResourceDestroy.bind(this)
+    );
+    this.eventBus.removeListener(
+      'resource:pool',
+      this.handleResourcePool.bind(this)
+    );
   }
 
   /**
@@ -310,16 +365,16 @@ export class PerformanceOptimizationSystem {
     if (!this.performanceConfig.monitoringEnabled) {
       return;
     }
-    
+
     // Start frame rate monitoring
     this.startFrameRateMonitoring();
-    
+
     // Start memory monitoring
     this.startMemoryMonitoring();
-    
+
     // Start CPU monitoring
     this.startCPUMonitoring();
-    
+
     // Start profiling if enabled
     if (this.performanceConfig.profilingEnabled) {
       this.startProfiling();
@@ -333,15 +388,15 @@ export class PerformanceOptimizationSystem {
     if (this.frameRateTimer) {
       clearInterval(this.frameRateTimer);
     }
-    
+
     if (this.memoryTimer) {
       clearInterval(this.memoryTimer);
     }
-    
+
     if (this.cpuTimer) {
       clearInterval(this.cpuTimer);
     }
-    
+
     if (this.profilingTimer) {
       clearInterval(this.profilingTimer);
     }
@@ -389,20 +444,23 @@ export class PerformanceOptimizationSystem {
   updateFrameRate() {
     const now = performance.now();
     const deltaTime = now - this.performanceMonitor.lastFrameTime;
-    
+
     this.performanceMonitor.frameCount++;
     this.performanceMonitor.lastFrameTime = now;
-    
+
     // Calculate frame rate
     this.performanceState.frameRate = 1000 / deltaTime;
     this.performanceState.frameTime = deltaTime;
-    
+
     // Add to frame time history
     this.performanceMonitor.frameTimes.push(deltaTime);
-    if (this.performanceMonitor.frameTimes.length > this.performanceMonitor.maxFrameTimeHistory) {
+    if (
+      this.performanceMonitor.frameTimes.length >
+      this.performanceMonitor.maxFrameTimeHistory
+    ) {
       this.performanceMonitor.frameTimes.shift();
     }
-    
+
     // Update metrics
     this.performanceMonitor.metrics.frameRate = this.performanceState.frameRate;
     this.performanceMonitor.metrics.frameTime = this.performanceState.frameTime;
@@ -413,15 +471,17 @@ export class PerformanceOptimizationSystem {
    */
   updateMemoryUsage() {
     if (performance.memory) {
-      this.performanceState.memoryUsage = performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize;
+      this.performanceState.memoryUsage =
+        performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize;
       this.performanceMonitor.memoryInfo = {
         used: performance.memory.usedJSHeapSize,
         total: performance.memory.totalJSHeapSize,
-        limit: performance.memory.jsHeapSizeLimit
+        limit: performance.memory.jsHeapSizeLimit,
       };
     }
-    
-    this.performanceMonitor.metrics.memoryUsage = this.performanceState.memoryUsage;
+
+    this.performanceMonitor.metrics.memoryUsage =
+      this.performanceState.memoryUsage;
   }
 
   /**
@@ -432,10 +492,13 @@ export class PerformanceOptimizationSystem {
     // In a real implementation, you'd use more sophisticated methods
     const now = performance.now();
     const deltaTime = now - (this.lastCPUUpdate || now);
-    
-    this.performanceState.cpuUsage = Math.min(1, deltaTime / this.performanceConfig.maxFrameTime);
+
+    this.performanceState.cpuUsage = Math.min(
+      1,
+      deltaTime / this.performanceConfig.maxFrameTime
+    );
     this.lastCPUUpdate = now;
-    
+
     this.performanceMonitor.metrics.cpuUsage = this.performanceState.cpuUsage;
   }
 
@@ -454,13 +517,14 @@ export class PerformanceOptimizationSystem {
    */
   profileRendering() {
     const startTime = performance.now();
-    
+
     // Simulate rendering work
     this.processRenderQueue();
-    
+
     const endTime = performance.now();
     this.performanceState.renderTime = endTime - startTime;
-    this.performanceMonitor.metrics.renderTime = this.performanceState.renderTime;
+    this.performanceMonitor.metrics.renderTime =
+      this.performanceState.renderTime;
   }
 
   /**
@@ -468,13 +532,14 @@ export class PerformanceOptimizationSystem {
    */
   profileUpdates() {
     const startTime = performance.now();
-    
+
     // Simulate update work
     this.processUpdateQueue();
-    
+
     const endTime = performance.now();
     this.performanceState.updateTime = endTime - startTime;
-    this.performanceMonitor.metrics.updateTime = this.performanceState.updateTime;
+    this.performanceMonitor.metrics.updateTime =
+      this.performanceState.updateTime;
   }
 
   /**
@@ -483,7 +548,7 @@ export class PerformanceOptimizationSystem {
   profileMemory() {
     // Check for memory leaks
     this.checkMemoryLeaks();
-    
+
     // Update memory statistics
     this.updateMemoryStatistics();
   }
@@ -493,35 +558,50 @@ export class PerformanceOptimizationSystem {
    */
   checkPerformanceThresholds() {
     const thresholds = this.performanceConfig;
-    
+
     // Check frame rate
     if (this.performanceState.frameRate < thresholds.targetFrameRate) {
-      this.handlePerformanceThreshold('frameRate', this.performanceState.frameRate);
+      this.handlePerformanceThreshold(
+        'frameRate',
+        this.performanceState.frameRate
+      );
     }
-    
+
     // Check frame time
     if (this.performanceState.frameTime > thresholds.maxFrameTime) {
-      this.handlePerformanceThreshold('frameTime', this.performanceState.frameTime);
+      this.handlePerformanceThreshold(
+        'frameTime',
+        this.performanceState.frameTime
+      );
     }
-    
+
     // Check memory usage
     if (this.performanceState.memoryUsage > thresholds.memoryThreshold) {
-      this.handlePerformanceThreshold('memory', this.performanceState.memoryUsage);
+      this.handlePerformanceThreshold(
+        'memory',
+        this.performanceState.memoryUsage
+      );
     }
-    
+
     // Check CPU usage
     if (this.performanceState.cpuUsage > thresholds.cpuThreshold) {
       this.handlePerformanceThreshold('cpu', this.performanceState.cpuUsage);
     }
-    
+
     // Check render time
     if (this.performanceState.renderTime > thresholds.renderThreshold) {
-      this.handlePerformanceThreshold('render', this.performanceState.renderTime);
+      this.handlePerformanceThreshold(
+        'render',
+        this.performanceState.renderTime
+      );
     }
-    
+
     // Check update time
     if (this.performanceState.updateTime > thresholds.updateThreshold) {
-      this.handlePerformanceThreshold('update', this.performanceState.updateTime);
+      this.handlePerformanceThreshold(
+        'update',
+        this.performanceState.updateTime
+      );
     }
   }
 
@@ -532,16 +612,16 @@ export class PerformanceOptimizationSystem {
     if (!this.performanceConfig.optimizationEnabled) {
       return;
     }
-    
+
     // Apply frame rate optimizations
     this.applyFrameRateOptimizations();
-    
+
     // Apply memory optimizations
     this.applyMemoryOptimizations();
-    
+
     // Apply rendering optimizations
     this.applyRenderingOptimizations();
-    
+
     // Apply asset optimizations
     this.applyAssetOptimizations();
   }
@@ -550,13 +630,15 @@ export class PerformanceOptimizationSystem {
    * Apply frame rate optimizations
    */
   applyFrameRateOptimizations() {
-    if (this.performanceState.frameRate < this.performanceConfig.targetFrameRate) {
+    if (
+      this.performanceState.frameRate < this.performanceConfig.targetFrameRate
+    ) {
       // Reduce quality
       this.reduceQuality();
-      
+
       // Enable culling
       this.enableCulling();
-      
+
       // Reduce effects
       this.reduceEffects();
     }
@@ -566,13 +648,15 @@ export class PerformanceOptimizationSystem {
    * Apply memory optimizations
    */
   applyMemoryOptimizations() {
-    if (this.performanceState.memoryUsage > this.performanceConfig.memoryThreshold) {
+    if (
+      this.performanceState.memoryUsage > this.performanceConfig.memoryThreshold
+    ) {
       // Trigger garbage collection
       this.triggerGarbageCollection();
-      
+
       // Clear unused assets
       this.clearUnusedAssets();
-      
+
       // Reduce object pools
       this.reduceObjectPools();
     }
@@ -582,13 +666,15 @@ export class PerformanceOptimizationSystem {
    * Apply rendering optimizations
    */
   applyRenderingOptimizations() {
-    if (this.performanceState.renderTime > this.performanceConfig.renderThreshold) {
+    if (
+      this.performanceState.renderTime > this.performanceConfig.renderThreshold
+    ) {
       // Enable batching
       this.enableBatching();
-      
+
       // Enable instancing
       this.enableInstancing();
-      
+
       // Reduce draw calls
       this.reduceDrawCalls();
     }
@@ -600,10 +686,10 @@ export class PerformanceOptimizationSystem {
   applyAssetOptimizations() {
     // Implement lazy loading
     this.implementLazyLoading();
-    
+
     // Compress assets
     this.compressAssets();
-    
+
     // Use texture atlases
     this.useTextureAtlases();
   }
@@ -620,10 +706,10 @@ export class PerformanceOptimizationSystem {
       'mesh',
       'shader',
       'buffer',
-      'texture'
+      'texture',
     ];
-    
-    poolTypes.forEach(type => {
+
+    poolTypes.forEach((type) => {
       this.createResourcePool(type);
     });
   }
@@ -641,10 +727,10 @@ export class PerformanceOptimizationSystem {
         created: 0,
         destroyed: 0,
         pooled: 0,
-        reused: 0
-      }
+        reused: 0,
+      },
     };
-    
+
     this.performanceState.resourcePools.set(type, pool);
     this.resourcePooler.pools.set(type, pool);
     this.resourcePooler.poolStats.totalPools++;
@@ -658,7 +744,7 @@ export class PerformanceOptimizationSystem {
     if (!pool) {
       return null;
     }
-    
+
     if (pool.objects.length > 0) {
       const object = pool.objects.pop();
       pool.activeCount++;
@@ -680,7 +766,7 @@ export class PerformanceOptimizationSystem {
     if (!pool) {
       return;
     }
-    
+
     if (pool.objects.length < pool.maxSize) {
       this.resetObject(object);
       pool.objects.push(object);
@@ -730,8 +816,8 @@ export class PerformanceOptimizationSystem {
       stats: {
         hits: 0,
         misses: 0,
-        evictions: 0
-      }
+        evictions: 0,
+      },
     };
   }
 
@@ -745,15 +831,15 @@ export class PerformanceOptimizationSystem {
       this.assetCache.accessTimes.set(url, Date.now());
       return this.assetCache.assets.get(url);
     }
-    
+
     this.assetCache.stats.misses++;
-    
+
     // Load asset
     const asset = await this.loadAssetFromURL(url, type);
-    
+
     // Add to cache
     this.addAssetToCache(url, asset);
-    
+
     return asset;
   }
 
@@ -762,10 +848,10 @@ export class PerformanceOptimizationSystem {
    */
   async loadAssetFromURL(url, type) {
     const startTime = performance.now();
-    
+
     try {
       let asset;
-      
+
       switch (type) {
         case 'image':
           asset = await this.loadImage(url);
@@ -782,10 +868,10 @@ export class PerformanceOptimizationSystem {
         default:
           throw new Error(`Unknown asset type: ${type}`);
       }
-      
+
       const loadTime = performance.now() - startTime;
       this.performanceState.assetLoadTime = loadTime;
-      
+
       return asset;
     } catch (error) {
       this.logger.error(`Failed to load asset: ${url}`, error);
@@ -841,7 +927,7 @@ export class PerformanceOptimizationSystem {
     if (this.assetCache.assets.size >= this.assetCache.maxSize) {
       this.evictOldestAsset();
     }
-    
+
     this.assetCache.assets.set(url, asset);
     this.assetCache.accessTimes.set(url, Date.now());
     this.assetCache.sizes.set(url, this.getAssetSize(asset));
@@ -853,14 +939,14 @@ export class PerformanceOptimizationSystem {
   evictOldestAsset() {
     let oldestUrl = null;
     let oldestTime = Infinity;
-    
+
     for (const [url, time] of this.assetCache.accessTimes) {
       if (time < oldestTime) {
         oldestTime = time;
         oldestUrl = url;
       }
     }
-    
+
     if (oldestUrl) {
       this.assetCache.assets.delete(oldestUrl);
       this.assetCache.accessTimes.delete(oldestUrl);
@@ -882,7 +968,7 @@ export class PerformanceOptimizationSystem {
     } else if (typeof asset === 'object') {
       return JSON.stringify(asset).length * 2;
     }
-    
+
     return 0;
   }
 
@@ -894,7 +980,7 @@ export class PerformanceOptimizationSystem {
     this.gcTimer = setInterval(() => {
       this.triggerGarbageCollection();
     }, this.performanceConfig.garbageCollectionInterval);
-    
+
     // Start asset cleanup timer
     this.assetCleanupTimer = setInterval(() => {
       this.cleanupUnusedAssets();
@@ -908,7 +994,7 @@ export class PerformanceOptimizationSystem {
     if (this.gcTimer) {
       clearInterval(this.gcTimer);
     }
-    
+
     if (this.assetCleanupTimer) {
       clearInterval(this.assetCleanupTimer);
     }
@@ -921,7 +1007,7 @@ export class PerformanceOptimizationSystem {
     if (typeof gc === 'function') {
       gc();
     }
-    
+
     this.logger.info('Garbage collection triggered');
   }
 
@@ -931,7 +1017,7 @@ export class PerformanceOptimizationSystem {
   cleanupUnusedAssets() {
     const now = Date.now();
     const maxAge = 300000; // 5 minutes
-    
+
     for (const [url, time] of this.assetCache.accessTimes) {
       if (now - time > maxAge) {
         this.assetCache.assets.delete(url);
@@ -948,10 +1034,10 @@ export class PerformanceOptimizationSystem {
     // Update frame rate
     this.performanceState.frameRate = 1000 / deltaTime;
     this.performanceState.frameTime = deltaTime;
-    
+
     // Update memory usage
     this.updateMemoryUsage();
-    
+
     // Update CPU usage
     this.updateCPUUsage();
   }
@@ -964,9 +1050,10 @@ export class PerformanceOptimizationSystem {
     this.resourcePooler.poolStats.totalObjects = 0;
     this.resourcePooler.poolStats.activeObjects = 0;
     this.resourcePooler.poolStats.pooledObjects = 0;
-    
+
     for (const pool of this.performanceState.resourcePools.values()) {
-      this.resourcePooler.poolStats.totalObjects += pool.objects.length + pool.activeCount;
+      this.resourcePooler.poolStats.totalObjects +=
+        pool.objects.length + pool.activeCount;
       this.resourcePooler.poolStats.activeObjects += pool.activeCount;
       this.resourcePooler.poolStats.pooledObjects += pool.objects.length;
     }
@@ -978,7 +1065,9 @@ export class PerformanceOptimizationSystem {
   updateAssetCache(deltaTime) {
     // Update cache statistics
     this.assetManager.assetStats.totalLoaded = this.assetCache.assets.size;
-    this.assetManager.assetStats.totalSize = Array.from(this.assetCache.sizes.values()).reduce((sum, size) => sum + size, 0);
+    this.assetManager.assetStats.totalSize = Array.from(
+      this.assetCache.sizes.values()
+    ).reduce((sum, size) => sum + size, 0);
   }
 
   /**
@@ -986,7 +1075,7 @@ export class PerformanceOptimizationSystem {
    */
   processRenderQueue() {
     // Process rendering queue
-    this.performanceState.renderQueue.forEach(object => {
+    this.performanceState.renderQueue.forEach((object) => {
       this.renderObject(object);
     });
   }
@@ -996,7 +1085,7 @@ export class PerformanceOptimizationSystem {
    */
   processUpdateQueue() {
     // Process update queue
-    this.performanceState.updateQueue.forEach(object => {
+    this.performanceState.updateQueue.forEach((object) => {
       this.updateObject(object);
     });
   }
@@ -1124,11 +1213,11 @@ export class PerformanceOptimizationSystem {
    */
   handlePerformanceThreshold(threshold, value) {
     this.logger.warn(`Performance threshold exceeded: ${threshold} (${value})`);
-    
+
     this.eventBus.emit('performance:thresholdExceeded', {
       threshold,
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -1275,7 +1364,7 @@ export class PerformanceOptimizationSystem {
     return {
       current: this.performanceState,
       monitor: this.performanceMonitor.metrics,
-      thresholds: this.performanceConfig
+      thresholds: this.performanceConfig,
     };
   }
 
@@ -1286,7 +1375,7 @@ export class PerformanceOptimizationSystem {
     return {
       current: this.memoryManager.memoryStats,
       allocated: this.memoryManager.allocatedObjects.size,
-      leaks: this.memoryManager.memoryLeaks.size
+      leaks: this.memoryManager.memoryLeaks.size,
     };
   }
 
@@ -1297,7 +1386,7 @@ export class PerformanceOptimizationSystem {
     return {
       current: this.assetManager.assetStats,
       cache: this.assetCache.stats,
-      loaded: this.assetManager.loadedAssets.size
+      loaded: this.assetManager.loadedAssets.size,
     };
   }
 
@@ -1307,7 +1396,7 @@ export class PerformanceOptimizationSystem {
   getResourcePoolStatistics() {
     return {
       current: this.resourcePooler.poolStats,
-      pools: Array.from(this.performanceState.resourcePools.values())
+      pools: Array.from(this.performanceState.resourcePools.values()),
     };
   }
 
@@ -1316,7 +1405,7 @@ export class PerformanceOptimizationSystem {
    */
   setPerformanceLevel(level) {
     this.performanceState.performanceLevel = level;
-    
+
     const settings = this.performanceConfig.optimizationLevels[level];
     if (settings) {
       this.applyPerformanceSettings(settings);
@@ -1328,7 +1417,9 @@ export class PerformanceOptimizationSystem {
    */
   applyPerformanceSettings(settings) {
     // Apply performance settings
-    this.logger.info(`Applied performance settings: ${JSON.stringify(settings)}`);
+    this.logger.info(
+      `Applied performance settings: ${JSON.stringify(settings)}`
+    );
   }
 
   /**

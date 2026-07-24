@@ -74,8 +74,9 @@ export class SimpleGame {
 
     // Announce to screen readers (accessibility)
     this.eventBus.emit('accessibility:announce', {
-      message: 'Simple Space Shooter loaded. Use arrow keys or WASD to move. Avoid red enemies!',
-      priority: 'polite'
+      message:
+        'Simple Space Shooter loaded. Use arrow keys or WASD to move. Avoid red enemies!',
+      priority: 'polite',
     });
 
     this.logger.info('SimpleGame: Ready to play!');
@@ -140,10 +141,10 @@ export class SimpleGame {
    */
   updateEnemies(deltaTime) {
     // Remove inactive enemies
-    this.enemies = this.enemies.filter(enemy => enemy.active);
+    this.enemies = this.enemies.filter((enemy) => enemy.active);
 
     // Update active enemies
-    this.enemies.forEach(enemy => enemy.update(deltaTime));
+    this.enemies.forEach((enemy) => enemy.update(deltaTime));
   }
 
   /**
@@ -194,7 +195,7 @@ export class SimpleGame {
   checkCollisions() {
     const playerBounds = this.player.getBounds();
 
-    this.enemies.forEach(enemy => {
+    this.enemies.forEach((enemy) => {
       if (!enemy.active) return;
 
       const enemyBounds = enemy.getBounds();
@@ -207,13 +208,13 @@ export class SimpleGame {
         // Emit event for audio/visual feedback
         this.eventBus.emit('player:hit', {
           health: this.player.health,
-          position: { x: this.player.x, y: this.player.y }
+          position: { x: this.player.x, y: this.player.y },
         });
 
         // Accessibility announcement
         this.eventBus.emit('accessibility:announce', {
           message: `Hit! Health: ${this.player.health}`,
-          priority: 'assertive'
+          priority: 'assertive',
         });
       }
     });
@@ -226,10 +227,12 @@ export class SimpleGame {
    * @returns {boolean} True if boxes overlap
    */
   checkAABB(a, b) {
-    return a.x < b.x + b.width &&
-           a.x + a.width > b.x &&
-           a.y < b.y + b.height &&
-           a.y + a.height > b.y;
+    return (
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y
+    );
   }
 
   /**
@@ -241,13 +244,13 @@ export class SimpleGame {
     // Emit game over event
     this.eventBus.emit('game:over', {
       score: this.score,
-      reason: 'player_died'
+      reason: 'player_died',
     });
 
     // Accessibility announcement
     this.eventBus.emit('accessibility:announce', {
       message: `Game Over! Final score: ${this.score}. Press R to restart.`,
-      priority: 'assertive'
+      priority: 'assertive',
     });
 
     this.logger.info(`SimpleGame: Game Over - Score: ${this.score}`);
@@ -271,7 +274,7 @@ export class SimpleGame {
     this.eventBus.emit('game:restart');
     this.eventBus.emit('accessibility:announce', {
       message: 'Game restarted',
-      priority: 'polite'
+      priority: 'polite',
     });
   }
 
@@ -290,7 +293,7 @@ export class SimpleGame {
     this.player.draw(this.ctx);
 
     // Draw enemies
-    this.enemies.forEach(enemy => enemy.draw(this.ctx));
+    this.enemies.forEach((enemy) => enemy.draw(this.ctx));
 
     // Draw UI overlay
     this.drawUI();

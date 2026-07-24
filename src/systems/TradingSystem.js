@@ -66,13 +66,13 @@ export class TradingSystem {
    */
   async initialize() {
     this.logger.info('Initializing TradingSystem...');
-    
+
     // Load trading data
     await this.loadTradingData();
-    
+
     // Start market updates
     this.startMarketUpdates();
-    
+
     this.logger.info('TradingSystem initialized successfully');
   }
 
@@ -81,13 +81,13 @@ export class TradingSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up TradingSystem...');
-    
+
     // Save trading data
     this.saveTradingData();
-    
+
     // Stop market updates
     this.stopMarketUpdates();
-    
+
     // Clear state
     this.tradingState.activeTrades.clear();
     this.tradingState.tradeHistory.clear();
@@ -97,10 +97,10 @@ export class TradingSystem {
     this.tradingState.currencyRates.clear();
     this.tradingState.tradeChannels.clear();
     this.tradingState.pendingTrades.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('TradingSystem cleaned up');
   }
 
@@ -110,13 +110,13 @@ export class TradingSystem {
   update(deltaTime, gameState) {
     // Update active trades
     this.updateActiveTrades(deltaTime);
-    
+
     // Update auction house
     this.updateAuctionHouse(deltaTime);
-    
+
     // Update market prices
     this.updateMarketPrices(deltaTime);
-    
+
     // Update reputation decay
     this.updateReputationDecay(deltaTime);
   }
@@ -129,35 +129,35 @@ export class TradingSystem {
       name: 'Gold',
       symbol: 'G',
       baseValue: 1,
-      decimals: 0
+      decimals: 0,
     });
 
     this.tradingState.currencyRates.set('silver', {
       name: 'Silver',
       symbol: 'S',
       baseValue: 0.1,
-      decimals: 2
+      decimals: 2,
     });
 
     this.tradingState.currencyRates.set('copper', {
       name: 'Copper',
       symbol: 'C',
       baseValue: 0.01,
-      decimals: 2
+      decimals: 2,
     });
 
     this.tradingState.currencyRates.set('platinum', {
       name: 'Platinum',
       symbol: 'P',
       baseValue: 10,
-      decimals: 0
+      decimals: 0,
     });
 
     this.tradingState.currencyRates.set('gems', {
       name: 'Gems',
       symbol: '💎',
       baseValue: 100,
-      decimals: 0
+      decimals: 0,
     });
   }
 
@@ -172,7 +172,7 @@ export class TradingSystem {
       maxPlayers: 1000,
       taxRate: 0.05,
       minLevel: 1,
-      active: true
+      active: true,
     });
 
     this.tradingState.tradeChannels.set('guild', {
@@ -182,7 +182,7 @@ export class TradingSystem {
       maxPlayers: 100,
       taxRate: 0.02,
       minLevel: 10,
-      active: true
+      active: true,
     });
 
     this.tradingState.tradeChannels.set('whisper', {
@@ -192,7 +192,7 @@ export class TradingSystem {
       maxPlayers: 2,
       taxRate: 0.01,
       minLevel: 1,
-      active: true
+      active: true,
     });
 
     this.tradingState.tradeChannels.set('premium', {
@@ -202,7 +202,7 @@ export class TradingSystem {
       maxPlayers: 500,
       taxRate: 0.03,
       minLevel: 50,
-      active: true
+      active: true,
     });
   }
 
@@ -218,7 +218,7 @@ export class TradingSystem {
       volatility: 0.1,
       lastUpdate: Date.now(),
       volume: 0,
-      trend: 'stable'
+      trend: 'stable',
     });
 
     this.tradingState.marketPrices.set('mana_potion', {
@@ -228,7 +228,7 @@ export class TradingSystem {
       volatility: 0.1,
       lastUpdate: Date.now(),
       volume: 0,
-      trend: 'stable'
+      trend: 'stable',
     });
 
     this.tradingState.marketPrices.set('iron_sword', {
@@ -238,7 +238,7 @@ export class TradingSystem {
       volatility: 0.2,
       lastUpdate: Date.now(),
       volume: 0,
-      trend: 'stable'
+      trend: 'stable',
     });
 
     this.tradingState.marketPrices.set('magic_ring', {
@@ -248,7 +248,7 @@ export class TradingSystem {
       volatility: 0.3,
       lastUpdate: Date.now(),
       volume: 0,
-      trend: 'stable'
+      trend: 'stable',
     });
   }
 
@@ -265,11 +265,11 @@ export class TradingSystem {
         { name: 'Respected', min: 500, max: 1000, color: '#00ff00' },
         { name: 'Honored', min: 1000, max: 2000, color: '#00ff80' },
         { name: 'Revered', min: 2000, max: 5000, color: '#0080ff' },
-        { name: 'Exalted', min: 5000, max: 10000, color: '#8000ff' }
+        { name: 'Exalted', min: 5000, max: 10000, color: '#8000ff' },
       ],
       decayRate: 0.01, // 1% per day
       maxReputation: 10000,
-      minReputation: -1000
+      minReputation: -1000,
     };
   }
 
@@ -284,17 +284,17 @@ export class TradingSystem {
     this.eventBus.on('trade:modify', this.modifyTrade.bind(this));
     this.eventBus.on('trade:complete', this.completeTrade.bind(this));
     this.eventBus.on('trade:cancel', this.cancelTrade.bind(this));
-    
+
     // Auction events
     this.eventBus.on('auction:list', this.listAuction.bind(this));
     this.eventBus.on('auction:bid', this.placeBid.bind(this));
     this.eventBus.on('auction:buyout', this.buyoutAuction.bind(this));
     this.eventBus.on('auction:expire', this.expireAuction.bind(this));
-    
+
     // Market events
     this.eventBus.on('market:priceUpdate', this.updateItemPrice.bind(this));
     this.eventBus.on('market:search', this.searchMarket.bind(this));
-    
+
     // Reputation events
     this.eventBus.on('reputation:update', this.updateReputation.bind(this));
   }
@@ -303,19 +303,37 @@ export class TradingSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('trade:initiate', this.initiateTrade.bind(this));
+    this.eventBus.removeListener(
+      'trade:initiate',
+      this.initiateTrade.bind(this)
+    );
     this.eventBus.removeListener('trade:accept', this.acceptTrade.bind(this));
     this.eventBus.removeListener('trade:decline', this.declineTrade.bind(this));
     this.eventBus.removeListener('trade:modify', this.modifyTrade.bind(this));
-    this.eventBus.removeListener('trade:complete', this.completeTrade.bind(this));
+    this.eventBus.removeListener(
+      'trade:complete',
+      this.completeTrade.bind(this)
+    );
     this.eventBus.removeListener('trade:cancel', this.cancelTrade.bind(this));
     this.eventBus.removeListener('auction:list', this.listAuction.bind(this));
     this.eventBus.removeListener('auction:bid', this.placeBid.bind(this));
-    this.eventBus.removeListener('auction:buyout', this.buyoutAuction.bind(this));
-    this.eventBus.removeListener('auction:expire', this.expireAuction.bind(this));
-    this.eventBus.removeListener('market:priceUpdate', this.updateItemPrice.bind(this));
+    this.eventBus.removeListener(
+      'auction:buyout',
+      this.buyoutAuction.bind(this)
+    );
+    this.eventBus.removeListener(
+      'auction:expire',
+      this.expireAuction.bind(this)
+    );
+    this.eventBus.removeListener(
+      'market:priceUpdate',
+      this.updateItemPrice.bind(this)
+    );
     this.eventBus.removeListener('market:search', this.searchMarket.bind(this));
-    this.eventBus.removeListener('reputation:update', this.updateReputation.bind(this));
+    this.eventBus.removeListener(
+      'reputation:update',
+      this.updateReputation.bind(this)
+    );
   }
 
   /**
@@ -323,27 +341,33 @@ export class TradingSystem {
    */
   initiateTrade(data) {
     const { fromPlayer, toPlayer, items, currency, channel } = data;
-    
+
     // Validate trade
     if (!this.validateTrade(fromPlayer, toPlayer, items, currency)) {
       this.logger.warn('Invalid trade request');
       return;
     }
-    
+
     // Check if players can trade
     if (!this.canPlayersTrade(fromPlayer, toPlayer)) {
       this.logger.warn('Players cannot trade');
       return;
     }
-    
+
     // Create trade
-    const trade = this.createTrade(fromPlayer, toPlayer, items, currency, channel);
-    
+    const trade = this.createTrade(
+      fromPlayer,
+      toPlayer,
+      items,
+      currency,
+      channel
+    );
+
     this.tradingState.activeTrades.set(trade.id, trade);
-    
+
     this.eventBus.emit('trade:initiated', {
       trade,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -353,26 +377,26 @@ export class TradingSystem {
   acceptTrade(data) {
     const { tradeId, playerId } = data;
     const trade = this.tradingState.activeTrades.get(tradeId);
-    
+
     if (!trade) {
       this.logger.error(`Trade not found: ${tradeId}`);
       return;
     }
-    
+
     if (trade.toPlayer.id !== playerId) {
       this.logger.warn('Player cannot accept this trade');
       return;
     }
-    
+
     trade.status = 'accepted';
     trade.acceptedAt = Date.now();
-    
+
     // Start trade completion timer
     this.startTradeCompletionTimer(trade);
-    
+
     this.eventBus.emit('trade:accepted', {
       trade,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -382,28 +406,28 @@ export class TradingSystem {
   declineTrade(data) {
     const { tradeId, playerId, reason } = data;
     const trade = this.tradingState.activeTrades.get(tradeId);
-    
+
     if (!trade) {
       this.logger.error(`Trade not found: ${tradeId}`);
       return;
     }
-    
+
     if (trade.toPlayer.id !== playerId) {
       this.logger.warn('Player cannot decline this trade');
       return;
     }
-    
+
     trade.status = 'declined';
     trade.declinedAt = Date.now();
     trade.declineReason = reason;
-    
+
     // Remove from active trades
     this.tradingState.activeTrades.delete(tradeId);
-    
+
     this.eventBus.emit('trade:declined', {
       trade,
       reason,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -413,25 +437,25 @@ export class TradingSystem {
   modifyTrade(data) {
     const { tradeId, playerId, newItems, newCurrency } = data;
     const trade = this.tradingState.activeTrades.get(tradeId);
-    
+
     if (!trade) {
       this.logger.error(`Trade not found: ${tradeId}`);
       return;
     }
-    
+
     if (trade.fromPlayer.id !== playerId) {
       this.logger.warn('Player cannot modify this trade');
       return;
     }
-    
+
     // Update trade
     trade.items = newItems;
     trade.currency = newCurrency;
     trade.modifiedAt = Date.now();
-    
+
     this.eventBus.emit('trade:modified', {
       trade,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -441,32 +465,32 @@ export class TradingSystem {
   completeTrade(data) {
     const { tradeId } = data;
     const trade = this.tradingState.activeTrades.get(tradeId);
-    
+
     if (!trade) {
       this.logger.error(`Trade not found: ${tradeId}`);
       return;
     }
-    
+
     if (trade.status !== 'accepted') {
       this.logger.warn('Trade not accepted');
       return;
     }
-    
+
     // Execute trade
     this.executeTrade(trade);
-    
+
     // Update reputation
     this.updateTradeReputation(trade);
-    
+
     // Add to trade history
     this.addToTradeHistory(trade);
-    
+
     // Remove from active trades
     this.tradingState.activeTrades.delete(tradeId);
-    
+
     this.eventBus.emit('trade:completed', {
       trade,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -476,28 +500,28 @@ export class TradingSystem {
   cancelTrade(data) {
     const { tradeId, playerId, reason } = data;
     const trade = this.tradingState.activeTrades.get(tradeId);
-    
+
     if (!trade) {
       this.logger.error(`Trade not found: ${tradeId}`);
       return;
     }
-    
+
     if (trade.fromPlayer.id !== playerId) {
       this.logger.warn('Player cannot cancel this trade');
       return;
     }
-    
+
     trade.status = 'cancelled';
     trade.cancelledAt = Date.now();
     trade.cancelReason = reason;
-    
+
     // Remove from active trades
     this.tradingState.activeTrades.delete(tradeId);
-    
+
     this.eventBus.emit('trade:cancelled', {
       trade,
       reason,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -505,22 +529,38 @@ export class TradingSystem {
    * List auction
    */
   listAuction(data) {
-    const { playerId, item, startingPrice, buyoutPrice, duration, channel } = data;
-    
+    const { playerId, item, startingPrice, buyoutPrice, duration, channel } =
+      data;
+
     // Validate auction
-    if (!this.validateAuction(playerId, item, startingPrice, buyoutPrice, duration)) {
+    if (
+      !this.validateAuction(
+        playerId,
+        item,
+        startingPrice,
+        buyoutPrice,
+        duration
+      )
+    ) {
       this.logger.warn('Invalid auction request');
       return;
     }
-    
+
     // Create auction
-    const auction = this.createAuction(playerId, item, startingPrice, buyoutPrice, duration, channel);
-    
+    const auction = this.createAuction(
+      playerId,
+      item,
+      startingPrice,
+      buyoutPrice,
+      duration,
+      channel
+    );
+
     this.tradingState.auctionHouse.set(auction.id, auction);
-    
+
     this.eventBus.emit('auction:listed', {
       auction,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -530,33 +570,33 @@ export class TradingSystem {
   placeBid(data) {
     const { auctionId, playerId, bidAmount } = data;
     const auction = this.tradingState.auctionHouse.get(auctionId);
-    
+
     if (!auction) {
       this.logger.error(`Auction not found: ${auctionId}`);
       return;
     }
-    
+
     if (auction.status !== 'active') {
       this.logger.warn('Auction not active');
       return;
     }
-    
+
     if (bidAmount <= auction.currentBid) {
       this.logger.warn('Bid too low');
       return;
     }
-    
+
     // Update auction
     auction.currentBid = bidAmount;
     auction.currentBidder = playerId;
     auction.bidCount++;
     auction.lastBidAt = Date.now();
-    
+
     this.eventBus.emit('auction:bidPlaced', {
       auction,
       bidAmount,
       playerId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -566,29 +606,29 @@ export class TradingSystem {
   buyoutAuction(data) {
     const { auctionId, playerId } = data;
     const auction = this.tradingState.auctionHouse.get(auctionId);
-    
+
     if (!auction) {
       this.logger.error(`Auction not found: ${auctionId}`);
       return;
     }
-    
+
     if (auction.status !== 'active') {
       this.logger.warn('Auction not active');
       return;
     }
-    
+
     if (!auction.buyoutPrice) {
       this.logger.warn('Auction has no buyout price');
       return;
     }
-    
+
     // Complete auction
     this.completeAuction(auction, playerId, auction.buyoutPrice);
-    
+
     this.eventBus.emit('auction:buyout', {
       auction,
       playerId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -598,25 +638,25 @@ export class TradingSystem {
   expireAuction(data) {
     const { auctionId } = data;
     const auction = this.tradingState.auctionHouse.get(auctionId);
-    
+
     if (!auction) {
       this.logger.error(`Auction not found: ${auctionId}`);
       return;
     }
-    
+
     auction.status = 'expired';
     auction.expiredAt = Date.now();
-    
+
     // Process auction result
     if (auction.currentBidder) {
       this.completeAuction(auction, auction.currentBidder, auction.currentBid);
     } else {
       this.returnAuctionItem(auction);
     }
-    
+
     this.eventBus.emit('auction:expired', {
       auction,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -626,18 +666,18 @@ export class TradingSystem {
   updateItemPrice(data) {
     const { item, newPrice, volume } = data;
     const priceData = this.tradingState.marketPrices.get(item);
-    
+
     if (!priceData) {
       this.logger.error(`Price data not found for item: ${item}`);
       return;
     }
-    
+
     // Update price with market dynamics
     const oldPrice = priceData.currentPrice;
     priceData.currentPrice = newPrice;
     priceData.volume += volume || 1;
     priceData.lastUpdate = Date.now();
-    
+
     // Calculate trend
     if (newPrice > oldPrice) {
       priceData.trend = 'rising';
@@ -646,13 +686,13 @@ export class TradingSystem {
     } else {
       priceData.trend = 'stable';
     }
-    
+
     this.eventBus.emit('market:priceUpdated', {
       item,
       oldPrice,
       newPrice,
       trend: priceData.trend,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -661,9 +701,9 @@ export class TradingSystem {
    */
   searchMarket(data) {
     const { query, filters, sortBy, limit } = data;
-    
+
     let results = [];
-    
+
     // Search active trades
     for (const trade of this.tradingState.activeTrades.values()) {
       if (this.matchesSearchCriteria(trade, query, filters)) {
@@ -673,14 +713,17 @@ export class TradingSystem {
           item: trade.items[0],
           price: trade.currency,
           player: trade.fromPlayer,
-          timestamp: trade.createdAt
+          timestamp: trade.createdAt,
         });
       }
     }
-    
+
     // Search auctions
     for (const auction of this.tradingState.auctionHouse.values()) {
-      if (auction.status === 'active' && this.matchesSearchCriteria(auction, query, filters)) {
+      if (
+        auction.status === 'active' &&
+        this.matchesSearchCriteria(auction, query, filters)
+      ) {
         results.push({
           type: 'auction',
           id: auction.id,
@@ -689,23 +732,23 @@ export class TradingSystem {
           buyoutPrice: auction.buyoutPrice,
           player: auction.seller,
           timeLeft: auction.endTime - Date.now(),
-          timestamp: auction.createdAt
+          timestamp: auction.createdAt,
         });
       }
     }
-    
+
     // Sort results
     results = this.sortSearchResults(results, sortBy);
-    
+
     // Limit results
     if (limit) {
       results = results.slice(0, limit);
     }
-    
+
     this.eventBus.emit('market:searchResults', {
       query,
       results,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -714,22 +757,22 @@ export class TradingSystem {
    */
   updateReputation(data) {
     const { playerId, change, reason } = data;
-    
+
     const currentRep = this.tradingState.playerReputation.get(playerId) || 0;
     const newRep = Math.max(
       this.reputationSystem.minReputation,
       Math.min(this.reputationSystem.maxReputation, currentRep + change)
     );
-    
+
     this.tradingState.playerReputation.set(playerId, newRep);
-    
+
     this.eventBus.emit('reputation:updated', {
       playerId,
       oldReputation: currentRep,
       newReputation: newRep,
       change,
       reason,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -738,7 +781,7 @@ export class TradingSystem {
    */
   updateActiveTrades(deltaTime) {
     const now = Date.now();
-    
+
     for (const [tradeId, trade] of this.tradingState.activeTrades) {
       // Check for trade timeout
       if (now - trade.createdAt > this.tradingConfig.tradeTimeout) {
@@ -752,7 +795,7 @@ export class TradingSystem {
    */
   updateAuctionHouse(deltaTime) {
     const now = Date.now();
-    
+
     for (const [auctionId, auction] of this.tradingState.auctionHouse) {
       if (auction.status === 'active' && now >= auction.endTime) {
         this.expireAuction({ auctionId });
@@ -774,14 +817,15 @@ export class TradingSystem {
    * Update reputation decay
    */
   updateReputationDecay(deltaTime) {
-    const decayAmount = this.tradingConfig.reputationDecay * deltaTime / (24 * 60 * 60 * 1000);
-    
+    const decayAmount =
+      (this.tradingConfig.reputationDecay * deltaTime) / (24 * 60 * 60 * 1000);
+
     for (const [playerId, reputation] of this.tradingState.playerReputation) {
       const newRep = Math.max(
         this.reputationSystem.minReputation,
         reputation - decayAmount
       );
-      
+
       if (newRep !== reputation) {
         this.tradingState.playerReputation.set(playerId, newRep);
       }
@@ -796,28 +840,28 @@ export class TradingSystem {
     if (!fromPlayer || !toPlayer) {
       return false;
     }
-    
+
     // Check if players are different
     if (fromPlayer.id === toPlayer.id) {
       return false;
     }
-    
+
     // Check if items are valid
     if (!items || items.length === 0) {
       return false;
     }
-    
+
     // Check if currency is valid
     if (!currency || currency.amount <= 0) {
       return false;
     }
-    
+
     // Check trade value limits
     const totalValue = this.calculateTradeValue(items, currency);
     if (totalValue > this.tradingConfig.maxTradeValue) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -829,17 +873,17 @@ export class TradingSystem {
     if (!fromPlayer.online || !toPlayer.online) {
       return false;
     }
-    
+
     // Check if players are in the same area
     if (fromPlayer.areaId !== toPlayer.areaId) {
       return false;
     }
-    
+
     // Check if players are not in combat
     if (fromPlayer.inCombat || toPlayer.inCombat) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -859,7 +903,7 @@ export class TradingSystem {
       acceptedAt: null,
       declinedAt: null,
       completedAt: null,
-      cancelledAt: null
+      cancelledAt: null,
     };
   }
 
@@ -869,13 +913,13 @@ export class TradingSystem {
   executeTrade(trade) {
     // Transfer items from seller to buyer
     this.transferItems(trade.fromPlayer, trade.toPlayer, trade.items);
-    
+
     // Transfer currency from buyer to seller
     this.transferCurrency(trade.toPlayer, trade.fromPlayer, trade.currency);
-    
+
     // Apply trade tax
     this.applyTradeTax(trade);
-    
+
     trade.status = 'completed';
     trade.completedAt = Date.now();
   }
@@ -885,7 +929,9 @@ export class TradingSystem {
    */
   transferItems(fromPlayer, toPlayer, items) {
     // This would transfer items between players
-    this.logger.info(`Transferred ${items.length} items from ${fromPlayer.id} to ${toPlayer.id}`);
+    this.logger.info(
+      `Transferred ${items.length} items from ${fromPlayer.id} to ${toPlayer.id}`
+    );
   }
 
   /**
@@ -893,7 +939,9 @@ export class TradingSystem {
    */
   transferCurrency(fromPlayer, toPlayer, currency) {
     // This would transfer currency between players
-    this.logger.info(`Transferred ${currency.amount} ${currency.type} from ${fromPlayer.id} to ${toPlayer.id}`);
+    this.logger.info(
+      `Transferred ${currency.amount} ${currency.type} from ${fromPlayer.id} to ${toPlayer.id}`
+    );
   }
 
   /**
@@ -916,13 +964,13 @@ export class TradingSystem {
     this.updateReputation({
       playerId: trade.fromPlayer.id,
       change: 10,
-      reason: 'successful_trade'
+      reason: 'successful_trade',
     });
-    
+
     this.updateReputation({
       playerId: trade.toPlayer.id,
       change: 10,
-      reason: 'successful_trade'
+      reason: 'successful_trade',
     });
   }
 
@@ -932,7 +980,7 @@ export class TradingSystem {
   addToTradeHistory(trade) {
     this.tradingState.tradeHistory.set(trade.id, {
       ...trade,
-      historyType: 'completed'
+      historyType: 'completed',
     });
   }
 
@@ -954,12 +1002,12 @@ export class TradingSystem {
   timeoutTrade(trade) {
     trade.status = 'timeout';
     trade.timeoutAt = Date.now();
-    
+
     this.tradingState.activeTrades.delete(trade.id);
-    
+
     this.eventBus.emit('trade:timeout', {
       trade,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -971,27 +1019,29 @@ export class TradingSystem {
     if (!playerId) {
       return false;
     }
-    
+
     // Check if item is valid
     if (!item) {
       return false;
     }
-    
+
     // Check if prices are valid
     if (startingPrice <= 0) {
       return false;
     }
-    
+
     if (buyoutPrice && buyoutPrice <= startingPrice) {
       return false;
     }
-    
+
     // Check if duration is valid
-    if (duration < this.tradingConfig.minAuctionDuration || 
-        duration > this.tradingConfig.maxAuctionDuration) {
+    if (
+      duration < this.tradingConfig.minAuctionDuration ||
+      duration > this.tradingConfig.maxAuctionDuration
+    ) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -1014,7 +1064,7 @@ export class TradingSystem {
       endTime: Date.now() + duration,
       lastBidAt: null,
       completedAt: null,
-      expiredAt: null
+      expiredAt: null,
     };
   }
 
@@ -1026,11 +1076,11 @@ export class TradingSystem {
     auction.completedAt = Date.now();
     auction.finalPrice = finalPrice;
     auction.buyer = buyerId;
-    
+
     // Transfer item and currency
     this.transferAuctionItem(auction);
     this.transferAuctionCurrency(auction);
-    
+
     // Apply auction tax
     this.applyAuctionTax(auction);
   }
@@ -1048,7 +1098,9 @@ export class TradingSystem {
    */
   transferAuctionItem(auction) {
     // Transfer item from seller to buyer
-    this.logger.info(`Transferred auction item from ${auction.seller} to ${auction.buyer}`);
+    this.logger.info(
+      `Transferred auction item from ${auction.seller} to ${auction.buyer}`
+    );
   }
 
   /**
@@ -1056,7 +1108,9 @@ export class TradingSystem {
    */
   transferAuctionCurrency(auction) {
     // Transfer currency from buyer to seller
-    this.logger.info(`Transferred ${auction.finalPrice} currency for auction ${auction.id}`);
+    this.logger.info(
+      `Transferred ${auction.finalPrice} currency for auction ${auction.id}`
+    );
   }
 
   /**
@@ -1072,18 +1126,18 @@ export class TradingSystem {
    */
   calculateTradeValue(items, currency) {
     let totalValue = 0;
-    
+
     // Add item values
-    items.forEach(item => {
+    items.forEach((item) => {
       const priceData = this.tradingState.marketPrices.get(item.type);
       if (priceData) {
         totalValue += priceData.currentPrice * item.quantity;
       }
     });
-    
+
     // Add currency value
     totalValue += currency.amount;
-    
+
     return totalValue;
   }
 
@@ -1095,26 +1149,26 @@ export class TradingSystem {
     if (query && !item.item.name.toLowerCase().includes(query.toLowerCase())) {
       return false;
     }
-    
+
     // Check filters
     if (filters) {
       if (filters.minPrice && item.price < filters.minPrice) {
         return false;
       }
-      
+
       if (filters.maxPrice && item.price > filters.maxPrice) {
         return false;
       }
-      
+
       if (filters.itemType && item.item.type !== filters.itemType) {
         return false;
       }
-      
+
       if (filters.rarity && item.item.rarity !== filters.rarity) {
         return false;
       }
     }
-    
+
     return true;
   }
 
@@ -1142,8 +1196,8 @@ export class TradingSystem {
   updateMarketPrice(priceData, deltaTime) {
     // Simple market dynamics simulation
     const volatility = priceData.volatility;
-    const change = (Math.random() - 0.5) * volatility * deltaTime / 1000;
-    
+    const change = ((Math.random() - 0.5) * volatility * deltaTime) / 1000;
+
     priceData.currentPrice = Math.max(1, priceData.currentPrice + change);
   }
 
@@ -1198,8 +1252,10 @@ export class TradingSystem {
       const data = {
         tradeHistory: Array.from(this.tradingState.tradeHistory.entries()),
         marketPrices: Array.from(this.tradingState.marketPrices.entries()),
-        playerReputation: Array.from(this.tradingState.playerReputation.entries()),
-        timestamp: Date.now()
+        playerReputation: Array.from(
+          this.tradingState.playerReputation.entries()
+        ),
+        timestamp: Date.now(),
       };
       localStorage.setItem('tradingData', JSON.stringify(data));
       this.logger.info('Trading data saved to storage');

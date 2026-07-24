@@ -7,7 +7,7 @@ import { AudioManager } from '../src/AudioSystem/AudioManager.js';
 
 // Mock AudioContext and Audio
 global.AudioContext = jest.fn(() => ({
-  close: jest.fn()
+  close: jest.fn(),
 }));
 
 global.Audio = jest.fn(() => ({
@@ -17,7 +17,7 @@ global.Audio = jest.fn(() => ({
   preload: 'auto',
   volume: 1,
   currentTime: 0,
-  ended: false // Add ended property mock
+  ended: false, // Add ended property mock
 }));
 
 describe('AudioManager', () => {
@@ -28,21 +28,21 @@ describe('AudioManager', () => {
 
   beforeEach(() => {
     mockEventBus = {
-      emit: jest.fn()
+      emit: jest.fn(),
     };
     mockLogger = {
       log: jest.fn(),
       warn: jest.fn(),
-      error: jest.fn()
+      error: jest.fn(),
     };
     mockConfig = {
-      enableAudio: true
+      enableAudio: true,
     };
 
     audioManager = new AudioManager({
       eventBus: mockEventBus,
       logger: mockLogger,
-      config: mockConfig
+      config: mockConfig,
     });
   });
 
@@ -59,7 +59,7 @@ describe('AudioManager', () => {
       master: 1.0,
       music: 0.8,
       sfx: 1.0,
-      voice: 0.9
+      voice: 0.9,
     });
   });
 
@@ -67,7 +67,7 @@ describe('AudioManager', () => {
     audioManager.setVolume('master', 0.5);
     audioManager.setVolume('music', 0.7);
     audioManager.setVolume('sfx', 0.9);
-    
+
     expect(audioManager.getVolume('master')).toBe(0.5);
     expect(audioManager.getVolume('music')).toBe(0.7);
     expect(audioManager.getVolume('sfx')).toBe(0.9);
@@ -76,7 +76,7 @@ describe('AudioManager', () => {
   test('should clamp volume values between 0 and 1', () => {
     audioManager.setVolume('master', -0.5);
     audioManager.setVolume('music', 1.5);
-    
+
     expect(audioManager.getVolume('master')).toBe(0);
     expect(audioManager.getVolume('music')).toBe(1);
   });
@@ -98,15 +98,15 @@ describe('AudioManager', () => {
       play: jest.fn().mockResolvedValue(undefined),
       currentTime: 0,
       volume: 1,
-      ended: false
+      ended: false,
     };
     audioManager.sounds.set('jump', mockSound);
-    
+
     audioManager.playSound('jump');
-    
+
     // play is async but playSound calls it and pushes to activeSounds in .then()
     // We need to wait for the promise to resolve
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(mockSound.play).toHaveBeenCalled();
     expect(mockSound.currentTime).toBe(0);
@@ -121,12 +121,12 @@ describe('AudioManager', () => {
       currentTime: 0,
       volume: 1,
       playbackRate: 1,
-      ended: false
+      ended: false,
     };
     audioManager.sounds.set('jump', mockSound);
-    
+
     audioManager.playSound('jump', { volume: 0.5, pitch: 1.5 });
-    
+
     expect(mockSound.volume).toBe(0.5);
     expect(mockSound.playbackRate).toBe(1.5);
   });
@@ -137,12 +137,12 @@ describe('AudioManager', () => {
       pause: jest.fn(),
       volume: 0.8,
       loop: true,
-      ended: false
+      ended: false,
     };
     audioManager.music.set('main_theme', mockMusic);
-    
+
     audioManager.playMusic('main_theme');
-    
+
     expect(mockMusic.play).toHaveBeenCalled();
   });
 
@@ -152,32 +152,32 @@ describe('AudioManager', () => {
       pause: jest.fn(),
       currentTime: 0,
       volume: 0.8,
-      ended: false
+      ended: false,
     };
     audioManager.music.set('main_theme', mockMusic);
-    
+
     // Start music first
     audioManager.playMusic('main_theme');
     audioManager.stopMusic();
-    
+
     expect(mockMusic.pause).toHaveBeenCalled();
     expect(mockMusic.currentTime).toBe(0);
   });
 
   test('should handle unknown sound gracefully', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-    
+
     audioManager.playSound('unknown_sound');
-    
+
     expect(consoleSpy).toHaveBeenCalledWith('Sound not found: unknown_sound');
     consoleSpy.mockRestore();
   });
 
   test('should handle unknown music gracefully', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-    
+
     audioManager.playMusic('unknown_music');
-    
+
     expect(consoleSpy).toHaveBeenCalledWith('Music not found: unknown_music');
     consoleSpy.mockRestore();
   });
@@ -185,14 +185,14 @@ describe('AudioManager', () => {
   test('should get sound from pool', () => {
     const mockSound = { play: jest.fn() };
     audioManager.audioPools.set('jump', [mockSound]);
-    
+
     const sound = audioManager.getSoundFromPool('jump');
     expect(sound).toBe(mockSound);
   });
 
   test('should return null for empty pool', () => {
     audioManager.audioPools.set('jump', []);
-    
+
     const sound = audioManager.getSoundFromPool('jump');
     expect(sound).toBeNull();
   });
@@ -200,9 +200,9 @@ describe('AudioManager', () => {
   test('should return sound to pool', () => {
     const mockSound = { pause: jest.fn(), currentTime: 0 };
     audioManager.audioPools.set('jump', []);
-    
+
     audioManager.returnSoundToPool('jump', mockSound);
-    
+
     expect(audioManager.audioPools.get('jump')).toContain(mockSound);
     expect(mockSound.pause).toHaveBeenCalled();
     expect(mockSound.currentTime).toBe(0);
@@ -212,9 +212,9 @@ describe('AudioManager', () => {
     const mockSound = { pause: jest.fn() };
     const fullPool = [1, 2, 3, 4, 5]; // Max size is 5
     audioManager.audioPools.set('jump', fullPool);
-    
+
     audioManager.returnSoundToPool('jump', mockSound);
-    
+
     expect(audioManager.audioPools.get('jump')).toHaveLength(5);
     expect(audioManager.audioPools.get('jump')).not.toContain(mockSound);
   });
@@ -225,26 +225,26 @@ describe('AudioManager', () => {
 
     // Create a mock sound that is ended
     const finishedSound = {
-        play: jest.fn(),
-        pause: jest.fn(),
-        currentTime: 0,
-        ended: true,
-        cloneNode: jest.fn()
+      play: jest.fn(),
+      pause: jest.fn(),
+      currentTime: 0,
+      ended: true,
+      cloneNode: jest.fn(),
     };
 
     // Create a mock sound that is NOT ended
     const activeSound = {
-        play: jest.fn(),
-        pause: jest.fn(),
-        currentTime: 0,
-        ended: false,
-        cloneNode: jest.fn()
+      play: jest.fn(),
+      pause: jest.fn(),
+      currentTime: 0,
+      ended: false,
+      cloneNode: jest.fn(),
     };
 
     // Manually push to active sounds (since playSound is async in pushing)
     audioManager.activeSounds.push(
-        { name: 'jump', sound: finishedSound },
-        { name: 'run', sound: activeSound }
+      { name: 'jump', sound: finishedSound },
+      { name: 'run', sound: activeSound }
     );
 
     expect(audioManager.activeSounds.length).toBe(2);

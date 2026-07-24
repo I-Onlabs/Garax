@@ -13,21 +13,21 @@ describe('GameLoopManager', () => {
 
   beforeEach(() => {
     mockEventBus = {
-      emit: jest.fn()
+      emit: jest.fn(),
     };
     mockLogger = {
       log: jest.fn(),
       warn: jest.fn(),
-      error: jest.fn()
+      error: jest.fn(),
     };
     mockConfig = {
-      frameRate: 60
+      frameRate: 60,
     };
 
     gameLoop = new GameLoopManager({
       eventBus: mockEventBus,
       logger: mockLogger,
-      config: mockConfig
+      config: mockConfig,
     });
   });
 
@@ -47,9 +47,9 @@ describe('GameLoopManager', () => {
       frameRate: 30,
       eventBus: mockEventBus,
       logger: mockLogger,
-      config: mockConfig
+      config: mockConfig,
     });
-    
+
     expect(customGameLoop.frameRate).toBe(30);
     expect(customGameLoop.targetFrameTime).toBe(1000 / 30);
   });
@@ -93,7 +93,7 @@ describe('GameLoopManager', () => {
   test('should update game state', () => {
     const newState = { score: 100, lives: 2 };
     gameLoop.updateGameState(newState);
-    
+
     const state = gameLoop.getGameState();
     expect(state.score).toBe(100);
     expect(state.lives).toBe(2);

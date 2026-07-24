@@ -14,13 +14,13 @@ const mockContainer = {
   removeEventListener: jest.fn(),
   querySelector: jest.fn(),
   querySelectorAll: jest.fn(() => []),
-  style: {}
+  style: {},
 };
 
 // Mock document methods
 Object.defineProperty(document, 'body', {
   value: mockContainer,
-  writable: true
+  writable: true,
 });
 
 Object.defineProperty(document, 'createElement', {
@@ -43,16 +43,16 @@ Object.defineProperty(document, 'createElement', {
       max: 1,
       step: 0.1,
       type: 'text',
-      parentNode: null
+      parentNode: null,
     };
     return element;
   }),
-  writable: true
+  writable: true,
 });
 
 Object.defineProperty(document, 'addEventListener', {
   value: jest.fn(),
-  writable: true
+  writable: true,
 });
 
 // Mock localStorage
@@ -80,7 +80,7 @@ describe('SettingsUI', () => {
     mockConfig = {
       eventBus,
       logger,
-      container: mockContainer
+      container: mockContainer,
     };
 
     // Clear all mocks and localStorage
@@ -88,7 +88,7 @@ describe('SettingsUI', () => {
     localStorageMock.getItem.mockClear();
     localStorageMock.setItem.mockClear();
     localStorageMock.clear();
-    
+
     // Reset localStorage mock to return null (no saved settings)
     localStorageMock.getItem.mockReturnValue(null);
   });
@@ -109,31 +109,39 @@ describe('SettingsUI', () => {
     test('should throw error if eventBus is missing', () => {
       expect(() => {
         new SettingsUI({ logger });
-      }).toThrow('SettingsUI: eventBus is required and must be an EventBus instance');
+      }).toThrow(
+        'SettingsUI: eventBus is required and must be an EventBus instance'
+      );
     });
 
     test('should throw error if logger is missing', () => {
       expect(() => {
         new SettingsUI({ eventBus });
-      }).toThrow('SettingsUI: logger is required and must be a Logger instance');
+      }).toThrow(
+        'SettingsUI: logger is required and must be a Logger instance'
+      );
     });
 
     test('should throw error if eventBus is not EventBus instance', () => {
       expect(() => {
         new SettingsUI({ eventBus: {}, logger });
-      }).toThrow('SettingsUI: eventBus is required and must be an EventBus instance');
+      }).toThrow(
+        'SettingsUI: eventBus is required and must be an EventBus instance'
+      );
     });
 
     test('should throw error if logger is not Logger instance', () => {
       expect(() => {
         new SettingsUI({ eventBus, logger: {} });
-      }).toThrow('SettingsUI: logger is required and must be a Logger instance');
+      }).toThrow(
+        'SettingsUI: logger is required and must be a Logger instance'
+      );
     });
 
     test('should initialize with default settings', () => {
       settingsUI = new SettingsUI(mockConfig);
       const settings = settingsUI.getSettings();
-      
+
       expect(settings.audio).toBeDefined();
       expect(settings.graphics).toBeDefined();
       expect(settings.gameplay).toBeDefined();
@@ -143,7 +151,7 @@ describe('SettingsUI', () => {
 
     test('should bind all methods correctly', () => {
       settingsUI = new SettingsUI(mockConfig);
-      
+
       expect(typeof settingsUI.show).toBe('function');
       expect(typeof settingsUI.hide).toBe('function');
       expect(typeof settingsUI.toggle).toBe('function');
@@ -161,7 +169,7 @@ describe('SettingsUI', () => {
 
     test('should get default settings correctly', () => {
       const settings = settingsUI.getSettings();
-      
+
       expect(settings.audio.masterVolume).toBe(1.0);
       expect(settings.audio.musicVolume).toBe(0.8);
       expect(settings.audio.sfxVolume).toBe(0.9);
@@ -173,14 +181,14 @@ describe('SettingsUI', () => {
 
     test('should update setting by path', () => {
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       settingsUI.updateSetting('audio.masterVolume', 0.5);
-      
+
       expect(settingsUI.getSettingValue('audio.masterVolume')).toBe(0.5);
       expect(eventSpy).toHaveBeenCalledWith('settings:changed', {
         path: 'audio.masterVolume',
         value: 0.5,
-        settings: expect.any(Object)
+        settings: expect.any(Object),
       });
     });
 
@@ -199,10 +207,10 @@ describe('SettingsUI', () => {
       // Modify some settings
       settingsUI.updateSetting('audio.masterVolume', 0.5);
       settingsUI.updateSetting('graphics.quality', 'low');
-      
+
       // Reset to defaults
       settingsUI.resetToDefaults();
-      
+
       expect(settingsUI.getSettingValue('audio.masterVolume')).toBe(1.0);
       expect(settingsUI.getSettingValue('graphics.quality')).toBe('high');
     });
@@ -210,15 +218,18 @@ describe('SettingsUI', () => {
     test('should set settings programmatically', () => {
       const newSettings = {
         audio: { masterVolume: 0.7 },
-        graphics: { quality: 'medium' }
+        graphics: { quality: 'medium' },
       };
-      
+
       const eventSpy = jest.spyOn(eventBus, 'emit');
       settingsUI.setSettings(newSettings);
-      
+
       expect(settingsUI.getSettingValue('audio.masterVolume')).toBe(0.7);
       expect(settingsUI.getSettingValue('graphics.quality')).toBe('medium');
-      expect(eventSpy).toHaveBeenCalledWith('settings:updated', expect.any(Object));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:updated',
+        expect.any(Object)
+      );
     });
   });
 
@@ -229,28 +240,28 @@ describe('SettingsUI', () => {
 
     test('should show settings UI', () => {
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       settingsUI.show();
-      
+
       expect(settingsUI.isVisible).toBe(true);
       expect(eventSpy).toHaveBeenCalledWith('settings:opened');
     });
 
     test('should hide settings UI', () => {
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       settingsUI.hide();
-      
+
       expect(settingsUI.isVisible).toBe(false);
       expect(eventSpy).toHaveBeenCalledWith('settings:closed');
     });
 
     test('should toggle settings UI visibility', () => {
       expect(settingsUI.isVisible).toBe(false);
-      
+
       settingsUI.toggle();
       expect(settingsUI.isVisible).toBe(true);
-      
+
       settingsUI.toggle();
       expect(settingsUI.isVisible).toBe(false);
     });
@@ -263,53 +274,62 @@ describe('SettingsUI', () => {
 
     test('should save settings to localStorage', () => {
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       settingsUI.saveSettings();
-      
+
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'gameSettings',
         JSON.stringify(settingsUI.getSettings())
       );
-      expect(eventSpy).toHaveBeenCalledWith('settings:saved', expect.any(Object));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:saved',
+        expect.any(Object)
+      );
     });
 
     test('should load settings from localStorage', () => {
       const savedSettings = {
         audio: { masterVolume: 0.6 },
-        graphics: { quality: 'low' }
+        graphics: { quality: 'low' },
       };
-      
+
       localStorageMock.getItem.mockReturnValue(JSON.stringify(savedSettings));
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       settingsUI.loadSettings();
-      
+
       expect(localStorageMock.getItem).toHaveBeenCalledWith('gameSettings');
       expect(settingsUI.getSettingValue('audio.masterVolume')).toBe(0.6);
       expect(settingsUI.getSettingValue('graphics.quality')).toBe('low');
-      expect(eventSpy).toHaveBeenCalledWith('settings:loaded', expect.any(Object));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:loaded',
+        expect.any(Object)
+      );
     });
 
     test('should handle localStorage errors gracefully', () => {
       localStorageMock.getItem.mockImplementation(() => {
         throw new Error('localStorage error');
       });
-      
+
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       expect(() => settingsUI.loadSettings()).not.toThrow();
-      expect(eventSpy).toHaveBeenCalledWith('settings:loadError', expect.any(Error));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:loadError',
+        expect.any(Error)
+      );
     });
 
     test('should merge settings correctly', () => {
       const savedSettings = {
         audio: { masterVolume: 0.6 },
-        graphics: { quality: 'low' }
+        graphics: { quality: 'low' },
       };
-      
+
       localStorageMock.getItem.mockReturnValue(JSON.stringify(savedSettings));
       settingsUI.loadSettings();
-      
+
       // Should merge with defaults, not replace entirely
       expect(settingsUI.getSettingValue('audio.masterVolume')).toBe(0.6);
       expect(settingsUI.getSettingValue('audio.musicVolume')).toBe(0.8); // default value
@@ -324,16 +344,22 @@ describe('SettingsUI', () => {
     });
 
     test('should set up event listeners on initialization', () => {
-      expect(document.addEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
+      expect(document.addEventListener).toHaveBeenCalledWith(
+        'keydown',
+        expect.any(Function)
+      );
     });
 
     test('should handle escape key to close settings', () => {
       settingsUI.show();
       expect(settingsUI.isVisible).toBe(true);
-      
+
       // Test that the escape key handler is set up
-      expect(document.addEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
-      
+      expect(document.addEventListener).toHaveBeenCalledWith(
+        'keydown',
+        expect.any(Function)
+      );
+
       // Note: In a real test environment, we would need to properly mock
       // the event listener to test the actual escape key functionality
     });
@@ -344,14 +370,14 @@ describe('SettingsUI', () => {
       // Create a fresh instance to ensure default settings
       const freshSettingsUI = new SettingsUI(mockConfig);
       const audioSettings = freshSettingsUI.getSettings().audio;
-      
+
       expect(audioSettings.masterVolume).toBe(1.0);
       expect(audioSettings.musicVolume).toBe(0.8);
       expect(audioSettings.sfxVolume).toBe(0.9);
       expect(audioSettings.muteAll).toBe(false);
       expect(audioSettings.muteMusic).toBe(false);
       expect(audioSettings.muteSfx).toBe(false);
-      
+
       freshSettingsUI.cleanup();
     });
 
@@ -359,21 +385,21 @@ describe('SettingsUI', () => {
       // Create a fresh instance to ensure default settings
       const freshSettingsUI = new SettingsUI(mockConfig);
       const graphicsSettings = freshSettingsUI.getSettings().graphics;
-      
+
       expect(graphicsSettings.quality).toBe('high');
       expect(graphicsSettings.fullscreen).toBe(false);
       expect(graphicsSettings.vsync).toBe(true);
       expect(graphicsSettings.particleEffects).toBe(true);
       expect(graphicsSettings.shadows).toBe(true);
       expect(graphicsSettings.antiAliasing).toBe(true);
-      
+
       freshSettingsUI.cleanup();
     });
 
     test('should have correct default gameplay settings', () => {
       settingsUI = new SettingsUI(mockConfig);
       const gameplaySettings = settingsUI.getSettings().gameplay;
-      
+
       expect(gameplaySettings.difficulty).toBe('normal');
       expect(gameplaySettings.autoSave).toBe(true);
       expect(gameplaySettings.autoPause).toBe(true);
@@ -385,7 +411,7 @@ describe('SettingsUI', () => {
     test('should have correct default accessibility settings', () => {
       settingsUI = new SettingsUI(mockConfig);
       const accessibilitySettings = settingsUI.getSettings().accessibility;
-      
+
       expect(accessibilitySettings.highContrast).toBe(false);
       expect(accessibilitySettings.largeText).toBe(false);
       expect(accessibilitySettings.screenReader).toBe(false);
@@ -397,7 +423,7 @@ describe('SettingsUI', () => {
     test('should have correct default key bindings', () => {
       settingsUI = new SettingsUI(mockConfig);
       const keyBindings = settingsUI.getSettings().controls.keyBindings;
-      
+
       expect(keyBindings.moveUp).toBe('KeyW');
       expect(keyBindings.moveDown).toBe('KeyS');
       expect(keyBindings.moveLeft).toBe('KeyA');
@@ -412,9 +438,9 @@ describe('SettingsUI', () => {
     test('should cleanup resources properly', () => {
       settingsUI = new SettingsUI(mockConfig);
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       settingsUI.cleanup();
-      
+
       expect(eventSpy).toHaveBeenCalledWith('settings:cleanup');
     });
   });
@@ -422,12 +448,12 @@ describe('SettingsUI', () => {
   describe('Error Handling', () => {
     test('should handle invalid setting paths gracefully', () => {
       settingsUI = new SettingsUI(mockConfig);
-      
+
       // Should not throw error for invalid path
       expect(() => {
         settingsUI.getSettingValue('invalid.path');
       }).not.toThrow();
-      
+
       expect(settingsUI.getSettingValue('invalid.path')).toBeUndefined();
     });
 
@@ -436,11 +462,14 @@ describe('SettingsUI', () => {
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('localStorage error');
       });
-      
+
       const eventSpy = jest.spyOn(eventBus, 'emit');
-      
+
       expect(() => settingsUI.saveSettings()).not.toThrow();
-      expect(eventSpy).toHaveBeenCalledWith('settings:saveError', expect.any(Error));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:saveError',
+        expect.any(Error)
+      );
     });
   });
 
@@ -448,21 +477,27 @@ describe('SettingsUI', () => {
     test('should integrate with EventBus correctly', () => {
       const eventSpy = jest.spyOn(eventBus, 'emit');
       settingsUI = new SettingsUI(mockConfig);
-      
+
       // Test that events are emitted for various actions
       settingsUI.show();
       expect(eventSpy).toHaveBeenCalledWith('settings:opened');
-      
+
       settingsUI.updateSetting('audio.masterVolume', 0.5);
-      expect(eventSpy).toHaveBeenCalledWith('settings:changed', expect.objectContaining({
-        path: 'audio.masterVolume',
-        value: 0.5
-      }));
-      
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:changed',
+        expect.objectContaining({
+          path: 'audio.masterVolume',
+          value: 0.5,
+        })
+      );
+
       // Reset localStorage mock to work properly for this test
       localStorageMock.setItem.mockImplementation(() => {});
       settingsUI.saveSettings();
-      expect(eventSpy).toHaveBeenCalledWith('settings:saved', expect.any(Object));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:saved',
+        expect.any(Object)
+      );
     });
 
     test('should work with custom container', () => {
@@ -473,17 +508,17 @@ describe('SettingsUI', () => {
         removeEventListener: jest.fn(),
         querySelector: jest.fn(),
         querySelectorAll: jest.fn(() => []),
-        style: {}
+        style: {},
       };
-      
+
       const customConfig = {
         eventBus,
         logger,
-        container: customContainer
+        container: customContainer,
       };
-      
+
       settingsUI = new SettingsUI(customConfig);
-      
+
       expect(customContainer.appendChild).toHaveBeenCalled();
     });
   });

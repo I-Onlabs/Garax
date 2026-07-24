@@ -26,7 +26,7 @@ jest.mock('../src/managers/AchievementManager.js', () => ({
     getAchievement: jest.fn(),
     getAllAchievements: jest.fn().mockReturnValue([
       { id: 'first_achievement', name: 'First Steps', unlocked: true },
-      { id: 'score_achievement', name: 'High Scorer', unlocked: false }
+      { id: 'score_achievement', name: 'High Scorer', unlocked: false },
     ]),
     checkScoreAchievements: jest.fn(),
     checkLevelAchievements: jest.fn(),
@@ -39,9 +39,11 @@ jest.mock('../src/managers/DailyChallengeManager.js', () => ({
     initialize: jest.fn().mockResolvedValue(),
     update: jest.fn(),
     cleanup: jest.fn(),
-    getActiveChallenges: jest.fn().mockReturnValue([
-      { id: 'daily_1', name: 'Daily Challenge 1', completed: false }
-    ]),
+    getActiveChallenges: jest
+      .fn()
+      .mockReturnValue([
+        { id: 'daily_1', name: 'Daily Challenge 1', completed: false },
+      ]),
     checkLevelChallenge: jest.fn(),
     checkCollectionChallenge: jest.fn(),
   })),
@@ -90,12 +92,12 @@ const mockContainer = {
   removeEventListener: jest.fn(),
   querySelector: jest.fn(),
   querySelectorAll: jest.fn(() => []),
-  style: {}
+  style: {},
 };
 
 Object.defineProperty(document, 'body', {
   value: mockContainer,
-  writable: true
+  writable: true,
 });
 
 Object.defineProperty(document, 'createElement', {
@@ -118,11 +120,11 @@ Object.defineProperty(document, 'createElement', {
       max: 1,
       step: 0.1,
       type: 'text',
-      parentNode: null
+      parentNode: null,
     };
     return element;
   }),
-  writable: true
+  writable: true,
 });
 
 describe('GameRefactored Enhanced', () => {
@@ -191,34 +193,42 @@ describe('GameRefactored Enhanced', () => {
   describe('UI Integration', () => {
     test('should set up UI integration events', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'on');
-      
+
       // Re-initialize to trigger setupUIIntegration
       game.setupUIIntegration();
-      
-      expect(eventSpy).toHaveBeenCalledWith('settings:changed', expect.any(Function));
-      expect(eventSpy).toHaveBeenCalledWith('game:stateChanged', expect.any(Function));
+
+      expect(eventSpy).toHaveBeenCalledWith(
+        'settings:changed',
+        expect.any(Function)
+      );
+      expect(eventSpy).toHaveBeenCalledWith(
+        'game:stateChanged',
+        expect.any(Function)
+      );
     });
 
     test('should handle settings changes', () => {
       const loggerSpy = jest.spyOn(game.logger, 'debug');
-      
+
       game.eventBus.emit('settings:changed', {
         path: 'audio.masterVolume',
-        value: 0.5
+        value: 0.5,
       });
-      
-      expect(loggerSpy).toHaveBeenCalledWith('Audio setting changed: audio.masterVolume = 0.5');
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Audio setting changed: audio.masterVolume = 0.5'
+      );
     });
 
     test('should update UI with game state changes', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
-      
+
       game.updateUI('score', 1000);
-      
+
       expect(eventSpy).toHaveBeenCalledWith('ui:update', {
         type: 'score',
         data: 1000,
-        timestamp: expect.any(Number)
+        timestamp: expect.any(Number),
       });
     });
   });
@@ -227,43 +237,47 @@ describe('GameRefactored Enhanced', () => {
     test('should handle console commands', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
       const loggerSpy = jest.spyOn(game.logger, 'info');
-      
+
       game.handleConsoleCommand({
         command: 'setScore',
-        args: ['5000']
+        args: ['5000'],
       });
-      
+
       expect(game.gameState.score).toBe(5000);
-      expect(eventSpy).toHaveBeenCalledWith('player:scoreChanged', { score: 5000 });
+      expect(eventSpy).toHaveBeenCalledWith('player:scoreChanged', {
+        score: 5000,
+      });
       expect(loggerSpy).toHaveBeenCalledWith('Console: Score set to 5000');
     });
 
     test('should handle setLevel console command', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
       const loggerSpy = jest.spyOn(game.logger, 'info');
-      
+
       game.handleConsoleCommand({
         command: 'setLevel',
-        args: ['5']
+        args: ['5'],
       });
-      
+
       expect(game.gameState.currentLevel).toBe(5);
-      expect(eventSpy).toHaveBeenCalledWith('player:levelCompleted', { level: 5 });
+      expect(eventSpy).toHaveBeenCalledWith('player:levelCompleted', {
+        level: 5,
+      });
       expect(loggerSpy).toHaveBeenCalledWith('Console: Level set to 5');
     });
 
     test('should handle addPowerUp console command', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
       const loggerSpy = jest.spyOn(game.logger, 'info');
-      
+
       game.handleConsoleCommand({
         command: 'addPowerUp',
-        args: ['speed']
+        args: ['speed'],
       });
-      
+
       expect(eventSpy).toHaveBeenCalledWith('powerup:activated', {
         type: 'speed',
-        duration: 10000
+        duration: 10000,
       });
       expect(loggerSpy).toHaveBeenCalledWith('Console: Power-up speed added');
     });
@@ -271,143 +285,154 @@ describe('GameRefactored Enhanced', () => {
     test('should handle unlockAchievement console command', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
       const loggerSpy = jest.spyOn(game.logger, 'info');
-      
+
       game.handleConsoleCommand({
         command: 'unlockAchievement',
-        args: ['test_achievement']
+        args: ['test_achievement'],
       });
-      
+
       expect(eventSpy).toHaveBeenCalledWith('achievement:unlocked', {
         name: 'test_achievement',
-        description: 'Console unlocked achievement'
+        description: 'Console unlocked achievement',
       });
-      expect(loggerSpy).toHaveBeenCalledWith('Console: Achievement test_achievement unlocked');
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Console: Achievement test_achievement unlocked'
+      );
     });
 
     test('should handle toggleSettings console command', () => {
       const toggleSpy = jest.spyOn(game.ui.settings, 'toggle');
-      
+
       game.handleConsoleCommand({
         command: 'toggleSettings',
-        args: []
+        args: [],
       });
-      
+
       expect(toggleSpy).toHaveBeenCalled();
     });
 
     test('should handle muteAudio console command', () => {
       const muteSpy = jest.spyOn(game.systems.audio, 'muteAll');
-      
+
       game.handleConsoleCommand({
         command: 'muteAudio',
-        args: []
+        args: [],
       });
-      
+
       expect(muteSpy).toHaveBeenCalled();
     });
 
     test('should handle unknown console commands', () => {
       const loggerSpy = jest.spyOn(game.logger, 'warn');
-      
+
       game.handleConsoleCommand({
         command: 'unknownCommand',
-        args: []
+        args: [],
       });
-      
-      expect(loggerSpy).toHaveBeenCalledWith('Console: Unknown command: unknownCommand');
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Console: Unknown command: unknownCommand'
+      );
     });
   });
 
   describe('Play Integration', () => {
     test('should handle play actions', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
-      
+
       game.handlePlayAction({
         action: 'jump',
-        params: { force: 10 }
+        params: { force: 10 },
       });
-      
+
       expect(eventSpy).toHaveBeenCalledWith('player:jump', { force: 10 });
     });
 
     test('should handle collect play action', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
-      
+
       game.handlePlayAction({
         action: 'collect',
-        params: { itemType: 'coin' }
+        params: { itemType: 'coin' },
       });
-      
-      expect(eventSpy).toHaveBeenCalledWith('player:collect', { itemType: 'coin' });
+
+      expect(eventSpy).toHaveBeenCalledWith('player:collect', {
+        itemType: 'coin',
+      });
     });
 
     test('should handle pause play action', () => {
       const pauseSpy = jest.spyOn(game, 'pause');
-      
+
       game.handlePlayAction({
         action: 'pause',
-        params: {}
+        params: {},
       });
-      
+
       expect(pauseSpy).toHaveBeenCalled();
     });
 
     test('should handle resume play action', () => {
       const resumeSpy = jest.spyOn(game, 'resume');
-      
+
       game.handlePlayAction({
         action: 'resume',
-        params: {}
+        params: {},
       });
-      
+
       expect(resumeSpy).toHaveBeenCalled();
     });
 
     test('should handle restart play action', () => {
       const stopSpy = jest.spyOn(game, 'stop');
       const startSpy = jest.spyOn(game, 'start').mockResolvedValue();
-      
+
       game.handlePlayAction({
         action: 'restart',
-        params: {}
+        params: {},
       });
-      
+
       expect(stopSpy).toHaveBeenCalled();
       expect(startSpy).toHaveBeenCalled();
     });
 
     test('should handle unknown play actions', () => {
       const loggerSpy = jest.spyOn(game.logger, 'warn');
-      
+
       game.handlePlayAction({
         action: 'unknownAction',
-        params: {}
+        params: {},
       });
-      
-      expect(loggerSpy).toHaveBeenCalledWith('Play: Unknown action: unknownAction');
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Play: Unknown action: unknownAction'
+      );
     });
   });
 
   describe('Power-up Management', () => {
     test('should track active power-ups', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
-      
+
       game.eventBus.emit('powerup:activated', {
         type: 'speed',
-        duration: 5000
+        duration: 5000,
       });
-      
+
       expect(game.gameState.activePowerUps.has('speed')).toBe(true);
-      expect(eventSpy).toHaveBeenCalledWith('powerup:activated', expect.any(Object));
+      expect(eventSpy).toHaveBeenCalledWith(
+        'powerup:activated',
+        expect.any(Object)
+      );
     });
 
     test('should remove expired power-ups', () => {
       // Add a power-up
       game.eventBus.emit('powerup:activated', {
         type: 'speed',
-        duration: 100 // Very short duration
+        duration: 100, // Very short duration
       });
-      
+
       // Wait for it to expire
       setTimeout(() => {
         const activePowerUps = game.getActivePowerUps();
@@ -418,15 +443,15 @@ describe('GameRefactored Enhanced', () => {
     test('should get active power-ups with remaining time', () => {
       game.eventBus.emit('powerup:activated', {
         type: 'speed',
-        duration: 10000
+        duration: 10000,
       });
-      
+
       const activePowerUps = game.getActivePowerUps();
       expect(activePowerUps).toHaveLength(1);
       expect(activePowerUps[0]).toMatchObject({
         type: 'speed',
         duration: 10000,
-        remainingTime: expect.any(Number)
+        remainingTime: expect.any(Number),
       });
     });
   });
@@ -437,9 +462,9 @@ describe('GameRefactored Enhanced', () => {
       game.gameState.currentLevel = 3;
       game.gameState.isRunning = true;
       game.gameState.startTime = Date.now() - 5000; // 5 seconds ago
-      
+
       const stats = game.getGameStats();
-      
+
       expect(stats).toMatchObject({
         score: 1000,
         level: 3,
@@ -448,9 +473,9 @@ describe('GameRefactored Enhanced', () => {
         gameTime: expect.any(Number),
         activePowerUps: expect.any(Array),
         achievements: expect.any(Array),
-        challenges: expect.any(Array)
+        challenges: expect.any(Array),
       });
-      
+
       expect(stats.gameTime).toBeGreaterThan(4000); // Should be around 5000ms
     });
   });
@@ -459,9 +484,9 @@ describe('GameRefactored Enhanced', () => {
     test('should initialize audio system on start', async () => {
       const audioInitSpy = jest.spyOn(game.systems.audio, 'initialize');
       const playMusicSpy = jest.spyOn(game.systems.audio, 'playMusic');
-      
+
       await game.start();
-      
+
       expect(audioInitSpy).toHaveBeenCalled();
       expect(playMusicSpy).toHaveBeenCalledWith('mainTheme');
     });
@@ -494,23 +519,23 @@ describe('GameRefactored Enhanced', () => {
 
     test('should provide executeConsoleCommand method', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
-      
+
       game.executeConsoleCommand('setScore', '1000');
-      
+
       expect(eventSpy).toHaveBeenCalledWith('console:command', {
         command: 'setScore',
-        args: ['1000']
+        args: ['1000'],
       });
     });
 
     test('should provide executePlayAction method', () => {
       const eventSpy = jest.spyOn(game.eventBus, 'emit');
-      
+
       game.executePlayAction('jump', { force: 5 });
-      
+
       expect(eventSpy).toHaveBeenCalledWith('play:action', {
         action: 'jump',
-        params: { force: 5 }
+        params: { force: 5 },
       });
     });
   });
@@ -518,43 +543,43 @@ describe('GameRefactored Enhanced', () => {
   describe('Cross-cutting Features Integration', () => {
     test('should integrate achievements with UI updates', () => {
       const updateUISpy = jest.spyOn(game, 'updateUI');
-      
+
       game.eventBus.emit('achievement:unlocked', {
         name: 'Test Achievement',
-        description: 'Test description'
+        description: 'Test description',
       });
-      
+
       expect(updateUISpy).toHaveBeenCalledWith('achievement', {
         name: 'Test Achievement',
-        description: 'Test description'
+        description: 'Test description',
       });
     });
 
     test('should integrate daily challenges with UI updates', () => {
       const updateUISpy = jest.spyOn(game, 'updateUI');
-      
+
       game.eventBus.emit('dailyChallenge:completed', {
         name: 'Test Challenge',
-        reward: '100 points'
+        reward: '100 points',
       });
-      
+
       expect(updateUISpy).toHaveBeenCalledWith('challenge', {
         name: 'Test Challenge',
-        reward: '100 points'
+        reward: '100 points',
       });
     });
 
     test('should integrate power-ups with UI updates', () => {
       const updateUISpy = jest.spyOn(game, 'updateUI');
-      
+
       game.eventBus.emit('powerup:activated', {
         type: 'speed',
-        duration: 10000
+        duration: 10000,
       });
-      
+
       expect(updateUISpy).toHaveBeenCalledWith('powerup', {
         type: 'speed',
-        duration: 10000
+        duration: 10000,
       });
     });
   });

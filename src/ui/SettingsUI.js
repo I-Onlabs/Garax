@@ -1,6 +1,6 @@
 /**
  * SettingsUI.js - Settings user interface component
- * 
+ *
  * Provides a comprehensive settings interface with proper UI-to-system contracts
  * for managing game settings, audio preferences, and accessibility options.
  */
@@ -12,10 +12,14 @@ export class SettingsUI {
   constructor(config = {}) {
     // Validate required dependencies
     if (!config.eventBus || !(config.eventBus instanceof EventBus)) {
-      throw new Error('SettingsUI: eventBus is required and must be an EventBus instance');
+      throw new Error(
+        'SettingsUI: eventBus is required and must be an EventBus instance'
+      );
     }
     if (!config.logger || !(config.logger instanceof Logger)) {
-      throw new Error('SettingsUI: logger is required and must be a Logger instance');
+      throw new Error(
+        'SettingsUI: logger is required and must be a Logger instance'
+      );
     }
 
     this.eventBus = config.eventBus;
@@ -23,7 +27,7 @@ export class SettingsUI {
     this.container = config.container || document.body;
     this.isVisible = false;
     this.settings = this.getDefaultSettings();
-    
+
     // Bind methods
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
@@ -53,7 +57,7 @@ export class SettingsUI {
         sfxVolume: 0.9,
         muteAll: false,
         muteMusic: false,
-        muteSfx: false
+        muteSfx: false,
       },
       // Graphics settings
       graphics: {
@@ -62,7 +66,7 @@ export class SettingsUI {
         vsync: true,
         particleEffects: true,
         shadows: true,
-        antiAliasing: true
+        antiAliasing: true,
       },
       // Gameplay settings
       gameplay: {
@@ -71,7 +75,7 @@ export class SettingsUI {
         autoPause: true,
         showFPS: false,
         showDebugInfo: false,
-        tutorialEnabled: true
+        tutorialEnabled: true,
       },
       // Accessibility settings
       accessibility: {
@@ -80,15 +84,15 @@ export class SettingsUI {
         screenReader: false,
         colorBlindMode: 'none', // none, protanopia, deuteranopia, tritanopia
         reducedMotion: false,
-        keyboardNavigation: true
+        keyboardNavigation: true,
       },
       // Controls settings
       controls: {
         keyBindings: this.getDefaultKeyBindings(),
         mouseSensitivity: 1.0,
         invertY: false,
-        autoAim: false
-      }
+        autoAim: false,
+      },
     };
   }
 
@@ -106,7 +110,7 @@ export class SettingsUI {
       pause: 'Escape',
       inventory: 'KeyI',
       map: 'KeyM',
-      chat: 'KeyT'
+      chat: 'KeyT',
     };
   }
 
@@ -144,14 +148,14 @@ export class SettingsUI {
 
     // Create header
     this.createHeader();
-    
+
     // Create settings sections
     this.createAudioSection();
     this.createGraphicsSection();
     this.createGameplaySection();
     this.createAccessibilitySection();
     this.createControlsSection();
-    
+
     // Create footer with action buttons
     this.createFooter();
 
@@ -210,16 +214,37 @@ export class SettingsUI {
    */
   createAudioSection() {
     const section = this.createSection('Audio Settings', 'audio');
-    
+
     // Master volume
-    this.createSliderControl(section, 'Master Volume', 'audio.masterVolume', 0, 1, 0.1);
-    
+    this.createSliderControl(
+      section,
+      'Master Volume',
+      'audio.masterVolume',
+      0,
+      1,
+      0.1
+    );
+
     // Music volume
-    this.createSliderControl(section, 'Music Volume', 'audio.musicVolume', 0, 1, 0.1);
-    
+    this.createSliderControl(
+      section,
+      'Music Volume',
+      'audio.musicVolume',
+      0,
+      1,
+      0.1
+    );
+
     // SFX volume
-    this.createSliderControl(section, 'SFX Volume', 'audio.sfxVolume', 0, 1, 0.1);
-    
+    this.createSliderControl(
+      section,
+      'SFX Volume',
+      'audio.sfxVolume',
+      0,
+      1,
+      0.1
+    );
+
     // Mute options
     this.createCheckboxControl(section, 'Mute All', 'audio.muteAll');
     this.createCheckboxControl(section, 'Mute Music', 'audio.muteMusic');
@@ -231,21 +256,29 @@ export class SettingsUI {
    */
   createGraphicsSection() {
     const section = this.createSection('Graphics Settings', 'graphics');
-    
+
     // Quality preset
     this.createSelectControl(section, 'Quality Preset', 'graphics.quality', [
       { value: 'low', label: 'Low' },
       { value: 'medium', label: 'Medium' },
       { value: 'high', label: 'High' },
-      { value: 'ultra', label: 'Ultra' }
+      { value: 'ultra', label: 'Ultra' },
     ]);
-    
+
     // Graphics options
     this.createCheckboxControl(section, 'Fullscreen', 'graphics.fullscreen');
     this.createCheckboxControl(section, 'VSync', 'graphics.vsync');
-    this.createCheckboxControl(section, 'Particle Effects', 'graphics.particleEffects');
+    this.createCheckboxControl(
+      section,
+      'Particle Effects',
+      'graphics.particleEffects'
+    );
     this.createCheckboxControl(section, 'Shadows', 'graphics.shadows');
-    this.createCheckboxControl(section, 'Anti-Aliasing', 'graphics.antiAliasing');
+    this.createCheckboxControl(
+      section,
+      'Anti-Aliasing',
+      'graphics.antiAliasing'
+    );
   }
 
   /**
@@ -253,43 +286,79 @@ export class SettingsUI {
    */
   createGameplaySection() {
     const section = this.createSection('Gameplay Settings', 'gameplay');
-    
+
     // Difficulty
     this.createSelectControl(section, 'Difficulty', 'gameplay.difficulty', [
       { value: 'easy', label: 'Easy' },
       { value: 'normal', label: 'Normal' },
       { value: 'hard', label: 'Hard' },
-      { value: 'expert', label: 'Expert' }
+      { value: 'expert', label: 'Expert' },
     ]);
-    
+
     // Gameplay options
     this.createCheckboxControl(section, 'Auto Save', 'gameplay.autoSave');
     this.createCheckboxControl(section, 'Auto Pause', 'gameplay.autoPause');
     this.createCheckboxControl(section, 'Show FPS', 'gameplay.showFPS');
-    this.createCheckboxControl(section, 'Show Debug Info', 'gameplay.showDebugInfo');
-    this.createCheckboxControl(section, 'Tutorial Enabled', 'gameplay.tutorialEnabled');
+    this.createCheckboxControl(
+      section,
+      'Show Debug Info',
+      'gameplay.showDebugInfo'
+    );
+    this.createCheckboxControl(
+      section,
+      'Tutorial Enabled',
+      'gameplay.tutorialEnabled'
+    );
   }
 
   /**
    * Create accessibility settings section
    */
   createAccessibilitySection() {
-    const section = this.createSection('Accessibility Settings', 'accessibility');
-    
+    const section = this.createSection(
+      'Accessibility Settings',
+      'accessibility'
+    );
+
     // Accessibility options
-    this.createCheckboxControl(section, 'High Contrast', 'accessibility.highContrast');
-    this.createCheckboxControl(section, 'Large Text', 'accessibility.largeText');
-    this.createCheckboxControl(section, 'Screen Reader Support', 'accessibility.screenReader');
-    this.createCheckboxControl(section, 'Reduced Motion', 'accessibility.reducedMotion');
-    this.createCheckboxControl(section, 'Keyboard Navigation', 'accessibility.keyboardNavigation');
-    
+    this.createCheckboxControl(
+      section,
+      'High Contrast',
+      'accessibility.highContrast'
+    );
+    this.createCheckboxControl(
+      section,
+      'Large Text',
+      'accessibility.largeText'
+    );
+    this.createCheckboxControl(
+      section,
+      'Screen Reader Support',
+      'accessibility.screenReader'
+    );
+    this.createCheckboxControl(
+      section,
+      'Reduced Motion',
+      'accessibility.reducedMotion'
+    );
+    this.createCheckboxControl(
+      section,
+      'Keyboard Navigation',
+      'accessibility.keyboardNavigation'
+    );
+
     // Color blind mode
-    this.createSelectControl(section, 'Color Blind Mode', 'accessibility.colorBlindMode', [
-      { value: 'none', label: 'None' },
-      { value: 'protanopia', label: 'Protanopia' },
-      { value: 'deuteranopia', label: 'Deuteranopia' },
-      { value: 'tritanopia', label: 'Tritanopia' }
-    ]);
+    this.createSelectControl(
+      section,
+      'Color Blind Mode',
+      'accessibility.colorBlindMode',
+      [
+        { value: 'none', label: 'None' },
+        { value: 'protanopia', label: 'Protanopia' },
+        { value: 'deuteranopia', label: 'Deuteranopia' },
+        { value: 'tritanopia', label: 'Tritanopia' },
+      ]
+    );
   }
 
   /**
@@ -297,17 +366,25 @@ export class SettingsUI {
    */
   createControlsSection() {
     const section = this.createSection('Controls Settings', 'controls');
-    
+
     // Mouse sensitivity
-    this.createSliderControl(section, 'Mouse Sensitivity', 'controls.mouseSensitivity', 0.1, 3.0, 0.1);
-    
+    this.createSliderControl(
+      section,
+      'Mouse Sensitivity',
+      'controls.mouseSensitivity',
+      0.1,
+      3.0,
+      0.1
+    );
+
     // Control options
     this.createCheckboxControl(section, 'Invert Y Axis', 'controls.invertY');
     this.createCheckboxControl(section, 'Auto Aim', 'controls.autoAim');
-    
+
     // Key bindings (simplified for now)
     const keyBindingsDiv = document.createElement('div');
-    keyBindingsDiv.innerHTML = '<h4>Key Bindings</h4><p>Key binding customization coming soon...</p>';
+    keyBindingsDiv.innerHTML =
+      '<h4>Key Bindings</h4><p>Key binding customization coming soon...</p>';
     section.appendChild(keyBindingsDiv);
   }
 
@@ -458,7 +535,7 @@ export class SettingsUI {
       border-radius: 4px;
     `;
 
-    options.forEach(option => {
+    options.forEach((option) => {
       const optionEl = document.createElement('option');
       optionEl.value = option.value;
       optionEl.textContent = option.label;
@@ -566,7 +643,7 @@ export class SettingsUI {
     if (!path || typeof path !== 'string') {
       return undefined;
     }
-    
+
     const keys = path.split('.');
     let value = this.settings;
     for (const key of keys) {
@@ -594,7 +671,7 @@ export class SettingsUI {
     this.eventBus.emit('settings:changed', {
       path,
       value,
-      settings: this.settings
+      settings: this.settings,
     });
 
     this.logger.debug(`Setting updated: ${path} = ${value}`);

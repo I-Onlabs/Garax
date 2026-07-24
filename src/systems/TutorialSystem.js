@@ -41,12 +41,12 @@ export class TutorialSystem {
         hintsEnabled: true,
         voiceEnabled: false,
         autoAdvance: false,
-        showProgress: true
+        showProgress: true,
       },
       playerLevel: 1,
       isFirstTime: true,
       tutorialQueue: [],
-      paused: false
+      paused: false,
     };
 
     // Tutorial system configuration
@@ -66,7 +66,7 @@ export class TutorialSystem {
         exploration: 'Exploration',
         crafting: 'Crafting System',
         social: 'Social Features',
-        advanced: 'Advanced Features'
+        advanced: 'Advanced Features',
       },
       stepTypes: {
         tooltip: 'tooltip',
@@ -75,8 +75,8 @@ export class TutorialSystem {
         interaction: 'interaction',
         demonstration: 'demonstration',
         quiz: 'quiz',
-        practice: 'practice'
-      }
+        practice: 'practice',
+      },
     };
 
     // Initialize tutorial system
@@ -96,18 +96,18 @@ export class TutorialSystem {
    */
   async initialize() {
     this.logger.info('Initializing TutorialSystem...');
-    
+
     // Load tutorial progress
     await this.loadTutorialProgress();
-    
+
     // Check if player is new
     this.checkIfNewPlayer();
-    
+
     // Start initial tutorial if needed
     if (this.tutorialState.isFirstTime) {
       this.startTutorial('welcome');
     }
-    
+
     this.logger.info('TutorialSystem initialized successfully');
   }
 
@@ -116,28 +116,28 @@ export class TutorialSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up TutorialSystem...');
-    
+
     // Stop active tutorial
     this.stopTutorial();
-    
+
     // Clear all tooltips and highlights
     this.clearAllTooltips();
     this.clearAllHighlights();
     this.clearAllOverlays();
-    
+
     // Save tutorial progress
     this.saveTutorialProgress();
-    
+
     // Clear state
     this.tutorialState.tutorialProgress.clear();
     this.tutorialState.tooltips.clear();
     this.tutorialState.highlights.clear();
     this.tutorialState.overlays.clear();
     this.tutorialState.tutorialQueue = [];
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('TutorialSystem cleaned up');
   }
 
@@ -147,16 +147,16 @@ export class TutorialSystem {
   update(deltaTime, gameState) {
     // Update active tutorial
     this.updateActiveTutorial(deltaTime);
-    
+
     // Update tooltips
     this.updateTooltips(deltaTime);
-    
+
     // Update highlights
     this.updateHighlights(deltaTime);
-    
+
     // Update overlays
     this.updateOverlays(deltaTime);
-    
+
     // Update tutorial queue
     this.updateTutorialQueue(deltaTime);
   }
@@ -177,9 +177,9 @@ export class TutorialSystem {
           id: 'welcome_message',
           type: 'overlay',
           title: 'Welcome!',
-          message: 'Welcome to the world of ARPG! Let\'s learn the basics.',
+          message: "Welcome to the world of ARPG! Let's learn the basics.",
           action: 'next',
-          duration: 5000
+          duration: 5000,
         },
         {
           id: 'movement_tutorial',
@@ -188,7 +188,7 @@ export class TutorialSystem {
           title: 'Movement',
           message: 'Use WASD or arrow keys to move your character.',
           action: 'interact',
-          duration: 10000
+          duration: 10000,
         },
         {
           id: 'camera_tutorial',
@@ -197,7 +197,7 @@ export class TutorialSystem {
           title: 'Camera',
           message: 'Use the mouse to look around and right-click to interact.',
           action: 'interact',
-          duration: 10000
+          duration: 10000,
         },
         {
           id: 'inventory_tutorial',
@@ -206,9 +206,9 @@ export class TutorialSystem {
           title: 'Inventory',
           message: 'Click here to open your inventory.',
           action: 'click',
-          duration: 8000
-        }
-      ]
+          duration: 8000,
+        },
+      ],
     });
 
     // Combat tutorial
@@ -226,7 +226,7 @@ export class TutorialSystem {
           title: 'Attack',
           message: 'Click here to attack enemies.',
           action: 'click',
-          duration: 8000
+          duration: 8000,
         },
         {
           id: 'block_tutorial',
@@ -235,7 +235,7 @@ export class TutorialSystem {
           title: 'Block',
           message: 'Hold this to block incoming attacks.',
           action: 'hold',
-          duration: 10000
+          duration: 10000,
         },
         {
           id: 'dodge_tutorial',
@@ -244,7 +244,7 @@ export class TutorialSystem {
           title: 'Dodge',
           message: 'Press this to dodge attacks.',
           action: 'press',
-          duration: 8000
+          duration: 8000,
         },
         {
           id: 'spell_tutorial',
@@ -253,9 +253,9 @@ export class TutorialSystem {
           title: 'Spells',
           message: 'Use spells to deal magical damage.',
           action: 'click',
-          duration: 10000
-        }
-      ]
+          duration: 10000,
+        },
+      ],
     });
 
     // Inventory tutorial
@@ -273,7 +273,7 @@ export class TutorialSystem {
           title: 'Inventory Panel',
           message: 'This is your inventory. Items are stored here.',
           action: 'observe',
-          duration: 8000
+          duration: 8000,
         },
         {
           id: 'item_drag',
@@ -282,7 +282,7 @@ export class TutorialSystem {
           title: 'Moving Items',
           message: 'Drag items to move them around.',
           action: 'drag',
-          duration: 12000
+          duration: 12000,
         },
         {
           id: 'item_equip',
@@ -291,7 +291,7 @@ export class TutorialSystem {
           title: 'Equipping Items',
           message: 'Drag items to equipment slots to equip them.',
           action: 'drag',
-          duration: 15000
+          duration: 15000,
         },
         {
           id: 'item_info',
@@ -300,9 +300,9 @@ export class TutorialSystem {
           title: 'Item Information',
           message: 'Hover over items to see their stats.',
           action: 'hover',
-          duration: 8000
-        }
-      ]
+          duration: 8000,
+        },
+      ],
     });
 
     // Skill tutorial
@@ -320,7 +320,7 @@ export class TutorialSystem {
           title: 'Skill Tree',
           message: 'Click here to open the skill tree.',
           action: 'click',
-          duration: 8000
+          duration: 8000,
         },
         {
           id: 'skill_node_explanation',
@@ -329,7 +329,7 @@ export class TutorialSystem {
           title: 'Skill Nodes',
           message: 'Each node represents a skill you can learn.',
           action: 'observe',
-          duration: 10000
+          duration: 10000,
         },
         {
           id: 'skill_learning',
@@ -338,7 +338,7 @@ export class TutorialSystem {
           title: 'Learning Skills',
           message: 'Click to learn a skill. You need skill points.',
           action: 'click',
-          duration: 12000
+          duration: 12000,
         },
         {
           id: 'skill_gems',
@@ -347,9 +347,9 @@ export class TutorialSystem {
           title: 'Skill Gems',
           message: 'Socket gems to gain active abilities.',
           action: 'observe',
-          duration: 10000
-        }
-      ]
+          duration: 10000,
+        },
+      ],
     });
 
     // Trading tutorial
@@ -367,7 +367,7 @@ export class TutorialSystem {
           title: 'Trading',
           message: 'Click here to start trading with other players.',
           action: 'click',
-          duration: 8000
+          duration: 8000,
         },
         {
           id: 'trade_interface',
@@ -375,7 +375,7 @@ export class TutorialSystem {
           title: 'Trade Interface',
           message: 'This is the trading interface. Drag items to trade them.',
           action: 'observe',
-          duration: 12000
+          duration: 12000,
         },
         {
           id: 'auction_house',
@@ -384,9 +384,9 @@ export class TutorialSystem {
           title: 'Auction House',
           message: 'Use the auction house to buy and sell items.',
           action: 'click',
-          duration: 10000
-        }
-      ]
+          duration: 10000,
+        },
+      ],
     });
 
     // Exploration tutorial
@@ -404,7 +404,7 @@ export class TutorialSystem {
           title: 'World Map',
           message: 'Open the map to see the world and plan your journey.',
           action: 'click',
-          duration: 8000
+          duration: 8000,
         },
         {
           id: 'area_discovery',
@@ -413,7 +413,7 @@ export class TutorialSystem {
           title: 'Areas',
           message: 'Visit new areas to discover them on the map.',
           action: 'observe',
-          duration: 10000
+          duration: 10000,
         },
         {
           id: 'dungeon_entrance',
@@ -422,9 +422,9 @@ export class TutorialSystem {
           title: 'Dungeons',
           message: 'Enter dungeons for challenging content and better loot.',
           action: 'click',
-          duration: 10000
-        }
-      ]
+          duration: 10000,
+        },
+      ],
     });
   }
 
@@ -444,8 +444,8 @@ export class TutorialSystem {
         fontSize: '14px',
         maxWidth: '300px',
         zIndex: 10000,
-        pointerEvents: 'none'
-      }
+        pointerEvents: 'none',
+      },
     };
   }
 
@@ -462,8 +462,8 @@ export class TutorialSystem {
         backgroundColor: 'rgba(255, 255, 0, 0.1)',
         zIndex: 9999,
         pointerEvents: 'none',
-        animation: 'pulse 1s infinite'
-      }
+        animation: 'pulse 1s infinite',
+      },
     };
   }
 
@@ -484,8 +484,8 @@ export class TutorialSystem {
         zIndex: 10001,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
-      }
+        justifyContent: 'center',
+      },
     };
   }
 
@@ -500,14 +500,20 @@ export class TutorialSystem {
     this.eventBus.on('tutorial:previous', this.previousStep.bind(this));
     this.eventBus.on('tutorial:skip', this.skipTutorial.bind(this));
     this.eventBus.on('tutorial:complete', this.completeTutorial.bind(this));
-    
+
     // Game events
     this.eventBus.on('player:levelUp', this.handlePlayerLevelUp.bind(this));
     this.eventBus.on('player:firstKill', this.handlePlayerFirstKill.bind(this));
     this.eventBus.on('player:firstItem', this.handlePlayerFirstItem.bind(this));
-    this.eventBus.on('player:firstTrade', this.handlePlayerFirstTrade.bind(this));
-    this.eventBus.on('player:firstDungeon', this.handlePlayerFirstDungeon.bind(this));
-    
+    this.eventBus.on(
+      'player:firstTrade',
+      this.handlePlayerFirstTrade.bind(this)
+    );
+    this.eventBus.on(
+      'player:firstDungeon',
+      this.handlePlayerFirstDungeon.bind(this)
+    );
+
     // UI events
     this.eventBus.on('ui:elementClick', this.handleElementClick.bind(this));
     this.eventBus.on('ui:elementHover', this.handleElementHover.bind(this));
@@ -518,20 +524,53 @@ export class TutorialSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('tutorial:start', this.startTutorial.bind(this));
+    this.eventBus.removeListener(
+      'tutorial:start',
+      this.startTutorial.bind(this)
+    );
     this.eventBus.removeListener('tutorial:stop', this.stopTutorial.bind(this));
     this.eventBus.removeListener('tutorial:next', this.nextStep.bind(this));
-    this.eventBus.removeListener('tutorial:previous', this.previousStep.bind(this));
+    this.eventBus.removeListener(
+      'tutorial:previous',
+      this.previousStep.bind(this)
+    );
     this.eventBus.removeListener('tutorial:skip', this.skipTutorial.bind(this));
-    this.eventBus.removeListener('tutorial:complete', this.completeTutorial.bind(this));
-    this.eventBus.removeListener('player:levelUp', this.handlePlayerLevelUp.bind(this));
-    this.eventBus.removeListener('player:firstKill', this.handlePlayerFirstKill.bind(this));
-    this.eventBus.removeListener('player:firstItem', this.handlePlayerFirstItem.bind(this));
-    this.eventBus.removeListener('player:firstTrade', this.handlePlayerFirstTrade.bind(this));
-    this.eventBus.removeListener('player:firstDungeon', this.handlePlayerFirstDungeon.bind(this));
-    this.eventBus.removeListener('ui:elementClick', this.handleElementClick.bind(this));
-    this.eventBus.removeListener('ui:elementHover', this.handleElementHover.bind(this));
-    this.eventBus.removeListener('ui:elementFocus', this.handleElementFocus.bind(this));
+    this.eventBus.removeListener(
+      'tutorial:complete',
+      this.completeTutorial.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:levelUp',
+      this.handlePlayerLevelUp.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:firstKill',
+      this.handlePlayerFirstKill.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:firstItem',
+      this.handlePlayerFirstItem.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:firstTrade',
+      this.handlePlayerFirstTrade.bind(this)
+    );
+    this.eventBus.removeListener(
+      'player:firstDungeon',
+      this.handlePlayerFirstDungeon.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementClick',
+      this.handleElementClick.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementHover',
+      this.handleElementHover.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementFocus',
+      this.handleElementFocus.bind(this)
+    );
   }
 
   /**
@@ -549,9 +588,9 @@ export class TutorialSystem {
       skipped: false,
       currentStep: 0,
       startTime: null,
-      endTime: null
+      endTime: null,
     };
-    
+
     this.tutorialState.tutorialProgress.set(tutorial.id, tutorial);
   }
 
@@ -562,34 +601,34 @@ export class TutorialSystem {
     if (!this.tutorialState.settings.enabled) {
       return;
     }
-    
+
     const tutorial = this.tutorialState.tutorialProgress.get(tutorialId);
     if (!tutorial) {
       this.logger.warn(`Tutorial not found: ${tutorialId}`);
       return;
     }
-    
+
     if (tutorial.completed || tutorial.skipped) {
       return;
     }
-    
+
     // Stop current tutorial if any
     if (this.tutorialState.activeTutorial) {
       this.stopTutorial();
     }
-    
+
     this.tutorialState.activeTutorial = tutorial;
     this.tutorialState.currentStep = 0;
     tutorial.startTime = Date.now();
-    
+
     // Start first step
     this.startStep(tutorial.steps[0]);
-    
+
     this.eventBus.emit('tutorial:started', {
       tutorial: tutorial,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Tutorial started: ${tutorial.name}`);
   }
 
@@ -600,22 +639,22 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
+
     const tutorial = this.tutorialState.activeTutorial;
-    
+
     // Clear all visual elements
     this.clearAllTooltips();
     this.clearAllHighlights();
     this.clearAllOverlays();
-    
+
     this.tutorialState.activeTutorial = null;
     this.tutorialState.currentStep = 0;
-    
+
     this.eventBus.emit('tutorial:stopped', {
       tutorial: tutorial,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Tutorial stopped: ${tutorial.name}`);
   }
 
@@ -626,15 +665,15 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
+
     const tutorial = this.tutorialState.activeTutorial;
     const nextStepIndex = this.tutorialState.currentStep + 1;
-    
+
     if (nextStepIndex >= tutorial.steps.length) {
       this.completeTutorial();
       return;
     }
-    
+
     this.tutorialState.currentStep = nextStepIndex;
     this.startStep(tutorial.steps[nextStepIndex]);
   }
@@ -646,14 +685,14 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
+
     const tutorial = this.tutorialState.activeTutorial;
     const prevStepIndex = this.tutorialState.currentStep - 1;
-    
+
     if (prevStepIndex < 0) {
       return;
     }
-    
+
     this.tutorialState.currentStep = prevStepIndex;
     this.startStep(tutorial.steps[prevStepIndex]);
   }
@@ -665,20 +704,20 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
+
     const tutorial = this.tutorialState.activeTutorial;
     tutorial.skipped = true;
     tutorial.endTime = Date.now();
-    
+
     this.tutorialState.skippedTutorials.add(tutorial.id);
-    
+
     this.stopTutorial();
-    
+
     this.eventBus.emit('tutorial:skipped', {
       tutorial: tutorial,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Tutorial skipped: ${tutorial.name}`);
   }
 
@@ -689,20 +728,20 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
+
     const tutorial = this.tutorialState.activeTutorial;
     tutorial.completed = true;
     tutorial.endTime = Date.now();
-    
+
     this.tutorialState.completedTutorials.add(tutorial.id);
-    
+
     this.stopTutorial();
-    
+
     this.eventBus.emit('tutorial:completed', {
       tutorial: tutorial,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Tutorial completed: ${tutorial.name}`);
   }
 
@@ -713,12 +752,12 @@ export class TutorialSystem {
     if (!step) {
       return;
     }
-    
+
     // Clear previous visual elements
     this.clearAllTooltips();
     this.clearAllHighlights();
     this.clearAllOverlays();
-    
+
     switch (step.type) {
       case 'tooltip':
         this.showTooltip(step);
@@ -742,7 +781,7 @@ export class TutorialSystem {
         this.showPractice(step);
         break;
     }
-    
+
     // Auto-advance if enabled
     if (this.tutorialState.settings.autoAdvance && step.duration) {
       setTimeout(() => {
@@ -760,13 +799,13 @@ export class TutorialSystem {
       this.logger.warn(`Tooltip target not found: ${step.target}`);
       return;
     }
-    
+
     const tooltip = this.createTooltip(step.title, step.message);
     this.positionTooltip(tooltip, target);
-    
+
     this.tooltipSystem.activeTooltips.set(step.id, tooltip);
     document.body.appendChild(tooltip);
-    
+
     // Auto-remove after duration
     if (step.duration) {
       setTimeout(() => {
@@ -784,13 +823,13 @@ export class TutorialSystem {
       this.logger.warn(`Highlight target not found: ${step.target}`);
       return;
     }
-    
+
     const highlight = this.createHighlight();
     this.positionHighlight(highlight, target);
-    
+
     this.highlightSystem.activeHighlights.set(step.id, highlight);
     document.body.appendChild(highlight);
-    
+
     // Auto-remove after duration
     if (step.duration) {
       setTimeout(() => {
@@ -804,10 +843,10 @@ export class TutorialSystem {
    */
   showOverlay(step) {
     const overlay = this.createOverlay(step.title, step.message);
-    
+
     this.overlaySystem.activeOverlays.set(step.id, overlay);
     document.body.appendChild(overlay);
-    
+
     // Auto-remove after duration
     if (step.duration) {
       setTimeout(() => {
@@ -825,10 +864,10 @@ export class TutorialSystem {
       this.logger.warn(`Interaction target not found: ${step.target}`);
       return;
     }
-    
+
     // Highlight the target
     this.showHighlight(step);
-    
+
     // Add click listener
     const clickHandler = (event) => {
       event.preventDefault();
@@ -836,7 +875,7 @@ export class TutorialSystem {
       target.removeEventListener('click', clickHandler);
       this.nextStep();
     };
-    
+
     target.addEventListener('click', clickHandler);
   }
 
@@ -846,7 +885,7 @@ export class TutorialSystem {
   showDemonstration(step) {
     // Show tooltip with instructions
     this.showTooltip(step);
-    
+
     // Simulate the action
     setTimeout(() => {
       this.simulateAction(step.action);
@@ -859,7 +898,7 @@ export class TutorialSystem {
   showQuiz(step) {
     // Create quiz overlay
     const overlay = this.createQuizOverlay(step);
-    
+
     this.overlaySystem.activeOverlays.set(step.id, overlay);
     document.body.appendChild(overlay);
   }
@@ -870,7 +909,7 @@ export class TutorialSystem {
   showPractice(step) {
     // Show practice instructions
     this.showOverlay(step);
-    
+
     // Enable practice mode
     this.enablePracticeMode(step);
   }
@@ -885,9 +924,9 @@ export class TutorialSystem {
       <div class="tooltip-title">${title}</div>
       <div class="tooltip-message">${message}</div>
     `;
-    
+
     Object.assign(tooltip.style, this.tooltipSystem.tooltipStyle);
-    
+
     return tooltip;
   }
 
@@ -897,9 +936,9 @@ export class TutorialSystem {
   createHighlight() {
     const highlight = document.createElement('div');
     highlight.className = 'tutorial-highlight';
-    
+
     Object.assign(highlight.style, this.highlightSystem.highlightStyle);
-    
+
     return highlight;
   }
 
@@ -919,18 +958,18 @@ export class TutorialSystem {
         </div>
       </div>
     `;
-    
+
     Object.assign(overlay.style, this.overlaySystem.overlayStyle);
-    
+
     // Add event listeners
     overlay.querySelector('.tutorial-next').addEventListener('click', () => {
       this.nextStep();
     });
-    
+
     overlay.querySelector('.tutorial-skip').addEventListener('click', () => {
       this.skipTutorial();
     });
-    
+
     return overlay;
   }
 
@@ -945,23 +984,27 @@ export class TutorialSystem {
         <div class="quiz-title">${step.title}</div>
         <div class="quiz-question">${step.message}</div>
         <div class="quiz-options">
-          ${step.options.map((option, index) => `
+          ${step.options
+            .map(
+              (option, index) => `
             <button class="quiz-option" data-answer="${index}">${option}</button>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       </div>
     `;
-    
+
     Object.assign(overlay.style, this.overlaySystem.overlayStyle);
-    
+
     // Add event listeners
-    overlay.querySelectorAll('.quiz-option').forEach(button => {
+    overlay.querySelectorAll('.quiz-option').forEach((button) => {
       button.addEventListener('click', (event) => {
         const answer = event.target.dataset.answer;
         this.handleQuizAnswer(step, answer);
       });
     });
-    
+
     return overlay;
   }
 
@@ -971,10 +1014,10 @@ export class TutorialSystem {
   positionTooltip(tooltip, target) {
     const targetRect = target.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
-    
-    let left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+
+    let left = targetRect.left + targetRect.width / 2 - tooltipRect.width / 2;
     let top = targetRect.bottom + 10;
-    
+
     // Adjust if tooltip goes off screen
     if (left < 0) left = 10;
     if (left + tooltipRect.width > window.innerWidth) {
@@ -983,7 +1026,7 @@ export class TutorialSystem {
     if (top + tooltipRect.height > window.innerHeight) {
       top = targetRect.top - tooltipRect.height - 10;
     }
-    
+
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
   }
@@ -993,7 +1036,7 @@ export class TutorialSystem {
    */
   positionHighlight(highlight, target) {
     const targetRect = target.getBoundingClientRect();
-    
+
     highlight.style.left = `${targetRect.left - 3}px`;
     highlight.style.top = `${targetRect.top - 3}px`;
     highlight.style.width = `${targetRect.width + 6}px`;
@@ -1037,7 +1080,7 @@ export class TutorialSystem {
    * Clear all tooltips
    */
   clearAllTooltips() {
-    this.tooltipSystem.activeTooltips.forEach(tooltip => tooltip.remove());
+    this.tooltipSystem.activeTooltips.forEach((tooltip) => tooltip.remove());
     this.tooltipSystem.activeTooltips.clear();
   }
 
@@ -1045,7 +1088,9 @@ export class TutorialSystem {
    * Clear all highlights
    */
   clearAllHighlights() {
-    this.highlightSystem.activeHighlights.forEach(highlight => highlight.remove());
+    this.highlightSystem.activeHighlights.forEach((highlight) =>
+      highlight.remove()
+    );
     this.highlightSystem.activeHighlights.clear();
   }
 
@@ -1053,7 +1098,7 @@ export class TutorialSystem {
    * Clear all overlays
    */
   clearAllOverlays() {
-    this.overlaySystem.activeOverlays.forEach(overlay => overlay.remove());
+    this.overlaySystem.activeOverlays.forEach((overlay) => overlay.remove());
     this.overlaySystem.activeOverlays.clear();
   }
 
@@ -1082,7 +1127,7 @@ export class TutorialSystem {
     // Enable practice mode for the specific action
     this.eventBus.emit('tutorial:practiceMode', {
       step: step,
-      enabled: true
+      enabled: true,
     });
   }
 
@@ -1091,7 +1136,7 @@ export class TutorialSystem {
    */
   handleQuizAnswer(step, answer) {
     const isCorrect = answer === step.correctAnswer;
-    
+
     if (isCorrect) {
       this.nextStep();
     } else {
@@ -1106,7 +1151,7 @@ export class TutorialSystem {
   showIncorrectAnswerFeedback() {
     // Show feedback for incorrect answer
     this.eventBus.emit('tutorial:incorrectAnswer', {
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -1117,7 +1162,7 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
+
     // Update tutorial logic
   }
 
@@ -1147,7 +1192,10 @@ export class TutorialSystem {
    */
   updateTutorialQueue(deltaTime) {
     // Process tutorial queue
-    if (this.tutorialState.tutorialQueue.length > 0 && !this.tutorialState.activeTutorial) {
+    if (
+      this.tutorialState.tutorialQueue.length > 0 &&
+      !this.tutorialState.activeTutorial
+    ) {
       const nextTutorial = this.tutorialState.tutorialQueue.shift();
       this.startTutorial(nextTutorial);
     }
@@ -1159,7 +1207,7 @@ export class TutorialSystem {
   handlePlayerLevelUp(data) {
     const { level } = data;
     this.tutorialState.playerLevel = level;
-    
+
     // Check for level-based tutorials
     this.checkLevelBasedTutorials(level);
   }
@@ -1199,8 +1247,9 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
-    const step = this.tutorialState.activeTutorial.steps[this.tutorialState.currentStep];
+
+    const step =
+      this.tutorialState.activeTutorial.steps[this.tutorialState.currentStep];
     if (step && step.action === 'click' && data.element === step.target) {
       this.nextStep();
     }
@@ -1213,8 +1262,9 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
-    const step = this.tutorialState.activeTutorial.steps[this.tutorialState.currentStep];
+
+    const step =
+      this.tutorialState.activeTutorial.steps[this.tutorialState.currentStep];
     if (step && step.action === 'hover' && data.element === step.target) {
       this.nextStep();
     }
@@ -1227,8 +1277,9 @@ export class TutorialSystem {
     if (!this.tutorialState.activeTutorial) {
       return;
     }
-    
-    const step = this.tutorialState.activeTutorial.steps[this.tutorialState.currentStep];
+
+    const step =
+      this.tutorialState.activeTutorial.steps[this.tutorialState.currentStep];
     if (step && step.action === 'focus' && data.element === step.target) {
       this.nextStep();
     }
@@ -1251,7 +1302,11 @@ export class TutorialSystem {
    */
   checkLevelBasedTutorials(level) {
     for (const [id, tutorial] of this.tutorialState.tutorialProgress) {
-      if (tutorial.level === level && !tutorial.completed && !tutorial.skipped) {
+      if (
+        tutorial.level === level &&
+        !tutorial.completed &&
+        !tutorial.skipped
+      ) {
         this.queueTutorial(id);
       }
     }
@@ -1274,12 +1329,14 @@ export class TutorialSystem {
       const data = {
         completedTutorials: Array.from(this.tutorialState.completedTutorials),
         skippedTutorials: Array.from(this.tutorialState.skippedTutorials),
-        tutorialProgress: Array.from(this.tutorialState.tutorialProgress.entries()),
+        tutorialProgress: Array.from(
+          this.tutorialState.tutorialProgress.entries()
+        ),
         settings: this.tutorialState.settings,
         isFirstTime: this.tutorialState.isFirstTime,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
+
       localStorage.setItem('tutorialData', JSON.stringify(data));
       this.logger.info('Tutorial progress saved');
     } catch (error) {
@@ -1295,13 +1352,23 @@ export class TutorialSystem {
       const savedData = localStorage.getItem('tutorialData');
       if (savedData) {
         const data = JSON.parse(savedData);
-        
-        this.tutorialState.completedTutorials = new Set(data.completedTutorials || []);
-        this.tutorialState.skippedTutorials = new Set(data.skippedTutorials || []);
-        this.tutorialState.tutorialProgress = new Map(data.tutorialProgress || []);
-        this.tutorialState.settings = { ...this.tutorialState.settings, ...data.settings };
-        this.tutorialState.isFirstTime = data.isFirstTime !== undefined ? data.isFirstTime : true;
-        
+
+        this.tutorialState.completedTutorials = new Set(
+          data.completedTutorials || []
+        );
+        this.tutorialState.skippedTutorials = new Set(
+          data.skippedTutorials || []
+        );
+        this.tutorialState.tutorialProgress = new Map(
+          data.tutorialProgress || []
+        );
+        this.tutorialState.settings = {
+          ...this.tutorialState.settings,
+          ...data.settings,
+        };
+        this.tutorialState.isFirstTime =
+          data.isFirstTime !== undefined ? data.isFirstTime : true;
+
         this.logger.info('Tutorial progress loaded');
       }
     } catch (error) {
@@ -1327,8 +1394,9 @@ export class TutorialSystem {
    * Get tutorials by category
    */
   getTutorialsByCategory(category) {
-    return Array.from(this.tutorialState.tutorialProgress.values())
-      .filter(tutorial => tutorial.category === category);
+    return Array.from(this.tutorialState.tutorialProgress.values()).filter(
+      (tutorial) => tutorial.category === category
+    );
   }
 
   /**
@@ -1359,7 +1427,10 @@ export class TutorialSystem {
     return {
       completed: this.tutorialState.completedTutorials.size,
       total: this.tutorialState.tutorialProgress.size,
-      percentage: (this.tutorialState.completedTutorials.size / this.tutorialState.tutorialProgress.size) * 100
+      percentage:
+        (this.tutorialState.completedTutorials.size /
+          this.tutorialState.tutorialProgress.size) *
+        100,
     };
   }
 
@@ -1387,7 +1458,7 @@ export class TutorialSystem {
     this.tutorialState.skippedTutorials.clear();
     this.tutorialState.tutorialProgress.clear();
     this.tutorialState.isFirstTime = true;
-    
+
     // Reinitialize tutorials
     this.initializeTutorials();
   }

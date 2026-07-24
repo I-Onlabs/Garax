@@ -46,7 +46,7 @@ export class LocalizationSystem {
       autoDetect: true,
       cacheEnabled: true,
       cache: new Map(),
-      lastUpdate: 0
+      lastUpdate: 0,
     };
 
     // Localization system configuration
@@ -67,12 +67,17 @@ export class LocalizationSystem {
         { code: 'he', name: 'Hebrew', nativeName: 'עברית', rtl: true },
         { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', rtl: false },
         { code: 'th', name: 'Thai', nativeName: 'ไทย', rtl: false },
-        { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt', rtl: false }
+        {
+          code: 'vi',
+          name: 'Vietnamese',
+          nativeName: 'Tiếng Việt',
+          rtl: false,
+        },
       ],
       translationPaths: {
         base: '/locales/',
         format: '{language}.json',
-        fallback: '/locales/en.json'
+        fallback: '/locales/en.json',
       },
       pluralRules: {
         en: { one: 'one', other: 'other' },
@@ -80,7 +85,14 @@ export class LocalizationSystem {
         fr: { one: 'one', other: 'other' },
         de: { one: 'one', other: 'other' },
         ru: { one: 'one', few: 'few', many: 'many', other: 'other' },
-        ar: { zero: 'zero', one: 'one', two: 'two', few: 'few', many: 'many', other: 'other' }
+        ar: {
+          zero: 'zero',
+          one: 'one',
+          two: 'two',
+          few: 'few',
+          many: 'many',
+          other: 'other',
+        },
       },
       dateFormats: {
         en: { short: 'MM/dd/yyyy', long: 'MMMM dd, yyyy', time: 'h:mm a' },
@@ -90,7 +102,7 @@ export class LocalizationSystem {
         ja: { short: 'yyyy/MM/dd', long: 'yyyy年M月d日', time: 'H:mm' },
         ko: { short: 'yyyy.MM.dd', long: 'yyyy년 M월 d일', time: 'a h:mm' },
         zh: { short: 'yyyy/MM/dd', long: 'yyyy年M月d日', time: 'H:mm' },
-        ar: { short: 'dd/MM/yyyy', long: 'dd MMMM yyyy', time: 'h:mm a' }
+        ar: { short: 'dd/MM/yyyy', long: 'dd MMMM yyyy', time: 'h:mm a' },
       },
       numberFormats: {
         en: { decimal: '.', thousands: ',', currency: '$' },
@@ -100,18 +112,46 @@ export class LocalizationSystem {
         ja: { decimal: '.', thousands: ',', currency: '¥' },
         ko: { decimal: '.', thousands: ',', currency: '₩' },
         zh: { decimal: '.', thousands: ',', currency: '¥' },
-        ar: { decimal: '.', thousands: ',', currency: 'د.إ' }
+        ar: { decimal: '.', thousands: ',', currency: 'د.إ' },
       },
       measurementUnits: {
         en: { distance: 'miles', weight: 'pounds', temperature: 'fahrenheit' },
-        es: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' },
-        fr: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' },
-        de: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' },
-        ja: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' },
-        ko: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' },
-        zh: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' },
-        ar: { distance: 'kilometers', weight: 'kilograms', temperature: 'celsius' }
-      }
+        es: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+        fr: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+        de: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+        ja: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+        ko: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+        zh: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+        ar: {
+          distance: 'kilometers',
+          weight: 'kilograms',
+          temperature: 'celsius',
+        },
+      },
     };
 
     // Initialize localization system
@@ -133,16 +173,16 @@ export class LocalizationSystem {
    */
   async initialize() {
     this.logger.info('Initializing LocalizationSystem...');
-    
+
     // Detect language
     await this.detectLanguage();
-    
+
     // Load translations
     await this.loadTranslations();
-    
+
     // Apply language
     this.applyLanguage();
-    
+
     this.logger.info('LocalizationSystem initialized successfully');
   }
 
@@ -151,10 +191,10 @@ export class LocalizationSystem {
    */
   cleanup() {
     this.logger.info('Cleaning up LocalizationSystem...');
-    
+
     // Save current language
     this.saveCurrentLanguage();
-    
+
     // Clear state
     this.localizationState.supportedLanguages.clear();
     this.localizationState.translations.clear();
@@ -169,10 +209,10 @@ export class LocalizationSystem {
     this.localizationState.dynamicContent.clear();
     this.localizationState.missingTranslations.clear();
     this.localizationState.cache.clear();
-    
+
     // Remove event listeners
     this.removeEventHandlers();
-    
+
     this.logger.info('LocalizationSystem cleaned up');
   }
 
@@ -182,10 +222,10 @@ export class LocalizationSystem {
   update(deltaTime, gameState) {
     // Update dynamic content
     this.updateDynamicContent(deltaTime);
-    
+
     // Update cache
     this.updateCache(deltaTime);
-    
+
     // Update missing translations
     this.updateMissingTranslations(deltaTime);
   }
@@ -194,12 +234,12 @@ export class LocalizationSystem {
    * Initialize languages
    */
   initializeLanguages() {
-    this.localizationConfig.supportedLanguages.forEach(lang => {
+    this.localizationConfig.supportedLanguages.forEach((lang) => {
       this.localizationState.supportedLanguages.set(lang.code, {
         code: lang.code,
         name: lang.name,
         nativeName: lang.nativeName,
-        rtl: lang.rtl || false
+        rtl: lang.rtl || false,
       });
     });
   }
@@ -217,33 +257,43 @@ export class LocalizationSystem {
    */
   initializeFormatters() {
     // Initialize date formatters
-    Object.entries(this.localizationConfig.dateFormats).forEach(([lang, formats]) => {
-      this.localizationState.dateFormats.set(lang, formats);
-    });
-    
+    Object.entries(this.localizationConfig.dateFormats).forEach(
+      ([lang, formats]) => {
+        this.localizationState.dateFormats.set(lang, formats);
+      }
+    );
+
     // Initialize number formatters
-    Object.entries(this.localizationConfig.numberFormats).forEach(([lang, formats]) => {
-      this.localizationState.numberFormats.set(lang, formats);
-    });
-    
+    Object.entries(this.localizationConfig.numberFormats).forEach(
+      ([lang, formats]) => {
+        this.localizationState.numberFormats.set(lang, formats);
+      }
+    );
+
     // Initialize currency formatters
-    Object.entries(this.localizationConfig.numberFormats).forEach(([lang, formats]) => {
-      this.localizationState.currencyFormats.set(lang, formats.currency);
-    });
-    
+    Object.entries(this.localizationConfig.numberFormats).forEach(
+      ([lang, formats]) => {
+        this.localizationState.currencyFormats.set(lang, formats.currency);
+      }
+    );
+
     // Initialize measurement units
-    Object.entries(this.localizationConfig.measurementUnits).forEach(([lang, units]) => {
-      this.localizationState.measurementUnits.set(lang, units);
-    });
+    Object.entries(this.localizationConfig.measurementUnits).forEach(
+      ([lang, units]) => {
+        this.localizationState.measurementUnits.set(lang, units);
+      }
+    );
   }
 
   /**
    * Initialize plural rules
    */
   initializePluralRules() {
-    Object.entries(this.localizationConfig.pluralRules).forEach(([lang, rules]) => {
-      this.localizationState.pluralRules.set(lang, rules);
-    });
+    Object.entries(this.localizationConfig.pluralRules).forEach(
+      ([lang, rules]) => {
+        this.localizationState.pluralRules.set(lang, rules);
+      }
+    );
   }
 
   /**
@@ -254,19 +304,19 @@ export class LocalizationSystem {
     this.localizationState.genderRules.set('en', {
       masculine: ['he', 'him', 'his'],
       feminine: ['she', 'her', 'hers'],
-      neutral: ['they', 'them', 'theirs']
+      neutral: ['they', 'them', 'theirs'],
     });
-    
+
     this.localizationState.genderRules.set('es', {
       masculine: ['él', 'lo', 'su'],
       feminine: ['ella', 'la', 'su'],
-      neutral: ['ellos', 'los', 'sus']
+      neutral: ['ellos', 'los', 'sus'],
     });
-    
+
     this.localizationState.genderRules.set('fr', {
       masculine: ['il', 'le', 'son'],
       feminine: ['elle', 'la', 'sa'],
-      neutral: ['ils', 'les', 'leurs']
+      neutral: ['ils', 'les', 'leurs'],
     });
   }
 
@@ -278,19 +328,19 @@ export class LocalizationSystem {
     this.localizationState.contextRules.set('en', {
       formal: 'formal',
       informal: 'informal',
-      polite: 'polite'
+      polite: 'polite',
     });
-    
+
     this.localizationState.contextRules.set('ja', {
       formal: '敬語',
       informal: '普通語',
-      polite: '丁寧語'
+      polite: '丁寧語',
     });
-    
+
     this.localizationState.contextRules.set('ko', {
       formal: '존댓말',
       informal: '반말',
-      polite: '정중어'
+      polite: '정중어',
     });
   }
 
@@ -299,17 +349,23 @@ export class LocalizationSystem {
    */
   setupEventHandlers() {
     // Localization events
-    this.eventBus.on('localization:changeLanguage', this.changeLanguage.bind(this));
+    this.eventBus.on(
+      'localization:changeLanguage',
+      this.changeLanguage.bind(this)
+    );
     this.eventBus.on('localization:translate', this.translate.bind(this));
     this.eventBus.on('localization:format', this.format.bind(this));
     this.eventBus.on('localization:pluralize', this.pluralize.bind(this));
     this.eventBus.on('localization:genderize', this.genderize.bind(this));
-    
+
     // UI events
     this.eventBus.on('ui:elementCreated', this.handleElementCreated.bind(this));
     this.eventBus.on('ui:elementUpdated', this.handleElementUpdated.bind(this));
-    this.eventBus.on('ui:elementDestroyed', this.handleElementDestroyed.bind(this));
-    
+    this.eventBus.on(
+      'ui:elementDestroyed',
+      this.handleElementDestroyed.bind(this)
+    );
+
     // Game events
     this.eventBus.on('game:stateChange', this.handleGameStateChange.bind(this));
     this.eventBus.on('game:event', this.handleGameEvent.bind(this));
@@ -319,15 +375,39 @@ export class LocalizationSystem {
    * Remove event handlers
    */
   removeEventHandlers() {
-    this.eventBus.removeListener('localization:changeLanguage', this.changeLanguage.bind(this));
-    this.eventBus.removeListener('localization:translate', this.translate.bind(this));
+    this.eventBus.removeListener(
+      'localization:changeLanguage',
+      this.changeLanguage.bind(this)
+    );
+    this.eventBus.removeListener(
+      'localization:translate',
+      this.translate.bind(this)
+    );
     this.eventBus.removeListener('localization:format', this.format.bind(this));
-    this.eventBus.removeListener('localization:pluralize', this.pluralize.bind(this));
-    this.eventBus.removeListener('localization:genderize', this.genderize.bind(this));
-    this.eventBus.removeListener('ui:elementCreated', this.handleElementCreated.bind(this));
-    this.eventBus.removeListener('ui:elementUpdated', this.handleElementUpdated.bind(this));
-    this.eventBus.removeListener('ui:elementDestroyed', this.handleElementDestroyed.bind(this));
-    this.eventBus.removeListener('game:stateChange', this.handleGameStateChange.bind(this));
+    this.eventBus.removeListener(
+      'localization:pluralize',
+      this.pluralize.bind(this)
+    );
+    this.eventBus.removeListener(
+      'localization:genderize',
+      this.genderize.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementCreated',
+      this.handleElementCreated.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementUpdated',
+      this.handleElementUpdated.bind(this)
+    );
+    this.eventBus.removeListener(
+      'ui:elementDestroyed',
+      this.handleElementDestroyed.bind(this)
+    );
+    this.eventBus.removeListener(
+      'game:stateChange',
+      this.handleGameStateChange.bind(this)
+    );
     this.eventBus.removeListener('game:event', this.handleGameEvent.bind(this));
   }
 
@@ -338,17 +418,17 @@ export class LocalizationSystem {
     if (!this.localizationState.autoDetect) {
       return;
     }
-    
+
     // Try to get language from various sources
     let detectedLanguage = null;
-    
+
     // 1. Check URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     const urlLang = urlParams.get('lang');
     if (urlLang && this.isLanguageSupported(urlLang)) {
       detectedLanguage = urlLang;
     }
-    
+
     // 2. Check localStorage
     if (!detectedLanguage) {
       const storedLang = localStorage.getItem('preferredLanguage');
@@ -356,7 +436,7 @@ export class LocalizationSystem {
         detectedLanguage = storedLang;
       }
     }
-    
+
     // 3. Check browser language
     if (!detectedLanguage) {
       const browserLang = navigator.language.split('-')[0];
@@ -364,7 +444,7 @@ export class LocalizationSystem {
         detectedLanguage = browserLang;
       }
     }
-    
+
     // 4. Check browser languages
     if (!detectedLanguage) {
       for (const lang of navigator.languages) {
@@ -375,12 +455,12 @@ export class LocalizationSystem {
         }
       }
     }
-    
+
     // 5. Fallback to default
     if (!detectedLanguage) {
       detectedLanguage = this.localizationConfig.defaultLanguage;
     }
-    
+
     this.localizationState.currentLanguage = detectedLanguage;
     this.logger.info(`Language detected: ${detectedLanguage}`);
   }
@@ -390,12 +470,15 @@ export class LocalizationSystem {
    */
   async loadTranslations() {
     const languagesToLoad = [this.localizationState.currentLanguage];
-    
+
     // Add fallback language if different
-    if (this.localizationState.fallbackLanguage !== this.localizationState.currentLanguage) {
+    if (
+      this.localizationState.fallbackLanguage !==
+      this.localizationState.currentLanguage
+    ) {
       languagesToLoad.push(this.localizationState.fallbackLanguage);
     }
-    
+
     for (const langCode of languagesToLoad) {
       if (!this.localizationState.loadedLanguages.has(langCode)) {
         await this.loadLanguage(langCode);
@@ -410,19 +493,24 @@ export class LocalizationSystem {
     try {
       const path = this.getTranslationPath(langCode);
       const response = await fetch(path);
-      
+
       if (!response.ok) {
-        throw new Error(`Failed to load translations for ${langCode}: ${response.status}`);
+        throw new Error(
+          `Failed to load translations for ${langCode}: ${response.status}`
+        );
       }
-      
+
       const translations = await response.json();
-      this.localizationState.translations.set(langCode, new Map(Object.entries(translations)));
+      this.localizationState.translations.set(
+        langCode,
+        new Map(Object.entries(translations))
+      );
       this.localizationState.loadedLanguages.add(langCode);
-      
+
       this.logger.info(`Translations loaded for ${langCode}`);
     } catch (error) {
       this.logger.error(`Failed to load translations for ${langCode}:`, error);
-      
+
       // Try to load fallback language
       if (langCode !== this.localizationState.fallbackLanguage) {
         await this.loadLanguage(this.localizationState.fallbackLanguage);
@@ -444,31 +532,31 @@ export class LocalizationSystem {
   applyLanguage() {
     const langCode = this.localizationState.currentLanguage;
     const language = this.localizationState.supportedLanguages.get(langCode);
-    
+
     if (!language) {
       this.logger.warn(`Language not supported: ${langCode}`);
       return;
     }
-    
+
     // Set document language
     document.documentElement.lang = langCode;
-    
+
     // Set RTL if needed
     if (language.rtl) {
       document.documentElement.dir = 'rtl';
     } else {
       document.documentElement.dir = 'ltr';
     }
-    
+
     // Update all translatable elements
     this.updateTranslatableElements();
-    
+
     this.eventBus.emit('localization:languageChanged', {
       language: langCode,
       rtl: language.rtl,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     this.logger.info(`Language applied: ${langCode}`);
   }
 
@@ -477,11 +565,11 @@ export class LocalizationSystem {
    */
   updateTranslatableElements() {
     const elements = document.querySelectorAll('[data-translate]');
-    
-    elements.forEach(element => {
+
+    elements.forEach((element) => {
       const key = element.getAttribute('data-translate');
       const translation = this.translate(key);
-      
+
       if (translation) {
         element.textContent = translation;
       }
@@ -496,21 +584,21 @@ export class LocalizationSystem {
       this.logger.warn(`Language not supported: ${langCode}`);
       return false;
     }
-    
+
     // Load translations if not already loaded
     if (!this.localizationState.loadedLanguages.has(langCode)) {
       await this.loadLanguage(langCode);
     }
-    
+
     // Change language
     this.localizationState.currentLanguage = langCode;
-    
+
     // Apply language
     this.applyLanguage();
-    
+
     // Save preference
     this.saveCurrentLanguage();
-    
+
     return true;
   }
 
@@ -520,49 +608,59 @@ export class LocalizationSystem {
   translate(key, params = {}, options = {}) {
     const langCode = options.language || this.localizationState.currentLanguage;
     const translations = this.localizationState.translations.get(langCode);
-    
+
     if (!translations) {
       this.logger.warn(`No translations loaded for ${langCode}`);
       return key;
     }
-    
+
     let translation = translations.get(key);
-    
+
     // Try fallback language if translation not found
     if (!translation && langCode !== this.localizationState.fallbackLanguage) {
-      const fallbackTranslations = this.localizationState.translations.get(this.localizationState.fallbackLanguage);
+      const fallbackTranslations = this.localizationState.translations.get(
+        this.localizationState.fallbackLanguage
+      );
       if (fallbackTranslations) {
         translation = fallbackTranslations.get(key);
       }
     }
-    
+
     // Return key if no translation found
     if (!translation) {
       this.localizationState.missingTranslations.add(key);
       this.logger.warn(`Translation not found: ${key}`);
       return key;
     }
-    
+
     // Apply parameters
     if (params && Object.keys(params).length > 0) {
       translation = this.applyParameters(translation, params);
     }
-    
+
     // Apply pluralization
     if (options.count !== undefined) {
-      translation = this.applyPluralization(translation, options.count, langCode);
+      translation = this.applyPluralization(
+        translation,
+        options.count,
+        langCode
+      );
     }
-    
+
     // Apply gender agreement
     if (options.gender) {
-      translation = this.applyGenderAgreement(translation, options.gender, langCode);
+      translation = this.applyGenderAgreement(
+        translation,
+        options.gender,
+        langCode
+      );
     }
-    
+
     // Apply context
     if (options.context) {
       translation = this.applyContext(translation, options.context, langCode);
     }
-    
+
     return translation;
   }
 
@@ -583,14 +681,14 @@ export class LocalizationSystem {
     if (!pluralRules) {
       return text;
     }
-    
+
     const pluralForm = this.getPluralForm(count, langCode);
     const pluralKey = `{${pluralForm}}`;
-    
+
     if (text.includes(pluralKey)) {
       return text.replace(pluralKey, count.toString());
     }
-    
+
     return text;
   }
 
@@ -602,7 +700,7 @@ export class LocalizationSystem {
     if (!pluralRules) {
       return 'other';
     }
-    
+
     // Simple plural rules implementation
     if (count === 1) {
       return 'one';
@@ -625,7 +723,7 @@ export class LocalizationSystem {
     if (!genderRules) {
       return text;
     }
-    
+
     // Simple gender agreement implementation
     const genderForms = genderRules[gender];
     if (genderForms) {
@@ -633,7 +731,7 @@ export class LocalizationSystem {
         text = text.replace(new RegExp(masculine, 'g'), feminine);
       }
     }
-    
+
     return text;
   }
 
@@ -645,14 +743,14 @@ export class LocalizationSystem {
     if (!contextRules) {
       return text;
     }
-    
+
     // Simple context implementation
     const contextForm = contextRules[context];
     if (contextForm) {
       // Apply context-specific transformations
       // This would be language-specific
     }
-    
+
     return text;
   }
 
@@ -662,11 +760,11 @@ export class LocalizationSystem {
   formatDate(date, format = 'short', langCode = null) {
     const lang = langCode || this.localizationState.currentLanguage;
     const dateFormats = this.localizationState.dateFormats.get(lang);
-    
+
     if (!dateFormats) {
       return date.toLocaleDateString();
     }
-    
+
     const formatString = dateFormats[format] || dateFormats.short;
     return this.formatDateString(date, formatString);
   }
@@ -680,10 +778,13 @@ export class LocalizationSystem {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     };
-    
-    return date.toLocaleDateString(this.localizationState.currentLanguage, options);
+
+    return date.toLocaleDateString(
+      this.localizationState.currentLanguage,
+      options
+    );
   }
 
   /**
@@ -692,17 +793,17 @@ export class LocalizationSystem {
   formatNumber(number, options = {}) {
     const lang = options.language || this.localizationState.currentLanguage;
     const numberFormats = this.localizationState.numberFormats.get(lang);
-    
+
     if (!numberFormats) {
       return number.toString();
     }
-    
+
     const { decimal, thousands } = numberFormats;
     const formatted = number.toLocaleString(lang, {
       minimumFractionDigits: options.decimals || 0,
-      maximumFractionDigits: options.decimals || 0
+      maximumFractionDigits: options.decimals || 0,
     });
-    
+
     return formatted.replace('.', decimal).replace(',', thousands);
   }
 
@@ -712,18 +813,18 @@ export class LocalizationSystem {
   formatCurrency(amount, currency = 'USD', options = {}) {
     const lang = options.language || this.localizationState.currentLanguage;
     const currencyFormats = this.localizationState.currencyFormats.get(lang);
-    
+
     if (!currencyFormats) {
       return `${currency} ${amount}`;
     }
-    
+
     const formatted = amount.toLocaleString(lang, {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: options.decimals || 2,
-      maximumFractionDigits: options.decimals || 2
+      maximumFractionDigits: options.decimals || 2,
     });
-    
+
     return formatted;
   }
 
@@ -733,15 +834,19 @@ export class LocalizationSystem {
   formatMeasurement(value, unit, options = {}) {
     const lang = options.language || this.localizationState.currentLanguage;
     const measurementUnits = this.localizationState.measurementUnits.get(lang);
-    
+
     if (!measurementUnits) {
       return `${value} ${unit}`;
     }
-    
+
     // Convert units if needed
-    const convertedValue = this.convertMeasurement(value, unit, measurementUnits[unit]);
+    const convertedValue = this.convertMeasurement(
+      value,
+      unit,
+      measurementUnits[unit]
+    );
     const convertedUnit = this.getUnitName(measurementUnits[unit], lang);
-    
+
     return `${convertedValue} ${convertedUnit}`;
   }
 
@@ -755,15 +860,17 @@ export class LocalizationSystem {
       kilometers: { miles: 0.621371 },
       pounds: { kilograms: 0.453592 },
       kilograms: { pounds: 2.20462 },
-      fahrenheit: { celsius: (f) => (f - 32) * 5 / 9 },
-      celsius: { fahrenheit: (c) => c * 9 / 5 + 32 }
+      fahrenheit: { celsius: (f) => ((f - 32) * 5) / 9 },
+      celsius: { fahrenheit: (c) => (c * 9) / 5 + 32 },
     };
-    
+
     if (conversions[fromUnit] && conversions[fromUnit][toUnit]) {
       const conversion = conversions[fromUnit][toUnit];
-      return typeof conversion === 'function' ? conversion(value) : value * conversion;
+      return typeof conversion === 'function'
+        ? conversion(value)
+        : value * conversion;
     }
-    
+
     return value;
   }
 
@@ -777,9 +884,9 @@ export class LocalizationSystem {
       pounds: { en: 'lbs', es: 'libras', fr: 'livres' },
       kilograms: { en: 'kg', es: 'kg', fr: 'kg' },
       fahrenheit: { en: '°F', es: '°F', fr: '°F' },
-      celsius: { en: '°C', es: '°C', fr: '°C' }
+      celsius: { en: '°C', es: '°C', fr: '°C' },
     };
-    
+
     return unitNames[unit]?.[langCode] || unit;
   }
 
@@ -789,7 +896,7 @@ export class LocalizationSystem {
   pluralize(singular, plural, count, langCode = null) {
     const lang = langCode || this.localizationState.currentLanguage;
     const pluralForm = this.getPluralForm(count, lang);
-    
+
     if (pluralForm === 'one') {
       return singular;
     } else {
@@ -802,7 +909,7 @@ export class LocalizationSystem {
    */
   genderize(masculine, feminine, gender, langCode = null) {
     const lang = langCode || this.localizationState.currentLanguage;
-    
+
     if (gender === 'feminine') {
       return feminine;
     } else {
@@ -835,7 +942,9 @@ export class LocalizationSystem {
    * Get current language info
    */
   getCurrentLanguageInfo() {
-    return this.localizationState.supportedLanguages.get(this.localizationState.currentLanguage);
+    return this.localizationState.supportedLanguages.get(
+      this.localizationState.currentLanguage
+    );
   }
 
   /**
@@ -915,7 +1024,7 @@ export class LocalizationSystem {
   updateElementTranslation(element) {
     const key = element.getAttribute('data-translate');
     const translation = this.translate(key);
-    
+
     if (translation) {
       element.textContent = translation;
     }
@@ -925,7 +1034,10 @@ export class LocalizationSystem {
    * Save current language
    */
   saveCurrentLanguage() {
-    localStorage.setItem('preferredLanguage', this.localizationState.currentLanguage);
+    localStorage.setItem(
+      'preferredLanguage',
+      this.localizationState.currentLanguage
+    );
   }
 
   /**
@@ -961,13 +1073,13 @@ export class LocalizationSystem {
       loadedLanguages: Array.from(this.localizationState.loadedLanguages),
       totalTranslations: 0,
       missingTranslations: this.localizationState.missingTranslations.size,
-      supportedLanguages: this.localizationState.supportedLanguages.size
+      supportedLanguages: this.localizationState.supportedLanguages.size,
     };
-    
+
     for (const translations of this.localizationState.translations.values()) {
       stats.totalTranslations += translations.size;
     }
-    
+
     return stats;
   }
 

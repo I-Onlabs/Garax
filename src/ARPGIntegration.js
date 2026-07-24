@@ -86,7 +86,9 @@ export class ARPGIntegration {
     }
 
     if (this.config.enablePerformance) {
-      this.systems.performance = new PerformanceOptimizationSystem(dependencies);
+      this.systems.performance = new PerformanceOptimizationSystem(
+        dependencies
+      );
     }
 
     if (this.config.enableMobile) {
@@ -125,7 +127,7 @@ export class ARPGIntegration {
     const validatedConfig = { ...config };
 
     // Validate boolean values
-    Object.keys(validatedConfig).forEach(key => {
+    Object.keys(validatedConfig).forEach((key) => {
       if (typeof validatedConfig[key] === 'boolean') {
         validatedConfig[key] = Boolean(validatedConfig[key]);
       }
@@ -151,7 +153,7 @@ export class ARPGIntegration {
         'procedural',
         'itemization',
         'endgame',
-        'trading'
+        'trading',
       ];
 
       for (const systemName of initOrder) {
@@ -262,7 +264,10 @@ export class ARPGIntegration {
 
     // System events
     this.eventBus.on('system:error', this.handleSystemError.bind(this));
-    this.eventBus.on('system:performance', this.handleSystemPerformance.bind(this));
+    this.eventBus.on(
+      'system:performance',
+      this.handleSystemPerformance.bind(this)
+    );
   }
 
   /**
@@ -433,7 +438,8 @@ export class ARPGIntegration {
   updateGameState(deltaTime) {
     // Update performance metrics
     if (this.systems.performance) {
-      this.gameState.performanceMetrics = this.systems.performance.getPerformanceMetrics();
+      this.gameState.performanceMetrics =
+        this.systems.performance.getPerformanceMetrics();
     }
 
     // Update mobile state
@@ -461,7 +467,7 @@ export class ARPGIntegration {
    */
   handlePlayerLevelUp(data) {
     this.logger.info(`Player leveled up to level ${data.level}`);
-    
+
     // Notify ARPG UI system
     if (this.systems.arpgUI) {
       this.systems.arpgUI.handlePlayerLevelUp(data);
@@ -473,7 +479,7 @@ export class ARPGIntegration {
    */
   handlePlayerDeath(data) {
     this.logger.info('Player died');
-    
+
     // Notify all systems
     for (const [name, system] of Object.entries(this.systems)) {
       if (system.handlePlayerDeath) {
@@ -487,7 +493,7 @@ export class ARPGIntegration {
    */
   handleSystemError(data) {
     this.logger.error('System error occurred:', data.error);
-    
+
     // Notify error handling system
     if (this.systems.errorHandling) {
       this.systems.errorHandling.handleError(data);
@@ -509,7 +515,7 @@ export class ARPGIntegration {
    */
   handlePerformanceThresholdExceeded(data) {
     this.logger.warn(`Performance threshold exceeded: ${data.threshold}`);
-    
+
     // Apply performance optimizations
     if (this.systems.performance) {
       this.systems.performance.handlePerformanceThreshold(data);
@@ -542,16 +548,19 @@ export class ARPGIntegration {
    */
   getSystemStatus() {
     const status = {};
-    
+
     for (const [name, system] of Object.entries(this.systems)) {
       status[name] = {
         initialized: !!system,
         running: system && system.isRunning ? system.isRunning() : false,
         errorCount: system && system.getErrorCount ? system.getErrorCount() : 0,
-        performance: system && system.getPerformanceMetrics ? system.getPerformanceMetrics() : null
+        performance:
+          system && system.getPerformanceMetrics
+            ? system.getPerformanceMetrics()
+            : null,
       };
     }
-    
+
     return status;
   }
 

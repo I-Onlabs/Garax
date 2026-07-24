@@ -13,23 +13,23 @@ describe('InputHandler', () => {
 
   beforeEach(() => {
     mockEventBus = {
-      emit: jest.fn()
+      emit: jest.fn(),
     };
     mockLogger = {
       log: jest.fn(),
       warn: jest.fn(),
-      error: jest.fn()
+      error: jest.fn(),
     };
     mockConfig = {
       enableKeyboard: true,
       enableMouse: true,
-      enableTouch: true
+      enableTouch: true,
     };
 
     inputHandler = new InputHandler({
       eventBus: mockEventBus,
       logger: mockLogger,
-      config: mockConfig
+      config: mockConfig,
     });
   });
 
@@ -50,9 +50,9 @@ describe('InputHandler', () => {
   test('should check if key is pressed', () => {
     inputHandler.inputState.keys.set('Space', {
       pressed: true,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     expect(inputHandler.isKeyPressed('Space')).toBe(true);
     expect(inputHandler.isKeyPressed('Enter')).toBe(false);
   });
@@ -60,9 +60,9 @@ describe('InputHandler', () => {
   test('should check if mouse button is pressed', () => {
     inputHandler.inputState.mouse.buttons.set(0, {
       pressed: true,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     expect(inputHandler.isMouseButtonPressed(0)).toBe(true);
     expect(inputHandler.isMouseButtonPressed(1)).toBe(false);
   });
@@ -70,7 +70,7 @@ describe('InputHandler', () => {
   test('should get mouse position', () => {
     inputHandler.inputState.mouse.x = 100;
     inputHandler.inputState.mouse.y = 200;
-    
+
     const position = inputHandler.getMousePosition();
     expect(position).toEqual({ x: 100, y: 200 });
   });
@@ -78,9 +78,9 @@ describe('InputHandler', () => {
   test('should get input buffer', () => {
     inputHandler.inputBuffer = [
       { type: 'keydown', data: 'Space', timestamp: Date.now() },
-      { type: 'keyup', data: 'Space', timestamp: Date.now() }
+      { type: 'keyup', data: 'Space', timestamp: Date.now() },
     ];
-    
+
     const buffer = inputHandler.getInputBuffer();
     expect(buffer).toHaveLength(2);
     expect(buffer[0].type).toBe('keydown');
@@ -89,9 +89,9 @@ describe('InputHandler', () => {
 
   test('should clear input buffer', () => {
     inputHandler.inputBuffer = [
-      { type: 'keydown', data: 'Space', timestamp: Date.now() }
+      { type: 'keydown', data: 'Space', timestamp: Date.now() },
     ];
-    
+
     inputHandler.clearInputBuffer();
     expect(inputHandler.inputBuffer).toHaveLength(0);
   });
@@ -127,35 +127,43 @@ describe('InputHandler', () => {
   test('should handle mouse move events', () => {
     const event = new MouseEvent('mousemove', { clientX: 100, clientY: 200 });
     inputHandler.handleMouseMove(event);
-    
+
     expect(inputHandler.inputState.mouse.x).toBe(100);
     expect(inputHandler.inputState.mouse.y).toBe(200);
   });
 
   test('should handle mouse down events', () => {
-    const event = new MouseEvent('mousedown', { button: 0, clientX: 100, clientY: 200 });
+    const event = new MouseEvent('mousedown', {
+      button: 0,
+      clientX: 100,
+      clientY: 200,
+    });
     inputHandler.handleMouseDown(event);
-    
+
     expect(inputHandler.inputState.mouse.buttons.get(0)).toMatchObject({
-      pressed: true
+      pressed: true,
     });
   });
 
   test('should handle mouse up events', () => {
-    const event = new MouseEvent('mouseup', { button: 0, clientX: 100, clientY: 200 });
+    const event = new MouseEvent('mouseup', {
+      button: 0,
+      clientX: 100,
+      clientY: 200,
+    });
     inputHandler.handleMouseUp(event);
-    
+
     expect(inputHandler.inputState.mouse.buttons.get(0)).toMatchObject({
-      pressed: false
+      pressed: false,
     });
   });
 
   test('should add input to buffer when enabled', () => {
     inputHandler.inputConfig.bufferInputs = true;
-    
+
     const event = new KeyboardEvent('keydown', { code: 'Space' });
     inputHandler.handleKeyDown(event);
-    
+
     expect(inputHandler.inputBuffer).toHaveLength(1);
     expect(inputHandler.inputBuffer[0].type).toBe('keydown');
     expect(inputHandler.inputBuffer[0].data).toBe('Space');
@@ -163,10 +171,10 @@ describe('InputHandler', () => {
 
   test('should not add input to buffer when disabled', () => {
     inputHandler.inputConfig.bufferInputs = false;
-    
+
     const event = new KeyboardEvent('keydown', { code: 'Space' });
     inputHandler.handleKeyDown(event);
-    
+
     expect(inputHandler.inputBuffer).toHaveLength(0);
   });
 

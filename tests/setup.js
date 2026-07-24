@@ -34,12 +34,13 @@ expect.extend({
     if (calls.length === 0) {
       return {
         pass: false,
-        message: () => 'Expected mock function to have been called, but it was not called',
+        message: () =>
+          'Expected mock function to have been called, but it was not called',
       };
     }
 
     // Check if any call's first argument matches the expected value
-    const matchingCall = calls.find(call => {
+    const matchingCall = calls.find((call) => {
       const firstArg = call[0];
       try {
         expect(firstArg).toEqual(expect.objectContaining(expected));
@@ -52,19 +53,20 @@ expect.extend({
     if (matchingCall) {
       return {
         pass: true,
-        message: () => `Expected mock not to have been called with event data matching ${JSON.stringify(expected)}`,
+        message: () =>
+          `Expected mock not to have been called with event data matching ${JSON.stringify(expected)}`,
       };
     }
 
     // Build a helpful error message showing what was actually received
-    const receivedFirstArgs = calls.map(call => call[0]);
+    const receivedFirstArgs = calls.map((call) => call[0]);
     return {
       pass: false,
       message: () =>
         `Expected mock to have been called with event data matching:\n` +
         `  ${JSON.stringify(expected)}\n\n` +
         `Received first arguments:\n` +
-        `  ${receivedFirstArgs.map(arg => JSON.stringify(arg)).join('\n  ')}`,
+        `  ${receivedFirstArgs.map((arg) => JSON.stringify(arg)).join('\n  ')}`,
     };
   },
 });
@@ -153,7 +155,9 @@ global.Audio = jest.fn().mockImplementation((src) => {
     }),
     removeEventListener: jest.fn((event, handler) => {
       if (eventListeners[event]) {
-        eventListeners[event] = eventListeners[event].filter(h => h !== handler);
+        eventListeners[event] = eventListeners[event].filter(
+          (h) => h !== handler
+        );
       }
     }),
     play: jest.fn().mockResolvedValue(undefined),
@@ -184,7 +188,9 @@ global.Blob = class Blob {
   constructor(parts, options = {}) {
     this.parts = parts;
     this.type = options.type || '';
-    this.size = parts ? parts.reduce((acc, part) => acc + (part.length || 0), 0) : 0;
+    this.size = parts
+      ? parts.reduce((acc, part) => acc + (part.length || 0), 0)
+      : 0;
   }
   arrayBuffer() {
     return Promise.resolve(new ArrayBuffer(0));

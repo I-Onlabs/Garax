@@ -13,11 +13,13 @@ export class PhysicsSystem {
     this.registeredObjects = new Set();
 
     // Use provided collision detector or create a new one
-    this.collisionDetector = options.collisionDetector || new CollisionDetector({
-      eventBus: this.eventBus,
-      logger: this.logger,
-      config: this.config
-    });
+    this.collisionDetector =
+      options.collisionDetector ||
+      new CollisionDetector({
+        eventBus: this.eventBus,
+        logger: this.logger,
+        config: this.config,
+      });
   }
 
   /**
@@ -40,10 +42,6 @@ export class PhysicsSystem {
 
     // 1. Sync game objects with collision detector
     // This ensures collision detector has the latest positions
-    if (gameState.player) {
-      this.syncObject(gameState.player);
-    }
-
     const activeIds = new Set();
 
     if (gameState.player) {
@@ -54,7 +52,7 @@ export class PhysicsSystem {
     }
 
     if (gameState.gameObjects && Array.isArray(gameState.gameObjects)) {
-      gameState.gameObjects.forEach(obj => {
+      gameState.gameObjects.forEach((obj) => {
         this.syncObject(obj);
         if (obj.id) {
           activeIds.add(obj.id);
@@ -104,7 +102,7 @@ export class PhysicsSystem {
       const collisionObj = {
         ...obj,
         position,
-        size
+        size,
       };
 
       this.collisionDetector.registerCollisionObject(obj.id, collisionObj);

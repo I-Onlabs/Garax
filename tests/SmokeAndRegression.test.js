@@ -10,7 +10,14 @@
  * - Cross-browser compatibility validation
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { GameRefactored } from '../src/GameRefactored.js';
 import { InputManager } from '../src/core/InputManager.js';
 import { PerformanceMonitor } from '../src/core/PerformanceMonitor.js';
@@ -22,7 +29,7 @@ const mockDesktopEnvironment = () => {
     value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     writable: true,
   });
-  
+
   Object.defineProperty(navigator, 'maxTouchPoints', {
     value: 0,
     writable: true,
@@ -41,10 +48,11 @@ const mockDesktopEnvironment = () => {
 
 const mockMobileEnvironment = () => {
   Object.defineProperty(navigator, 'userAgent', {
-    value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+    value:
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
     writable: true,
   });
-  
+
   Object.defineProperty(navigator, 'maxTouchPoints', {
     value: 5,
     writable: true,
@@ -134,7 +142,7 @@ describe('🚀 Smoke Tests - Critical Functionality', () => {
     it('should provide performance metrics', () => {
       const monitor = game.getPerformanceMonitor();
       const report = monitor.getPerformanceReport();
-      
+
       expect(report).toBeDefined();
       expect(report.metrics).toBeDefined();
       expect(report.metrics.fps).toBeDefined();
@@ -144,7 +152,7 @@ describe('🚀 Smoke Tests - Critical Functionality', () => {
     it('should calculate performance score', () => {
       const monitor = game.getPerformanceMonitor();
       const score = monitor.getPerformanceScore();
-      
+
       expect(typeof score).toBe('number');
       expect(score).toBeGreaterThanOrEqual(0);
       expect(score).toBeLessThanOrEqual(100);
@@ -162,7 +170,7 @@ describe('🚀 Smoke Tests - Critical Functionality', () => {
     it('should provide mobile controls state', () => {
       const inputManager = game.getInputManager();
       const state = inputManager.getMobileControlsState();
-      
+
       expect(state).toBeDefined();
       expect(typeof state.isMobile).toBe('boolean');
       expect(state.orientation).toBeDefined();
@@ -172,9 +180,9 @@ describe('🚀 Smoke Tests - Critical Functionality', () => {
       const inputManager = game.getInputManager();
       const newSettings = {
         mobileControls: { size: 'large', opacity: 0.9 },
-        mobileUI: { buttonSize: 80, joystickSize: 150 }
+        mobileUI: { buttonSize: 80, joystickSize: 150 },
       };
-      
+
       expect(() => {
         inputManager.updateMobileSettings(newSettings);
       }).not.toThrow();
@@ -198,7 +206,7 @@ describe('🚀 Smoke Tests - Critical Functionality', () => {
       const mobileTesting = game.getMobileTesting();
       await mobileTesting.runAllTests();
       const results = mobileTesting.getTestResults();
-      
+
       expect(results).toBeDefined();
       expect(results.overall).toBeDefined();
       expect(results.device).toBeDefined();
@@ -225,13 +233,13 @@ describe('🔄 Regression Tests - Feature Stability', () => {
   describe('Performance Monitoring Regression', () => {
     it('should maintain consistent performance metrics', async () => {
       await game.start();
-      
+
       const monitor = game.getPerformanceMonitor();
       const initialScore = monitor.getPerformanceScore();
-      
+
       // Simulate some game activity
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const finalScore = monitor.getPerformanceScore();
       expect(finalScore).toBeGreaterThanOrEqual(0);
       expect(finalScore).toBeLessThanOrEqual(100);
@@ -252,7 +260,7 @@ describe('🔄 Regression Tests - Feature Stability', () => {
     it('should provide optimization suggestions', () => {
       const monitor = game.getPerformanceMonitor();
       const report = monitor.getPerformanceReport();
-      
+
       expect(report.suggestions).toBeDefined();
       expect(Array.isArray(report.suggestions)).toBe(true);
     });
@@ -266,26 +274,26 @@ describe('🔄 Regression Tests - Feature Stability', () => {
     it('should maintain mobile controls functionality', () => {
       const inputManager = game.getInputManager();
       const state = inputManager.getMobileControlsState();
-      
+
       expect(state.isMobile).toBe(true);
       expect(state.orientation).toBeDefined();
     });
 
     it('should handle mobile settings updates', () => {
       const inputManager = game.getInputManager();
-      
+
       const settings = {
         mobileControls: {
           size: 'large',
           opacity: 0.9,
-          hapticFeedback: true
+          hapticFeedback: true,
         },
         mobileUI: {
           buttonSize: 80,
-          joystickSize: 150
-        }
+          joystickSize: 150,
+        },
       };
-      
+
       expect(() => {
         inputManager.updateMobileSettings(settings);
       }).not.toThrow();
@@ -295,13 +303,13 @@ describe('🔄 Regression Tests - Feature Stability', () => {
   describe('Game State Regression', () => {
     it('should maintain game state consistency', async () => {
       await game.start();
-      
+
       const initialState = game.getPerformanceReport();
       expect(initialState).toBeDefined();
-      
+
       // Simulate game activity
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
       const finalState = game.getPerformanceReport();
       expect(finalState).toBeDefined();
     });
@@ -348,11 +356,17 @@ describe('📱 Mobile Functionality Regression', () => {
 
     it('should handle orientation changes', () => {
       const inputManager = game.getInputManager();
-      
+
       // Simulate orientation change
-      Object.defineProperty(window, 'innerWidth', { value: 667, writable: true });
-      Object.defineProperty(window, 'innerHeight', { value: 375, writable: true });
-      
+      Object.defineProperty(window, 'innerWidth', {
+        value: 667,
+        writable: true,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        value: 375,
+        writable: true,
+      });
+
       const state = inputManager.getMobileControlsState();
       expect(state.orientation).toBeDefined();
     });
@@ -361,21 +375,21 @@ describe('📱 Mobile Functionality Regression', () => {
   describe('Mobile Performance Regression', () => {
     it('should maintain performance on mobile', async () => {
       await game.start();
-      
+
       const monitor = game.getPerformanceMonitor();
       const score = monitor.getPerformanceScore();
-      
+
       expect(score).toBeGreaterThanOrEqual(0);
       expect(score).toBeLessThanOrEqual(100);
     });
 
     it('should handle mobile-specific performance issues', () => {
       const monitor = game.getPerformanceMonitor();
-      
+
       // Simulate mobile performance constraints
       monitor.metrics.memory.used = 150 * 1024 * 1024; // 150MB
       const score = monitor.getPerformanceScore();
-      
+
       expect(score).toBeDefined();
       expect(typeof score).toBe('number');
     });
@@ -414,10 +428,14 @@ describe('♿ Accessibility Regression', () => {
     it('should maintain keyboard support', () => {
       const inputManager = game.getInputManager();
       // Keyboard navigation is controlled via enableKeyboardNavigation setting
-      expect(typeof inputManager.settings.enableKeyboardNavigation).toBe('boolean');
+      expect(typeof inputManager.settings.enableKeyboardNavigation).toBe(
+        'boolean'
+      );
       // Accessibility features are in inputManager.accessibility
       expect(inputManager.accessibility).toBeDefined();
-      expect(typeof inputManager.accessibility.keyboardNavigation).toBe('boolean');
+      expect(typeof inputManager.accessibility.keyboardNavigation).toBe(
+        'boolean'
+      );
     });
   });
 });
@@ -426,23 +444,27 @@ describe('🌐 Cross-Browser Compatibility Regression', () => {
   const browsers = [
     {
       name: 'Chrome',
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     },
     {
       name: 'Firefox',
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0'
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
     },
     {
       name: 'Safari',
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15'
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
     },
     {
       name: 'Edge',
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59'
-    }
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59',
+    },
   ];
 
-  browsers.forEach(browser => {
+  browsers.forEach((browser) => {
     describe(`${browser.name} Compatibility`, () => {
       let game;
 
@@ -501,18 +523,18 @@ describe('⚡ Performance Regression', () => {
   describe('Memory Management', () => {
     it('should not leak memory during operation', async () => {
       await game.start();
-      
+
       const monitor = game.getPerformanceMonitor();
       const initialMemory = monitor.metrics.memory.used;
-      
+
       // Simulate extended operation
       for (let i = 0; i < 10; i++) {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
-      
+
       const finalMemory = monitor.metrics.memory.used;
       const memoryIncrease = finalMemory - initialMemory;
-      
+
       // Memory increase should be reasonable (less than 10MB)
       expect(memoryIncrease).toBeLessThan(10 * 1024 * 1024);
     });
@@ -558,10 +580,10 @@ describe('🔧 Configuration Regression', () => {
         performance: {
           fpsTarget: 30,
           memoryWarningThreshold: 50 * 1024 * 1024,
-          enableAutoOptimization: false
-        }
+          enableAutoOptimization: false,
+        },
       };
-      
+
       expect(() => {
         game = new GameRefactored(config);
       }).not.toThrow();
@@ -574,10 +596,10 @@ describe('🔧 Configuration Regression', () => {
         mobileControls: {
           size: 'large',
           opacity: 0.9,
-          hapticFeedback: true
-        }
+          hapticFeedback: true,
+        },
       };
-      
+
       expect(() => {
         game = new GameRefactored(config);
       }).not.toThrow();
